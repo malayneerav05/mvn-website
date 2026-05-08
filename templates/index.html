@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Maya Vidya Niketan{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="relative text-white overflow-hidden min-h-[80vh] md:min-h-[90vh] flex items-center">
+    <!-- Background Image with Overlay -->
+    <div class="absolute inset-0 z-0">
+        <img src="{{ url_for('static', filename='images/hero_school.png') }}" alt="Maya Vidya Niketan Campus" class="w-full h-full object-cover">
+        <!-- Modern blue-tinted overlay for better text contrast -->
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-950/90 via-blue-900/70 to-transparent"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-32 relative z-10 w-full">
+        <div class="max-w-4xl">
+            <span class="inline-block px-4 py-1.5 mb-6 text-xs font-bold tracking-widest uppercase bg-blue-500 bg-opacity-30 border border-blue-400 border-opacity-30 rounded-full backdrop-blur-sm" data-aos="fade-down">Now Accepting Applications for 2026-27</span>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-[1.1]" data-aos="fade-right" data-aos-delay="100">
+                Inspiring Excellence,<br><span class="text-blue-400">Shaping Futures.</span>
+            </h1>
+            <p class="text-xl md:text-2xl font-medium text-blue-100 mb-12 max-w-2xl leading-relaxed" data-aos="fade-right" data-aos-delay="200">
+                Nurturing the next generation of leaders through innovative, technology-driven education at Maya Vidya Niketan.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-6" data-aos="fade-up" data-aos-delay="300">
+                <a href="{{ url_for('campus') }}" class="bg-white text-blue-900 hover:bg-blue-50 font-bold py-4 px-10 rounded-full shadow-2xl transition transform hover:-translate-y-1 active:scale-95 text-center">Explore Campus</a>
+                <a href="{{ url_for('admissions') }}" class="bg-blue-600/20 hover:bg-white/10 text-white border-2 border-white border-opacity-30 font-bold py-4 px-10 rounded-full backdrop-blur-md transition transform hover:-translate-y-1 active:scale-95 text-center">Apply Now</a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Smooth Wave transition -->
+    <div class="absolute bottom-0 left-0 w-full leading-[0] z-20">
+        <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 120L60 110C120 100 240 80 360 76.7C480 73.3 600 86.7 720 93.3C840 100 960 100 1080 90C1200 80 1320 60 1380 50L1440 40V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
+        </svg>
+    </div>
+</div>
+
+<!-- Welcome Message Section -->
+<div class="py-24 bg-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row items-center gap-16">
+            <div class="md:w-1/2" data-aos="fade-right">
+                <div class="relative">
+                    <div class="absolute -top-6 -left-6 w-32 h-32 bg-blue-100 rounded-2xl z-0"></div>
+                    <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-indigo-100 rounded-2xl z-0"></div>
+                    <div class="relative z-10 rounded-3xl overflow-hidden shadow-2xl transform transition hover:scale-[1.02] duration-500">
+                        <img src="https://ui-avatars.com/api/?name=Chandrika+Kumari&size=800&background=0D8ABC&color=fff&font-size=0.33" alt="Directoress Chandrika Kumari" class="w-full aspect-[4/5] object-cover">
+                        <div class="absolute bottom-0 left-0 w-full p-8 bg-gradient-to-t from-black/80 to-transparent text-white">
+                            <p class="font-bold text-xl mb-1">Chandrika Kumari</p>
+                            <p class="text-blue-300 text-sm font-semibold uppercase tracking-widest">Directoress</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="md:w-1/2" data-aos="fade-left">
+                <h2 class="text-blue-600 font-bold uppercase tracking-[0.2em] text-sm mb-4">Leadership Message</h2>
+                <h3 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-8 leading-tight">Our Mission & Guiding Principles</h3>
+                <div class="prose prose-xl text-slate-600 leading-relaxed italic">
+                    <p class="mb-8 text-2xl font-light">"Our mission is to ignite a lifelong passion for learning. By challenging the advanced and uplifting the less assured, we ensure each pupil realizes their unique academic potential."</p>
+                    <div class="not-italic bg-blue-50 border-l-4 border-blue-600 p-6 rounded-r-2xl mb-8">
+                        <p class="text-blue-900 font-extrabold text-xl mb-1">Our Motto:</p>
+                        <p class="text-blue-700 font-bold text-lg">Aim High, Be Kind, and Dare to be Different.</p>
+                    </div>
+                    <p class="text-lg not-italic text-slate-500">We provide an environment where state-of-the-art infrastructure meets compassionate teaching, ensuring every child receives the foundation they need to succeed.</p>
+                </div>
+                <div class="mt-10 flex items-center gap-4">
+                    <div class="w-12 h-[1px] bg-slate-300"></div>
+                    <p class="font-bold text-slate-900">Chandrika Kumari</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- About Us (Maya Educational Trust) -->
+<div class="py-32 bg-slate-50 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-blue-600 font-bold uppercase tracking-[0.2em] text-sm mb-4" data-aos="fade-up">About Our Foundation</h2>
+            <h3 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-10" data-aos="fade-up" data-aos-delay="100">Maya Educational Trust</h3>
+            <p class="text-xl text-slate-600 leading-relaxed mb-20 max-w-3xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+                Maya Vidya Niketan is proudly operated under the newly founded <span class="font-bold text-blue-700">Maya Educational Trust</span>. Our ethos is deeply rooted in a commitment to community development and accessible, high-quality education.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <!-- Academic Excellence -->
+                <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 hover-lift border border-white" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"></path></svg>
+                    </div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">Academic Mastery</h4>
+                    <p class="text-slate-500 leading-relaxed">Rigorous CBSE curriculum blended with practical, hands-on learning experiences.</p>
+                </div>
+                
+                <!-- Holistic Development -->
+                <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 hover-lift border border-white" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">Character First</h4>
+                    <p class="text-slate-500 leading-relaxed">Focusing on sports, arts, and ethics alongside academic achievements.</p>
+                </div>
+                
+                <!-- Modern Infrastructure -->
+                <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 hover-lift border border-white" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="w-16 h-16 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-8 shadow-inner">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                    <h4 class="text-2xl font-bold text-slate-900 mb-4">Smart Tech</h4>
+                    <p class="text-slate-500 leading-relaxed">State-of-the-art interactive labs and digital-ready classrooms.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

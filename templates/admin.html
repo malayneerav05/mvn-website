@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard | Maya Vidya Niketan{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+            <div class="flex flex-wrap gap-4">
+                <a href="#news-manager" class="bg-blue-100 text-blue-700 hover:bg-blue-200 font-semibold py-2 px-4 rounded transition">News Manager</a>
+                <a href="#media-manager" class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-semibold py-2 px-4 rounded transition">Media Manager</a>
+                <a href="#admissions" class="bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold py-2 px-4 rounded transition">Applications</a>
+                <a href="{{ url_for('logout') }}" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow-sm transition">Logout</a>
+            </div>
+        </div>
+
+        <!-- News Manager Section -->
+        <div id="news-manager" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Add News Form -->
+            <div class="lg:col-span-1 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div class="bg-blue-600 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">Post New Highlight</h2>
+                </div>
+                <div class="p-6">
+                    <form action="{{ url_for('add_news') }}" method="POST" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Article Title</label>
+                            <input type="text" name="title" required placeholder="e.g. Science Fair 2026 Results" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Content</label>
+                            <textarea name="content" required rows="5" placeholder="Write the main details here..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Publish to Website</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage News Table -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div class="bg-slate-800 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">Manage Existing News</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% if news %}
+                                {% for item in news %}
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ item.date_posted.strftime('%Y-%m-%d') if item.date_posted else 'N/A' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-900">{{ item.title }}</td>
+                                    <td class="px-6 py-4 text-right">
+                                        <form action="{{ url_for('delete_news', news_id=item.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this news article?')">
+                                            <button type="submit" class="text-red-600 hover:text-red-900 font-bold text-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="px-6 py-8 text-center text-gray-500">No news articles posted yet.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Media Manager Section -->
+        <div id="media-manager" class="bg-white rounded-xl shadow-md overflow-hidden mb-12 border border-gray-200">
+            <div class="bg-indigo-600 px-6 py-4">
+                <h2 class="text-xl font-bold text-white">Media Manager - Update Campus Images</h2>
+            </div>
+            <div class="p-6">
+                <p class="text-gray-600 mb-6 italic">Upload new photos to instantly update the Campus & Facilities page.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    
+                    <!-- Physics Lab Form -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h3 class="font-bold text-gray-800 mb-3">Physics Laboratory</h3>
+                        <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                            <input type="hidden" name="section_name" value="physics_lab">
+                            <div class="flex flex-col">
+                                <label class="text-xs font-semibold text-gray-500 uppercase mb-1">New Image</label>
+                                <input type="file" name="image" accept="image/*" required class="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition font-medium text-sm">Update Physics Lab</button>
+                        </form>
+                    </div>
+
+                    <!-- Chemistry Lab Form -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h3 class="font-bold text-gray-800 mb-3">Chemistry Laboratory</h3>
+                        <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                            <input type="hidden" name="section_name" value="chemistry_lab">
+                            <div class="flex flex-col">
+                                <label class="text-xs font-semibold text-gray-500 uppercase mb-1">New Image</label>
+                                <input type="file" name="image" accept="image/*" required class="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition font-medium text-sm">Update Chemistry Lab</button>
+                        </form>
+                    </div>
+
+                    <!-- Classroom Form -->
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h3 class="font-bold text-gray-800 mb-3">Interactive Classrooms</h3>
+                        <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                            <input type="hidden" name="section_name" value="classroom">
+                            <div class="flex flex-col">
+                                <label class="text-xs font-semibold text-gray-500 uppercase mb-1">New Image</label>
+                                <input type="file" name="image" accept="image/*" required class="text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                            </div>
+                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition font-medium text-sm">Update Classrooms</button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Admissions Table -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden mb-12 border border-gray-200">
+            <div class="bg-blue-600 px-6 py-4">
+                <h2 class="text-xl font-bold text-white">Student Admission Applications</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Parent</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% if admissions %}
+                            {% for row in admissions %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ row.id }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.submission_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ row.student_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        {{ row.grade_applied }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ row.parent_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div>{{ row.email }}</div>
+                                    <div>{{ row.phone }}</div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">No admission applications found.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Staff Recruitment Table -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
+            <div class="bg-gray-800 px-6 py-4">
+                <h2 class="text-xl font-bold text-white">Staff Recruitment Applications</h2>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Applicant Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Position</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qualifications</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% if recruitment %}
+                            {% for row in recruitment %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ row.id }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.submission_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ row.applicant_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                        {{ row.position_applied }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div>{{ row.email }}</div>
+                                    <div>{{ row.phone }}</div>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate" title="{{ row.qualifications }}">
+                                    {{ row.qualifications }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">No recruitment applications found.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

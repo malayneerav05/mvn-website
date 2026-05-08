@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Admissions & Recruitment | Maya Vidya Niketan{% endblock %}
+
+{% block content %}
+<div class="bg-gray-100 py-16 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Join Our Community</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">Whether you're looking to enroll your child for the 2026-2027 academic year or seeking a rewarding career with us, you're in the right place.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            
+            <!-- Student Admissions Form -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+                <div class="bg-blue-600 px-8 py-6">
+                    <h2 class="text-2xl font-bold text-white">2026-2027 Student Admissions</h2>
+                    <p class="text-blue-100 mt-1">Submit an inquiry for the upcoming academic year.</p>
+                </div>
+                <div class="p-8">
+                    <form action="{{ url_for('admissions') }}" method="POST" class="space-y-6">
+                        <input type="hidden" name="form_type" value="admission">
+                        
+                        <div>
+                            <label for="student_name" class="block text-sm font-medium text-gray-700">Student Name</label>
+                            <input type="text" name="student_name" id="student_name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                        
+                        <div>
+                            <label for="grade" class="block text-sm font-medium text-gray-700">Grade Applied For</label>
+                            <select name="grade" id="grade" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                <option value="">Select Grade</option>
+                                <option value="Nursery">Nursery / KG</option>
+                                <option value="1-5">Grades 1 to 5</option>
+                                <option value="6-8">Grades 6 to 8</option>
+                                <option value="9-10">Grades 9 & 10</option>
+                                <option value="11-12">Grades 11 & 12 (Senior Secondary)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="parent_name" class="block text-sm font-medium text-gray-700">Parent/Guardian Name</label>
+                            <input type="text" name="parent_name" id="parent_name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                <input type="email" name="email" id="email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <input type="tel" name="phone" id="phone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition">
+                                Submit Admission Inquiry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Staff Recruitment Form -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+                <div class="bg-gray-800 px-8 py-6">
+                    <h2 class="text-2xl font-bold text-white">Staff Recruitment</h2>
+                    <p class="text-gray-300 mt-1">Apply to join our dedicated team of educators and professionals.</p>
+                </div>
+                <div class="p-8">
+                    <form action="{{ url_for('admissions') }}" method="POST" class="space-y-6">
+                        <input type="hidden" name="form_type" value="recruitment">
+                        
+                        <div>
+                            <label for="applicant_name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                            <input type="text" name="applicant_name" id="applicant_name" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        </div>
+                        
+                        <div>
+                            <label for="position" class="block text-sm font-medium text-gray-700">Position Applied For</label>
+                            <select name="position" id="position" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                                <option value="">Select Position</option>
+                                <option value="PGT - Physics">PGT - Physics</option>
+                                <option value="PGT - Chemistry">PGT - Chemistry</option>
+                                <option value="TGT - All Subjects">TGT - All Subjects</option>
+                                <option value="PRT / Pre-Primary">PRT / Pre-Primary</option>
+                                <option value="Administrative Staff">Administrative Staff</option>
+                                <option value="Lab Assistant">Lab Assistant</option>
+                            </select>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <div>
+                                <label for="recruitment_email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                                <input type="email" name="email" id="recruitment_email" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                            <div>
+                                <label for="recruitment_phone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                <input type="tel" name="phone" id="recruitment_phone" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="qualifications" class="block text-sm font-medium text-gray-700">Highest Qualification & Experience Summary</label>
+                            <textarea name="qualifications" id="qualifications" rows="3" required class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="E.g., M.Sc. Physics, B.Ed., 5 years experience"></textarea>
+                        </div>
+                        
+                        <div>
+                            <button type="submit" class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition">
+                                Submit Application
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
