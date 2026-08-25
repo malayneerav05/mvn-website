@@ -3049,6 +3049,124 @@ def generate_ncert_syllabus_overview(query, grade, subject):
     return out
 
 
+def is_cbse_exam_info_query(query):
+    """Detects queries regarding CBSE board exam dates, datesheets, schedules, results, and passing marks."""
+    q = query.lower().strip()
+    keywords = [
+        'board exam', 'board exams', 'board examination', 'exam date', 'exam dates',
+        'when is the cbse', 'when is cbse', 'datesheet', 'date sheet', 'exam schedule',
+        'practical exam', 'practical exams', 'admit card', 'passing marks', 'passing criteria',
+        'passing percentage', 'result date', 'when will results', 'when will result',
+        'cbse 10th board', 'cbse 12th board', 'pre-board', 'exam timing', 'exam start',
+        'exams start', 'board exam kab', 'pariksha kab', 'exam kab hoga', 'board pariksha',
+        'cbse exam', 'cbse exams', 'when is class 10 exam', 'when is class 12 exam',
+        'when are board exams', 'when will board exams'
+    ]
+    if any(k in q for k in keywords):
+        return True
+        
+    return bool(re.search(r'\b(?:when|kab)\b.*\b(?:exam|exams|board|datesheet|pariksha)\b', q))
+
+
+def generate_cbse_exam_info_response(query, grade="Class 10"):
+    """Provides comprehensive, official CBSE board examination schedules, practical dates, timings, and passing criteria."""
+    is_hing = any(k in query.lower() for k in ['kab', 'hoga', 'hogi', 'kya hai', 'batao', 'kaise', 'kitne', 'pariksha', 'shuru'])
+    
+    if is_hing:
+        return (
+            f"### 📅 **CBSE Board Exam 2026-27 Schedule & Guidance ({grade})**\n\n"
+            f"Official **Central Board of Secondary Education (CBSE)** ke annual examination framework ke anusaar:\n\n"
+            f"#### 1. 🗓️ **Exam Dates & Schedule:**\n"
+            f"- **Main Theory Board Exams ({grade})**: Har saal **Mid-February (approx. 15 February)** se shuru hokar **March/April** tak conduct kiye jaate hain.\n"
+            f"- **Practical Exams & Internal Assessments**: Schools ke laboratories me **1st January se 14th February** ke beech complete hote hain.\n"
+            f"- **Official Date Sheet (Timetable)**: CBSE ki official website ([cbse.gov.in](https://www.cbse.gov.in)) par **November / December** me subject-wise date sheet release hoti hai.\n\n"
+            f"#### 2. ⏰ **Exam Shift & Timings:**\n"
+            f"- **Timing**: Subah `10:30 AM se 1:30 PM` (3 Hours standard paper).\n"
+            f"- **Question Paper Reading Time**: 15 minutes (`10:15 AM - 10:30 AM`) paper dhyan se padhne aur plan karne ke liye milte hain.\n\n"
+            f"#### 3. 🎯 **Passing Marks (Passing Criteria):**\n"
+            f"- **Class 10**: Har subject me Theory + Internal Assessment milakar minimum **33% overall marks** lana anivarya hai.\n"
+            f"- **Class 12**: Theory me 33% aur Practical me 33% alag-alag lana zaroori hota hai.\n\n"
+            f"#### 💡 **Maya AI Board Exam Preparation Support:**\n"
+            f"- Aap Maya AI se kisi bhi chapter ke **NCERT Exemplar questions**, **Formula derivations**, ya **Revision notes** maang sakte hain!\n"
+            f"- Practice shuru karne ke liye chat me likhein: *'Give me questions on Motion'* ya *'Solve quadratic equation'*."
+        )
+    else:
+        return (
+            f"### 📅 **CBSE Board Examination Schedule & Guidelines ({grade} / 2026-27)**\n\n"
+            f"According to the official **Central Board of Secondary Education (CBSE)** annual examination framework:\n\n"
+            f"#### 1. 🗓️ **Key Examination Dates:**\n"
+            f"- **Annual Theory Examinations ({grade})**: Typically commence from **mid-February (approx. February 15th)** and conclude by **late March / early April**.\n"
+            f"- **Practical & Internal Assessments**: Conducted in school laboratories during **January (January 1st – February 14th)**.\n"
+            f"- **Official Date Sheet Release**: CBSE publishes the comprehensive subject-wise timetable on the official portal ([cbse.gov.in](https://www.cbse.gov.in)) around **late November / early December**.\n\n"
+            f"#### 2. ⏰ **Exam Shift & Timing:**\n"
+            f"- **Main Examination Shift**: `10:30 AM – 1:30 PM` (3 Hours for main papers).\n"
+            f"- **Cool-off Reading Time**: An extra 15 minutes (`10:15 AM – 10:30 AM`) is allocated strictly for reading the question paper prior to writing.\n\n"
+            f"#### 3. 🎯 **CBSE Passing Criteria:**\n"
+            f"- **Class 10**: Students must secure a minimum of **33% aggregate marks** (combined theory + internal assessment) in each subject.\n"
+            f"- **Class 12**: Students must secure **33% marks separately** in Theory and **33% marks in Practicals/Internal Assessment**.\n\n"
+            f"#### 💡 **How Maya AI Can Help You Prepare:**\n"
+            f"- Request chapter-wise **NCERT Exemplar questions**, **step-by-step numerical solutions**, or **formula sheets** anytime!\n"
+            f"- Simply type: *'Give me two questions of motion from NCERT Exemplar'* or *'Explain photosynthesis'* to start practicing."
+        )
+
+
+def is_study_tips_query(query):
+    """Detects queries asking for study tips, revision strategy, topper advice, or exam preparation framework."""
+    q = query.lower()
+    return any(k in q for k in [
+        'how to study', 'how to score', 'study tips', 'revision strategy',
+        'time table', 'timetable', 'exam preparation', 'how to prepare',
+        'board exam tips', 'how to get 95', 'how to get full marks',
+        'how to manage time', 'padhai kaise kare', 'padhai me man kaise lagaye',
+        'revision kaise kare', 'topper tips', 'how to top'
+    ])
+
+
+def generate_study_tips_response(query, grade="Class 10", subject="General Science"):
+    """Provides structured, high-yield CBSE revision strategies, active recall tips, and mock paper guidelines."""
+    is_hing = any(k in query.lower() for k in ['kaise', 'kare', 'batao', 'karna', 'tarika', 'karein'])
+    
+    if is_hing:
+        return (
+            f"### 🎯 **CBSE Board Exam Topper Study Strategy ({grade})**\n\n"
+            f"Board exams me **95%+ marks** score karne ke liye yeh proven 5-step strategy follow karein:\n\n"
+            f"#### 1. 📖 **NCERT First Rule (Core Foundation):**\n"
+            f"- Board question paper **90%+ NCERT line-by-line** se banta hai.\n"
+            f"- Har chapter ke **In-text questions** aur **Chapter-end exercises** ko kam se kam 2 baar notebook me likh kar solve karein.\n\n"
+            f"#### 2. 📝 **Formula & Concept Sheets Banayein:**\n"
+            f"- Physics/Math ke sabhi formulas aur Chemistry ke reaction mechanisms ek **2-page summary sheet** par likhein.\n"
+            f"- Har subah 15 minute iska quick active recall karein.\n\n"
+            f"#### 3. ⏱️ **Active Recall & Past 5 Years PYQs:**\n"
+            f"- Sirf padhne ke bajaye **Previous Year Questions (PYQs)** timer lagakar solve karein.\n"
+            f"- Weak topics ko turant Maya AI se explain karne ko bolein.\n\n"
+            f"#### 4. 🎨 **Presentation & Diagrams:**\n"
+            f"- Biology diagrams ko neat pencil aur labeling ke sath practice karein.\n"
+            f"- Answers hamesha **bullet points** aur underlined keywords ke sath likhein.\n\n"
+            f"#### 5. ⏳ **3-Hour Mock Test Routine:**\n"
+            f"- Exam month me har hafte ek full 3-hour sample paper likhein taaki time management perfect ho jaye.\n\n"
+            f"Aap abhi kis subject ya chapter ko practice karna chahte hain? Chat me topic type karein!"
+        )
+    else:
+        return (
+            f"### 🎯 **CBSE Board Exam High-Scoring Strategy ({grade})**\n\n"
+            f"To achieve **95%+ in your CBSE Board Examinations**, implement this high-yield 5-step preparation framework:\n\n"
+            f"#### 1. 📖 **Master the NCERT Textbooks First:**\n"
+            f"- Over **90% of CBSE board questions** directly derive from NCERT textbook concepts, in-text activities, and exemplar problems.\n"
+            f"- Solve every single in-text question and chapter exercise by hand.\n\n"
+            f"#### 2. 📝 **Maintain a Formula & Reaction Notebook:**\n"
+            f"- Compile all Physics/Math formulas with standard SI units, and Chemistry chemical equations in a dedicated summary notebook.\n"
+            f"- Spend 15 minutes every morning doing quick active recall.\n\n"
+            f"#### 3. ⏱️ **Solve 5-Year CBSE Past Papers (PYQs):**\n"
+            f"- Solving previous year questions reveals recurring high-weightage topics and examiner marking schemes.\n\n"
+            f"#### 4. 🎨 **Master Answer Presentation & Diagrams:**\n"
+            f"- Use clean, pencil-drawn labeled diagrams for Science.\n"
+            f"- Structure theoretical answers with clear headings, bullet points, and highlighted keywords.\n\n"
+            f"#### 5. ⏳ **Simulate 3-Hour Timed Mock Tests:**\n"
+            f"- Practice full-length sample papers under strict 3-hour exam conditions to master pacing and eliminate exam anxiety.\n\n"
+            f"Which subject or chapter would you like to practice today? Type any topic to begin!"
+        )
+
+
 def format_thinking_block(user_query, intent_state, action_desc, is_math=False):
     """
     Formats the 3-part structured thinking block:
@@ -3471,6 +3589,16 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
     # 3. Mode 4 / 5: Student Code Submission Evaluation (CS Teacher Persona)
     if is_code_submission(user_query):
         return evaluate_student_code_submission(user_query, grade)
+
+    # 3.4. CBSE Board Preparation Strategies & Study Tips
+    if is_study_tips_query(user_query):
+        thinking = format_thinking_block(user_query, "State A (Study Tips & Revision Strategy)", "Provide high-scoring CBSE exam preparation framework and active recall tips")
+        return thinking + generate_study_tips_response(user_query, grade=grade, subject=subject)
+
+    # 3.45. CBSE Board Exam Schedules, Datesheets, Results & Passing Criteria
+    if is_cbse_exam_info_query(user_query):
+        thinking = format_thinking_block(user_query, "State A (CBSE Board Exam Information)", "Provide official CBSE schedule, practical exam timeline, shift timings, and passing criteria")
+        return thinking + generate_cbse_exam_info_response(user_query, grade=grade)
 
     # 3.5. NCERT / CBSE Official Syllabus Directory
     if is_syllabus_query(user_query):
@@ -4209,11 +4337,11 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
     # Strip common conversational patterns and introductory phrases
     clean_topic = re.sub(r'^(main|mai|i am|ham|hum)\s+.*?(hun|hu|hoon|student|vidyarthi|am)\s*,?\s*', '', clean_topic, flags=re.IGNORECASE)
     clean_topic = re.sub(r'(kya hota hai|kya hai|kise kehte hai|kise kehte hain|batao|samjhao|explain karo|bataiye|samjhaiye|in hindi|hindi mein|hindi me|english me|english mein|please).*$', '', clean_topic, flags=re.IGNORECASE).strip()
-    for prefix in ['what is ', 'what are ', 'explain ', 'define ', 'describe ', 'tell me about ', 'can you tell me ', 'can you explain ', 'kya hai ', 'kise kehte hain ']:
+    for prefix in ['what is ', 'what are ', 'explain ', 'define ', 'describe ', 'tell me about ', 'can you tell me ', 'can you explain ', 'kya hai ', 'kise kehte hain ', 'when is the ', 'when is ', 'where is ', 'why is ', 'how is ', 'who is ']:
         if clean_topic.lower().startswith(prefix):
             clean_topic = clean_topic[len(prefix):].strip()
     clean_topic = clean_topic.rstrip('?.! ').strip()
-    clean_topic_title = clean_topic.title() if (clean_topic and len(clean_topic.split()) <= 5) else f"{subject} Core Concept"
+    clean_topic_title = clean_topic.title() if (clean_topic and len(clean_topic.split()) <= 7) else (clean_topic[:40].title() if clean_topic else f"{subject} Core Concept")
 
     return thinking + (
         f"### 💡 **{clean_topic_title} Breakdown ({grade} - {subject})**\n\n"
@@ -4297,6 +4425,22 @@ def ai_tutor_chat():
                     f"2. Output exactly {q_count} multiple-choice questions (A, B, C, D) relevant to their topic.\n"
                     f"3. CRITICAL: Stop typing immediately after question {q_count}. Do NOT provide answers, and do NOT provide any feedback. Wait for the student to reply with their choices."
                 )
+        elif is_cbse_exam_info_query(user_query):
+            system_instruction = (
+                f"System: You are the Maya AI Academic Advisor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
+                f"Target Student Grade: {grade}\n"
+                f"Current Subject: {subject}\n\n"
+                f"Task: Provide official CBSE board examination dates (mid-February to April), practicals in January, shift timings (10:30 AM - 1:30 PM with 15-min reading time), and passing criteria (33%).\n"
+                f"Global Language Rule: Mirror the user's exact language (Hinglish or English)."
+            )
+        elif is_study_tips_query(user_query):
+            system_instruction = (
+                f"System: You are the Maya AI Academic Mentor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
+                f"Target Student Grade: {grade}\n"
+                f"Current Subject: {subject}\n\n"
+                f"Task: Provide proven CBSE board preparation strategies (NCERT mastery, PYQ practice, formula notebooks, timed 3-hour mocks, and clean answer presentation).\n"
+                f"Global Language Rule: Mirror the user's exact language (Hinglish or English)."
+            )
         elif is_syllabus_query(user_query):
             system_instruction = (
                 f"System: You are the Maya AI Academic Curriculum Advisor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
