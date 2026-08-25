@@ -2586,11 +2586,15 @@ def is_off_topic_state_d(query):
     ]
     
     # If the student is asking academic questions, do NOT flag as off-topic unless boredom/games/jokes are explicitly present
-    academic_keywords = ['solve', 'explain', 'formula', 'ncert', 'cbse', 'derive', 'numerical', 'definition', 'calculate', 'reaction', 'theorem', 'velocity', 'photosynthesis', 'law', 'acceleration']
-    if any(k in q for k in academic_keywords) and not any(k in q for k in ['bored', 'free fire', 'bgmi', 'joke', 'movie', 'game']):
+    academic_keywords = [
+        'solve', 'explain', 'formula', 'ncert', 'cbse', 'derive', 'numerical', 'definition', 'calculate',
+        'reaction', 'theorem', 'velocity', 'photosynthesis', 'law', 'acceleration', 'find', 'square root',
+        'root', 'roots', 'prime', 'factor', 'factorization', 'difference', 'between', 'why', 'what', 'how', 'which'
+    ]
+    if any(k in q for k in academic_keywords) and not any(k in q for k in ['bored', 'free fire', 'bgmi', 'pubg', 'joke', 'chutkula', 'movie', 'video game']):
         return False
         
-    return any(k in q for k in off_topic_keywords)
+    return any(re.search(r'\b' + re.escape(k) + r'\b', q) for k in off_topic_keywords)
 
 
 def generate_state_d_pivot_response(user_query, grade, subject):
@@ -2603,7 +2607,7 @@ def generate_state_d_pivot_response(user_query, grade, subject):
     is_hing = is_hinglish(user_query)
 
     # 1. Boredom / Fatigue + Games / Movies
-    if any(k in q_lower for k in ['bored', 'bore', 'tired', 'movie', 'film', 'game', 'games', 'gaming', 'video game', 'free fire', 'bgmi', 'pubg', 'minecraft']):
+    if any(re.search(r'\b' + re.escape(k) + r'\b', q_lower) for k in ['bored', 'bore', 'tired', 'movie', 'movies', 'film', 'films', 'game', 'games', 'gaming', 'video game', 'video games', 'free fire', 'bgmi', 'pubg', 'minecraft', 'roblox', 'fortnite']):
         if is_hing:
             return (
                 "Main samajh sakta hoon! Padhai karte-karte kabhi-kabhi thakawat aur boredom feel hona natural hai. 🧘‍♂️\n\n"
@@ -2618,7 +2622,7 @@ def generate_state_d_pivot_response(user_query, grade, subject):
             )
 
     # 2. Jokes / Fun / Songs -> Pivot with cognitive hook
-    if any(k in q_lower for k in ['joke', 'jokes', 'chutkula', 'song', 'gana', 'kahani', 'comedy', 'humor', 'sing']):
+    if any(re.search(r'\b' + re.escape(k) + r'\b', q_lower) for k in ['joke', 'jokes', 'chutkula', 'chutkule', 'song', 'songs', 'gana', 'gaane', 'kahani', 'comedy', 'humor', 'sing', 'dance']):
         if is_hing:
             return (
                 "Mere syllabus me stand-up jokes toh nahi hain, par thoda smile karna dimaag ke liye bohot accha hota hai! 😊 Padhai ke beech me laughter se focus aur memory retain karne ki power improve hoti hai.\n\n"
@@ -2631,7 +2635,7 @@ def generate_state_d_pivot_response(user_query, grade, subject):
             )
 
     # 3. Roleplay / Superhero -> Pivot to Physics & Aerodynamics
-    if any(k in q_lower for k in ['roleplay', 'batman', 'superman', 'spiderman', 'iron man', 'hero', 'anime', 'goku', 'naruto']):
+    if any(re.search(r'\b' + re.escape(k) + r'\b', q_lower) for k in ['roleplay', 'batman', 'superman', 'spiderman', 'iron man', 'superhero', 'anime', 'goku', 'naruto']):
         if is_hing:
             return (
                 "Aha! Superheroes bohot cool hote hain, lekin main superhero roleplay nahi kar sakta. Main aapka **Maya AI Tutor** hoon! 🚀\n\n"
@@ -3335,9 +3339,9 @@ def is_multi_intent(query):
     if is_code_submission(query) or is_syllabus_query(query):
         return False
 
-    has_off_topic = any(k in q for k in [
+    has_off_topic = any(re.search(r'\b' + re.escape(k) + r'\b', q) for k in [
         'free fire', 'bgmi', 'pubg', 'fortnite', 'minecraft', 'gta', 'roblox', 'video game', 'video games', 'gamer', 'gaming',
-        'movie', 'movies', 'film', 'actor', 'netflix', 'joke', 'jokes', 'chutkula', 'sing a song', 'gana gao',
+        'movie', 'movies', 'film', 'films', 'actor', 'actors', 'actress', 'netflix', 'joke', 'jokes', 'chutkula', 'sing a song', 'gana gao',
         'batman', 'superman', 'spiderman', 'iron man', 'crush', 'marry me', 'bored', 'bore ho'
     ])
     
@@ -4197,8 +4201,8 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"2. **Middle Zone (Luminous, Yellow):** Partial/incomplete combustion zone; moderately hot, produces carbon soot particles.\n"
             f"3. **Inner Zone (Dark):** Contains unburnt wax vapours; least hot part surrounding the wick.\n\n"
             f"#### ⚡ **3. Fuel Efficiency & Calorific Value:**\n"
-            f"- **Calorific Value:** The amount of heat energy produced on complete combustion of $1\\text{ kg}$ of a fuel (SI Unit: $\\text{kJ/kg}$).\n"
-            f"- Hydrogen has the highest calorific value ($150,000\\text{ kJ/kg}$), while LPG has $\\approx 55,000\\text{ kJ/kg}$.\n\n"
+            f"- **Calorific Value:** The amount of heat energy produced on complete combustion of $1\\text{{ kg}}$ of a fuel (SI Unit: $\\text{{kJ/kg}}$).\n"
+            f"- Hydrogen has the highest calorific value ($150,000\\text{{ kJ/kg}}$), while LPG has $\\approx 55,000\\text{{ kJ/kg}}$.\n\n"
             f"Would you like a quick 3-question quiz to test this concept?"
         )
 
@@ -4536,7 +4540,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             "Would you like a quick 3-question quiz to test this concept?"
         )
 
-    if any(k in q_lower for k in ['acid', 'base', 'salt', 'ph', 'litmus', 'neutralization']):
+    if (any(re.search(r'\b' + re.escape(w) + r'\b', q_lower) for w in ['acid', 'acids', 'base', 'bases', 'salt', 'salts', 'litmus', 'neutralization', 'phenolphthalein', 'alkali', 'alkaline']) or any(k in q_lower for k in ['ph scale', 'ph value', 'ph paper', 'acidic solution', 'basic solution', 'alkaline solution'])) and not any(k in q_lower for k in ['proportionality theorem', 'thales theorem', 'geometry', 'triangle', 'triangles', 'math', 'algebra']):
         return thinking + (
             f"### 🧪 **Acids, Bases and Salts ({grade} - {subject})**\n\n"
             "#### 1. **Acids vs Bases:**\n"
@@ -4643,7 +4647,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
         )
 
     # 4.48. Computer Networks (PAN, LAN, MAN, WAN, Topologies)
-    if any(k in q_lower for k in ['pan, lan', 'lan', 'wan', 'man', 'network topology', 'computer network', 'star topology', 'bus topology', 'transmission media', 'twisted pair', 'coaxial', 'optical fiber', 'mac address', 'ip address', 'http vs https']) or ('network' in q_lower and any(k in q_lower for k in ['topolog', 'type', 'difference', 'lan', 'wan'])):
+    if (any(re.search(r'\b' + re.escape(w) + r'\b', q_lower) for w in ['pan', 'lan', 'wan', 'man', 'topology', 'topologies']) and any(k in q_lower for k in ['network', 'networks', 'computer', 'difference', 'types of network', 'connect', 'cable', 'internet'])) or any(k in q_lower for k in ['network topology', 'computer network', 'star topology', 'bus topology', 'mesh topology', 'ring topology', 'transmission media', 'twisted pair', 'coaxial cable', 'optical fiber', 'mac address', 'ip address', 'http vs https']):
         return thinking + (
             f"### 🌐 **Computer Networks & Topologies ({grade} - {subject})**\n\n"
             f"A **Computer Network** is an interconnection of autonomous computing devices allowing data, resource, and service sharing.\n\n"
@@ -4664,6 +4668,277 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"- **Unguided (Wireless):** Radio waves, Microwaves, Infrared, Satellite.\n"
             f"- **MAC vs IP Address:** MAC address is a 48-bit permanent hardware address assigned by the manufacturer (NIC); IP address is a 32-bit (IPv4) or 128-bit (IPv6) logical network address assigned dynamically.\n\n"
             f"Would you like a quick 3-question quiz on computer networks?"
+        )
+
+    # Math: Basic Proportionality Theorem (Thales Theorem)
+    if any(k in q_lower for k in ['proportionality theorem', 'thales theorem', 'thales', 'bpt']):
+        return thinking + (
+            f"### 📐 **Basic Proportionality Theorem (Thales Theorem) ({grade} - {subject})**\n\n"
+            f"#### 📜 **1. Statement of the Theorem:**\n"
+            f"If a line is drawn parallel to one side of a triangle intersecting the other two sides in distinct points, then the other two sides are divided in the **same ratio**.\n\n"
+            f"#### 🔺 **2. Mathematical Formulation:**\n"
+            f"In $\\triangle ABC$, if a line $DE \\parallel BC$ intersects $AB$ at $D$ and $AC$ at $E$, then:\n"
+            f"$$\\frac{{\\text{{AD}}}}{{\\text{{DB}}}} = \\frac{{\\text{{AE}}}}{{\\text{{EC}}}}$$\n\n"
+            f"#### 🔁 **3. Converse of BPT:**\n"
+            f"If a line divides any two sides of a triangle in the same ratio ($\\frac{{\\text{{AD}}}}{{\\text{{DB}}}} = \\frac{{\\text{{AE}}}}{{\\text{{EC}}}}$), then the line must be **parallel to the third side** ($DE \\parallel BC$).\n\n"
+            f"#### 🧠 **4. Classic Board Exam Problem:**\n"
+            f"*In $\\triangle ABC$, $DE \\parallel BC$. If $AD = 1.5\\text{{ cm}}$, $DB = 3\\text{{ cm}}$, and $AE = 1\\text{{ cm}}$, find $EC$.*\n"
+            f"- **Solution:** By BPT, $\\frac{{AD}}{{DB}} = \\frac{{AE}}{{EC}} \\implies \\frac{{1.5}}{{3}} = \\frac{{1}}{{EC}} \\implies EC = \\frac{{3}}{{1.5}} = 2\\text{{ cm}}$.\n\n"
+            f"Would you like to practice a BPT proof or solve another triangle problem?"
+        )
+
+    # Math: Prime Factorization & Square Roots / Number Theory
+    if any(k in q_lower for k in ['square root', 'cube root', 'prime factorization', 'prime factor', 'hcf and lcm', 'fundamental theorem of arithmetic']):
+        return thinking + (
+            f"### 🔢 **Prime Factorization, Square Roots & Number Theory ({grade} - {subject})**\n\n"
+            f"#### 🌲 **1. Fundamental Theorem of Arithmetic:**\n"
+            f"Every composite number can be expressed (factorized) uniquely as the product of prime numbers, apart from the order in which the prime factors occur.\n\n"
+            f"#### 🔍 **2. Finding Square Roots using Prime Factorization (Step-by-Step):**\n"
+            f"**Example: Find $\\sqrt{{625}}$**\n"
+            f"1. **Prime Factorization:** Divide 625 by the smallest prime factor:\n"
+            f"   - $625 \\div 5 = 125$\n"
+            f"   - $125 \\div 5 = 25$\n"
+            f"   - $25 \\div 5 = 5$\n"
+            f"   - $5 \\div 5 = 1$\n"
+            f"   $$\\implies 625 = 5 \\times 5 \\times 5 \\times 5 = (5 \\times 5)^2$$\n"
+            f"2. **Group into Pairs:** $(5 \\times 5) \\times (5 \\times 5) = 5^2 \\times 5^2$\n"
+            f"3. **Take one factor from each pair:**\n"
+            f"   $$\\sqrt{{625}} = 5 \\times 5 = \\mathbf{{25}}$$\n\n"
+            f"#### 📊 **3. HCF & LCM Formula:**\n"
+            f"$$\\text{{HCF}}(a, b) \\times \\text{{LCM}}(a, b) = a \\times b$$\n\n"
+            f"Type any number to find its prime factors or square root step-by-step!"
+        )
+
+    # Chemistry: Important NCERT Salts (Plaster of Paris, Bleaching Powder, Baking Soda, Washing Soda)
+    if any(k in q_lower for k in ['plaster of paris', 'gypsum', 'bleaching powder', 'baking soda', 'washing soda', 'baking powder', 'caustic soda', 'chlor-alkali']):
+        return thinking + (
+            f"### 🧪 **Important Chemical Salts in Daily Life ({grade} - {subject})**\n\n"
+            f"#### 🏥 **1. Plaster of Paris (POP) & Gypsum:**\n"
+            f"- **Chemical Name:** Calcium Sulphate Hemihydrate ($\\text{{CaSO}}_4 \\cdot \\frac{{1}}{{2}}\\text{{H}}_2\\text{{O}}$).\n"
+            f"- **Preparation:** Heating Gypsum ($\\text{{CaSO}}_4 \\cdot 2\\text{{H}}_2\\text{{O}}$) carefully at **$373\\text{{ K}}$ ($100^\\circ\\text{{C}}$)**:\n"
+            f"  $$\\text{{CaSO}}_4 \\cdot 2\\text{{H}}_2\\text{{O}} \\xrightarrow{{373\\text{{ K}}}} \\text{{CaSO}}_4 \\cdot \\frac{{1}}{{2}}\\text{{H}}_2\\text{{O}} + 1\\frac{{1}}{{2}}\\text{{H}}_2\\text{{O}}$$\n"
+            f"- **Setting Reaction:** On mixing with water, POP re-hydrates back into a hard solid mass of Gypsum:\n"
+            f"  $$\\text{{CaSO}}_4 \\cdot \\frac{{1}}{{2}}\\text{{H}}_2\\text{{O}} + 1\\frac{{1}}{{2}}\\text{{H}}_2\\text{{O}} \\rightarrow \\text{{CaSO}}_4 \\cdot 2\\text{{H}}_2\\text{{O}}$$\n"
+            f"- **Uses:** Supporting fractured bones in casts, making decorative statues, false ceilings, and blackboard chalk.\n\n"
+            f"#### 🧼 **2. Other Important NCERT Salts Comparison:**\n"
+            f"| Common Name | Chemical Name | Chemical Formula | Key CBSE Exam Use |\n"
+            f"| :--- | :--- | :--- | :--- |\n"
+            f"| **Bleaching Powder** | Calcium Oxychloride | $\\text{{CaOCl}}_2$ | Disinfecting drinking water, bleaching cotton |\n"
+            f"| **Baking Soda** | Sodium Hydrogen Carbonate | $\\text{{NaHCO}}_3$ | Antacid for acidity, making crispy pakoras & baking |\n"
+            f"| **Washing Soda** | Sodium Carbonate Decahydrate | $\\text{{Na}}_2\\text{{CO}}_3 \\cdot 10\\text{{H}}_2\\text{{O}}$ | Removing permanent hardness of water, glass & soap industry |\n"
+            f"| **Caustic Soda** | Sodium Hydroxide | $\\text{{NaOH}}$ | Degreasing metals, soap making (Chlor-alkali process) |\n\n"
+            f"Would you like a quick 3-question quiz on chemical salts?"
+        )
+
+    # Chemistry: Amphoteric Oxides
+    if any(k in q_lower for k in ['amphoteric oxide', 'amphoteric oxides', 'amphoteric']):
+        return thinking + (
+            f"### 🧪 **Amphoteric Oxides Explained ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Definition:**\n"
+            f"**Amphoteric Oxides** are metal oxides that react with **both acids and bases** to produce salt and water.\n\n"
+            f"#### 🔬 **Prime Examples (Aluminium Oxide $\\text{{Al}}_2\\text{{O}}_3$ and Zinc Oxide $\\text{{ZnO}}$):**\n\n"
+            f"**1. Aluminium Oxide ($\\text{{Al}}_2\\text{{O}}_3$) as a Base (Reacting with Acid):**\n"
+            f"$$\\text{{Al}}_2\\text{{O}}_3 + 6\\text{{HCl}} \\rightarrow 2\\text{{AlCl}}_3 \\text{{ (Aluminium chloride)}} + 3\\text{{H}}_2\\text{{O}}$$\n\n"
+            f"**2. Aluminium Oxide ($\\text{{Al}}_2\\text{{O}}_3$) as an Acid (Reacting with Base):**\n"
+            f"$$\\text{{Al}}_2\\text{{O}}_3 + 2\\text{{NaOH}} \\rightarrow 2\\mathbf{{\\text{{NaAlO}}_2 \\text{{ (Sodium aluminate)}}}} + \\text{{H}}_2\\text{{O}}$$\n\n"
+            f"**3. Zinc Oxide ($\\text{{ZnO}}$):**\n"
+            f"- With Acid: $\\text{{ZnO}} + 2\\text{{HCl}} \\rightarrow \\text{{ZnCl}}_2 + \\text{{H}}_2\\text{{O}}$\n"
+            f"- With Base: $\\text{{ZnO}} + 2\\text{{NaOH}} \\rightarrow \\mathbf{{\\text{{Na}}_2\\text{{ZnO}}_2 \\text{{ (Sodium zincate)}}}} + \\text{{H}}_2\\text{{O}}$\n\n"
+            f"Would you like a quick 3-question quiz on metals and non-metals?"
+        )
+
+    # Biology: Xylem vs Phloem Complex Tissues
+    if any(k in q_lower for k in ['xylem and phloem', 'xylem vs phloem', 'xylem tissue', 'phloem tissue', 'complex permanent tissue']):
+        return thinking + (
+            f"### 🌿 **Xylem vs Phloem: Complex Permanent Tissues ({grade} - {subject})**\n\n"
+            f"**Complex Permanent Tissues** are composed of more than one type of cell working together as a single unit to perform vascular conduction in plants.\n\n"
+            f"#### 📊 **1. Comprehensive Comparison Table (CBSE NCERT):**\n"
+            f"| Feature | Xylem 💧 | Phloem 🍯 |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Substance Transported** | Transports **Water and dissolved Minerals** | Transports **Soluble Food (Sucrose/Photosynthates)** |\n"
+            f"| **Direction of Flow** | **Unidirectional** (Upwards from roots to leaves) | **Bidirectional** (Upwards and downwards from leaves to all parts) |\n"
+            f"| **Process Name** | Ascent of Sap (Transpiration pull) | **Translocation** (requires ATP energy) |\n"
+            f"| **Cellular State** | Mostly dead cells (*Exception: Xylem Parenchyma is living*) | Mostly living cells (*Exception: Phloem Fibres are dead*) |\n"
+            f"| **Conducting Elements** | Tracheids and Vessels | Sieve Tubes and Companion Cells |\n"
+            f"| **Other Elements** | Xylem Fibres & Xylem Parenchyma | Phloem Parenchyma & Phloem Fibres |\n\n"
+            f"#### 🔍 **2. Transpiration Pull vs Translocation:**\n"
+            f"- **Transpiration Pull:** Evaporation of water through stomata creates a suction pull that drives water upward in xylem vessels.\n"
+            f"- **Translocation:** Active loading of sucrose into sieve tubes using ATP increases osmotic pressure, moving food to areas of lower pressure.\n\n"
+            f"Would you like a quick 3-question quiz on plant tissues?"
+        )
+
+    # Physics: Distance vs Displacement & Equations of Motion
+    if any(k in q_lower for k in ['distance and displacement', 'distance vs displacement', 'displacement', 'scalar vs vector', 'equations of motion']):
+        return thinking + (
+            f"### 🚗 **Distance vs Displacement & Motion ({grade} - {subject})**\n\n"
+            f"#### 📊 **1. Distance vs Displacement Comparison:**\n"
+            f"| Feature | Distance ($s$) 📏 | Displacement ($\\vec{{s}}$) 🎯 |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Definition** | Total length of actual path traversed | Shortest straight-line distance between initial & final points |\n"
+            f"| **Quantity Type** | **Scalar** (Magnitude only) | **Vector** (Magnitude and specific direction) |\n"
+            f"| **Can it be zero?** | Never zero for a moving body | **Can be zero** (if body returns to starting point) |\n"
+            f"| **Can it be negative?** | Always positive | Can be positive, negative, or zero |\n"
+            f"| **Magnitude Comparison** | $\\text{{Distance}} \\ge |\\text{{Displacement}}|$ | $|\\text{{Displacement}}| \\le \\text{{Distance}}$ |\n\n"
+            f"#### 🏎️ **2. The Three Equations of Uniformly Accelerated Motion:**\n"
+            f"1. **Velocity-Time Relation:** $$v = u + at$$\n"
+            f"2. **Position-Time Relation:** $$s = ut + \\frac{{1}}{{2}}at^2$$\n"
+            f"3. **Position-Velocity Relation:** $$v^2 = u^2 + 2as$$\n"
+            f"*(Where $u = \\text{{initial velocity}}, v = \\text{{final velocity}}, a = \\text{{acceleration}}, t = \\text{{time}}, s = \\text{{distance}})*\n\n"
+            f"Would you like to solve a numerical using the equations of motion?"
+        )
+
+    # Physics: Archimedes Principle & Relative Density
+    if any(k in q_lower for k in ['archimedes principle', 'archimedes', 'buoyancy', 'buoyant force', 'relative density', 'flotation']):
+        return thinking + (
+            f"### 🌊 **Archimedes' Principle, Buoyancy & Density ({grade} - {subject})**\n\n"
+            f"#### 📜 **1. Archimedes' Principle:**\n"
+            f"When a body is fully or partially immersed in a fluid, it experiences an upward buoyant force equal to the **weight of the fluid displaced** by it:\n"
+            f"$$F_b = \\text{{Weight of Displaced Fluid}} = m_{{\\text{{fluid}}}} \\times g = \\rho_{{\\text{{fluid}}}} \\times V_{{\\text{{immersed}}}} \\times g$$\n\n"
+            f"#### 🚢 **2. Applications of Archimedes' Principle:**\n"
+            f"1. Designing ships and submarines (steel ships float because their hollow hull displaces a massive volume of water greater than their weight).\n"
+            f"2. **Hydrometers:** Measuring relative density of liquids.\n"
+            f"3. **Lactometers:** Testing the purity of milk.\n\n"
+            f"#### ⚖️ **3. Relative Density:**\n"
+            f"$$\\text{{Relative Density}} = \\frac{{\\text{{Density of Substance}}}}{{\\text{{Density of Water at }} 4^\\circ\\text{{C}} (1000\\text{{ kg/m}}^3)}}$$\n"
+            f"- Relative density is a **pure dimensionless number** (no units).\n"
+            f"- If $\\text{{RD}} > 1$, the object **sinks** in water; if $\\text{{RD}} < 1$, the object **floats**.\n\n"
+            f"Would you like a quick 3-question quiz on buoyancy and gravitation?"
+        )
+
+    # Physics (Senior): Coulomb's Law & Electrostatics
+    if any(k in q_lower for k in ['coulomb', 'coulombs law', "coulomb's law", 'electrostatic force', 'electric charge', 'permittivity']):
+        return thinking + (
+            f"### ⚡ **Coulomb's Law in Electrostatics ({grade} - {subject})**\n\n"
+            f"#### 📜 **1. Statement of Coulomb's Law:**\n"
+            f"The electrostatic force of attraction or repulsion between two stationary point charges is **directly proportional to the product of the magnitudes of the charges** and **inversely proportional to the square of the distance** between them.\n\n"
+            f"#### 📐 **2. Mathematical Formula:**\n"
+            f"$$F = \\frac{{1}}{{4\\pi\\varepsilon_0}} \\frac{{|q_1 q_2|}}{{r^2}} = k \\frac{{|q_1 q_2|}}{{r^2}}$$\n"
+            f"- **Coulomb's Constant ($k$ in vacuum):** $$k = \\frac{{1}}{{4\\pi\\varepsilon_0}} \\approx 8.99 \\times 10^9\\text{{ N}}\\cdot\\text{{m}}^2/\\text{{C}}^2$$\n"
+            f"- **Permittivity of Free Space ($\\varepsilon_0$):** $$\\varepsilon_0 = 8.854 \\times 10^{{-12}}\\text{{ C}}^2/(\\text{{N}}\\cdot\\text{{m}}^2)$$\n"
+            f"- **Vector Form:** $$\\vec{{F}}_{{12}} = \\frac{{1}}{{4\\pi\\varepsilon_0}} \\frac{{q_1 q_2}}{{r^2}} \\hat{{r}}_{{21}}$$\n\n"
+            f"#### 🔍 **3. Key Characteristics:**\n"
+            f"1. Like charges repel; unlike charges attract.\n"
+            f"2. Acts along the line joining the centers of the two charges (Central force).\n"
+            f"3. Strictly obeys Newton's Third Law: $\\vec{{F}}_{{12}} = -\\vec{{F}}_{{21}}$.\n\n"
+            f"Would you like to solve a numerical calculating the electrostatic force between two charges?"
+        )
+
+    # Physics (Senior): Projectile Motion
+    if any(k in q_lower for k in ['projectile motion', 'projectile', 'time of flight', 'maximum height', 'horizontal range']):
+        return thinking + (
+            f"### 🚀 **Projectile Motion ({grade} - {subject})**\n\n"
+            f"A **Projectile** is an object thrown into the air at an angle $\\theta$ with initial velocity $u$, moving under the sole influence of gravity (parabolic path / trajectory).\n\n"
+            f"#### 📊 **1. Standard Kinematic Formulas:**\n"
+            f"1. **Time of Flight ($T$):** Total duration in the air:\n"
+            f"   $$T = \\frac{{2u\\sin\\theta}}{{g}}$$\n"
+            f"2. **Maximum Height ($H_{{\\text{{max}}}}$):** Peak vertical altitude reached:\n"
+            f"   $$H_{{\\text{{max}}}} = \\frac{{u^2\\sin^2\\theta}}{{2g}}$$\n"
+            f"3. **Horizontal Range ($R$):** Total horizontal distance covered:\n"
+            f"   $$R = \\frac{{u^2\\sin 2\\theta}}{{g}}$$\n"
+            f"4. **Maximum Range Condition:** Range is maximum when thrown at $\\theta = 45^\\circ$, where $R_{{\\text{{max}}}} = \\frac{{u^2}}{{g}}$.\n\n"
+            f"#### 📐 **2. Equation of Trajectory (Parabola):**\n"
+            f"$$y = x\\tan\\theta - \\frac{{g x^2}}{{2u^2\\cos^2\\theta}}$$\n\n"
+            f"Would you like to solve a projectile motion numerical step-by-step?"
+        )
+
+    # Computer Science (Senior): List vs Tuple & SQL Keys
+    if any(k in q_lower for k in ['list vs tuple', 'difference between list and tuple', 'list and tuple', 'mutable vs immutable', 'primary key', 'foreign key', 'candidate key']):
+        return thinking + (
+            f"### 💻 **Computer Science: Python Data Structures & SQL Relations ({grade} - {subject})**\n\n"
+            f"#### 🐍 **1. Python: List vs Tuple Comparison:**\n"
+            f"| Feature | List `[]` 📝 | Tuple `()` 🔒 |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Mutability** | **Mutable** (Elements can be changed/modified) | **Immutable** (Elements cannot be modified after creation) |\n"
+            f"| **Syntax** | Square brackets: `my_list = [10, 20, 30]` | Parentheses: `my_tuple = (10, 20, 30)` |\n"
+            f"| **Memory & Speed** | Consumes more memory, slightly slower iteration | Memory-efficient, faster execution |\n"
+            f"| **Methods** | `append()`, `extend()`, `insert()`, `pop()`, `remove()` | `count()`, `index()` only |\n"
+            f"| **Dictionary Key** | Cannot be used as dict keys (unhashable) | Can be used as dict keys (hashable) |\n\n"
+            f"#### 🗄️ **2. SQL Database Keys:**\n"
+            f"- **Primary Key:** A column (or set of columns) that **uniquely identifies** each row/record in a table. It cannot contain `NULL` values and must be unique (e.g. `StudentID`, `AadhaarNumber`).\n"
+            f"- **Foreign Key:** A column in one table that references the **Primary Key of another table**, establishing a relational link and enforcing referential integrity (e.g. `DepartmentID` in an `Employee` table).\n"
+            f"- **Candidate Key:** All attribute sets capable of becoming a Primary Key.\n\n"
+            f"Would you like to write a Python script or SQL table creation query?"
+        )
+
+    # IT 402: Mail Merge
+    if any(k in q_lower for k in ['mail merge', 'digital documentation', 'merge document', 'data source in mail merge']):
+        return thinking + (
+            f"### 📄 **Mail Merge in Digital Documentation (IT Code 402 - {grade})**\n\n"
+            f"**Mail Merge** is an automated word processing feature that enables creating multiple personalized letters, envelopes, mailing labels, or certificates by merging a standard document with a database/spreadsheet.\n\n"
+            f"#### 🧩 **1. Three Main Components of Mail Merge:**\n"
+            f"1. **Main Document:** The standard text file containing the common layout and message (e.g., Annual Sports Day invitation).\n"
+            f"2. **Data Source:** The structured dataset (in Excel, Access, or Calc) containing variable recipient information (Name, Address, Roll No, Marks).\n"
+            f"3. **Merged Document:** The final output generated after combining the main document with each individual record from the data source.\n\n"
+            f"#### 🛠️ **2. Step-by-Step Mail Merge Workflow:**\n"
+            f"1. Open Word Processor (MS Word / LibreOffice Writer) and draft the **Main Document**.\n"
+            f"2. Launch the **Mail Merge Wizard** (from the *Mailings* tab).\n"
+            f"3. Select or create the **Data Source** containing recipient details.\n"
+            f"4. Insert **Merge Fields** (e.g. `«First_Name»`, `«City»`) into designated positions.\n"
+            f"5. Preview merged records to verify layout accuracy.\n"
+            f"6. Complete and **Print / Export / Email** individual personalized copies.\n\n"
+            f"Would you like a quick 3-question quiz on IT Code 402?"
+        )
+
+    # Social Science: Non-Cooperation Movement
+    if any(k in q_lower for k in ['non-cooperation', 'non cooperation movement', 'rowlatt act', 'jallianwala bagh', 'khilafat', 'chauri chaura', 'civil disobedience']):
+        return thinking + (
+            f"### 🇮🇳 **The Non-Cooperation Movement (1920–1922) ({grade} - {subject})**\n\n"
+            f"#### 🌟 **1. Background & Causes (Why was it launched?):**\n"
+            f"Mahatma Gandhi declared in his book *Hind Swaraj* (1909) that British rule was established in India with the cooperation of Indians and would collapse within a year if Indians refused to cooperate. Key triggers were:\n"
+            f"1. **The Rowlatt Act (1919):** Allowed detention of political prisoners without trial for 2 years.\n"
+            f"2. **Jallianwala Bagh Massacre (13 April 1919):** General Dyer ordered troops to fire on peaceful unarmed civilians in Amritsar.\n"
+            f"3. **Khilafat Movement:** Joined hands with the Ali brothers (Muhammad Ali and Shaukat Ali) to unite Hindus and Muslims against British injustice to the Ottoman Caliph.\n\n"
+            f"#### 📜 **2. Core Programme & Methods:**\n"
+            f"- Surrender of titles and honorary posts awarded by the British government.\n"
+            f"- Boycott of civil services, army, police, courts, legislative councils, and schools/colleges.\n"
+            f"- Boycott of foreign goods and picketing of liquor shops; promotion of Swadeshi hand-spun **Khadi**.\n\n"
+            f"#### 🛑 **3. Calling off at Chauri Chaura (February 1922):**\n"
+            f"- At Chauri Chaura (Gorakhpur, UP), a peaceful demonstration turned violent, and a crowd burned down a police station, killing 22 policemen.\n"
+            f"- Believing that Indians were not yet ready for mass non-violent struggle (*Satyagraha*), Gandhiji abruptly called off the movement.\n\n"
+            f"Would you like a quick 3-question quiz on Nationalism in India?"
+        )
+
+    # English: Active Voice vs Passive Voice
+    if any(k in q_lower for k in ['active voice and passive voice', 'active and passive', 'active voice', 'passive voice', 'voice change']):
+        return thinking + (
+            f"### ✍️ **Active Voice vs Passive Voice ({grade} - {subject})**\n\n"
+            f"**Voice** describes the relationship between the action (verb) and the participants (subject/object) in a sentence.\n\n"
+            f"#### 📊 **1. Core Difference:**\n"
+            f"- **Active Voice:** The subject performs the action directly (Focus is on the **doer**).\n"
+            f"  - *Structure:* $\\text{{Subject}} + \\text{{Verb}} + \\text{{Object}}$\n"
+            f"- **Passive Voice:** The subject receives the action (Focus is on the **action / recipient**).\n"
+            f"  - *Structure:* $\\text{{Object}} + \\text{{helping verb (be)}} + \\text{{Past Participle (V3)}} + \\text{{by}} + \\text{{Subject}}$\n\n"
+            f"#### 📝 **2. Two Clear Board Exam Examples:**\n\n"
+            f"**Example 1 (Simple Present):**\n"
+            f"- **Active:** *The teacher explains the lesson.*\n"
+            f"- **Passive:** *The lesson **is explained** by the teacher.*\n\n"
+            f"**Example 2 (Simple Past):**\n"
+            f"- **Active:** *Shakespeare wrote Hamlet.*\n"
+            f"- **Passive:** *Hamlet **was written** by Shakespeare.*\n\n"
+            f"#### 🔄 **3. Pronoun Transformation Table:**\n"
+            f"- $I \\rightarrow \\text{{me}}, \\quad \\text{{We}} \\rightarrow \\text{{us}}, \\quad \\text{{He}} \\rightarrow \\text{{him}}, \\quad \\text{{She}} \\rightarrow \\text{{her}}, \\quad \\text{{They}} \\rightarrow \\text{{them}}$\n\n"
+            f"Would you like to practice converting 3 active sentences into passive voice?"
+        )
+
+    # Hindi: Sangya (Noun) & Bhed
+    if any(k in q_lower for k in ['sangya', 'sangya ke bhed', 'sangya kise kehte hain', 'sarvanam', 'visheshan']):
+        return thinking + (
+            f"### 📖 **संज्ञा (Noun) और उसके भेद ({grade} - {subject})**\n\n"
+            f"#### 🎯 **1. संज्ञा की परिभाषा:**\n"
+            f"किसी व्यक्ति, वस्तु, स्थान, प्राणी या भाव के नाम को **संज्ञा** (Noun) कहते हैं।\n"
+            f"- **उदाहरण:** राम (व्यक्ति), पुस्तक (वस्तु), पटना (स्थान), गाय (प्राणी), मिठास/बचपन (भाव)।\n\n"
+            f"#### 🏷️ **2. संज्ञा के 3 मुख्य भेद (CBSE Hindi Vyakaran):**\n\n"
+            f"1. **व्यक्तिवाचक संज्ञा (Proper Noun):**\n"
+            f"   - जो शब्द किसी विशेष व्यक्ति, स्थान या वस्तु का बोध कराते हैं।\n"
+            f"   - *उदाहरण:* **महात्मा गांधी**, **गंगा नदी**, **दिल्ली**, **रामायण**।\n\n"
+            f"2. **जातिवाचक संज्ञा (Common Noun):**\n"
+            f"   - जो शब्द किसी प्राणी या वस्तु की संपूर्ण जाति या वर्ग का बोध कराते हैं।\n"
+            f"   - *उदाहरण:* **लड़का**, **नदी**, **पर्वत**, **विद्यालय**, **पेड़**।\n"
+            f"   - *(इसके 2 उपभेद होते हैं: द्रव्यवाचक जैसे सोना/पानी, और समूहवाचक जैसे कक्षा/सेना)।*\n\n"
+            f"3. **भाववाचक संज्ञा (Abstract Noun):**\n"
+            f"   - जो शब्द किसी गुण, दोष, अवस्था, दशा या भाव का बोध कराते हैं (जिन्हें देखा/छुआ नहीं जा सकता, केवल अनुभव किया जाता है)।\n"
+            f"   - *उदाहरण:* **बचपन**, **ईमानदारी**, **मिठास**, **सुंदरता**, **क्रोध**।\n\n"
+            f"क्या आप संज्ञा के भेदों पर एक छोटा सा 3-question अभ्यास टेस्ट हल करना चाहेंगे?"
         )
 
     # Primary Math Concepts (Classes 1-5)
@@ -4727,7 +5002,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
         )
 
     # Trigonometry Concepts
-    if any(k in q_lower for k in ['trigonometry', 'sin', 'cos', 'tan', 'trigonometric', 'secant', 'cosecant', 'cotangent']):
+    if any(re.search(r'\b' + re.escape(w) + r'\b', q_lower) for w in ['trigonometry', 'trigonometric', 'sine', 'cosine', 'tangent', 'secant', 'cosecant', 'cotangent']) or any(k in q_lower for k in ['sin theta', 'cos theta', 'tan theta', 'sin(', 'cos(', 'tan(', 'sin^2', 'cos^2', 'tan^2', 'sec^2', 'cosec^2', 'cot^2']):
         return thinking + (
             f"### 📐 **Trigonometry Fundamentals ({grade} - {subject})**\n\n"
             "#### 1. **Six Trigonometric Ratios (in a Right-Angled Triangle):**\n"
