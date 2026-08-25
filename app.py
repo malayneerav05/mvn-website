@@ -2435,7 +2435,7 @@ def detect_subject_from_query(query, default_subject="General Science", history=
             return "Computer Science"
         if any(k in q for k in ['english', 'grammar', 'essay', 'paragraph', 'letter', 'speech', 'leave application', 'composition', 'poem', 'story', 'preposition', 'reported speech', 'active passive', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301']):
             return "English"
-        if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy']):
+        if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy', 'mirror', 'mirrors', 'lens', 'lenses', 'rear view', 'convex', 'concave', 'refraction', 'reflection', 'focal length', 'myopia', 'hypermetropia', 'presbyopia', 'prism', 'spectrum', 'rainbow', 'twinkle', 'twinkling', 'scattering of light']):
             return "Physics"
         if any(k in q for k in ['chemistry', 'chemical reaction', 'atomic structure', 'valency', 'periodic table', 'acid', 'base', 'salt', 'mole concept', 'metals', 'non-metals', 'carbon', 'combustion', 'states of matter']):
             return "Chemistry"
@@ -4311,6 +4311,123 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
                 f"- Plants store excess glucose as **Starch** for later energy needs.\n\n"
                 f"Would you like a quick 3-question quiz to test this concept?"
             )
+
+    # 3.1. Specific Direct NCERT Optics Questions:
+    # A. Rear-View / Side Mirror in Vehicles
+    if any(k in q_lower for k in ['rear view', 'side mirror', 'rear-view', 'side-view', 'wing mirror', 'rear view of car', 'rear view of vehicle', 'rear-view mirror']) or ('mirror' in q_lower and any(k in q_lower for k in ['car', 'cars', 'vehicle', 'vehicles', 'automobile', 'bike', 'motorcycle', 'driver'])):
+        return thinking + (
+            f"### 🚗 **Rear-View Mirrors in Vehicles ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"**Convex Mirrors** (उत्तल दर्पण) are used as rear-view (wing / side) mirrors in cars and vehicles.\n\n"
+            f"#### 🔍 **Two Key Scientific Reasons (CBSE NCERT Board Standard):**\n"
+            f"1. **Always Forms an Erect and Diminished Image:**\n"
+            f"   - A convex mirror always produces a **virtual, erect (upright), and diminished (smaller)** image of objects behind the vehicle, regardless of their distance.\n"
+            f"2. **Provides a Much Wider Field of View:**\n"
+            f"   - Because convex mirrors **curve outwards**, they capture a much wider angle of view compared to plane or concave mirrors, allowing the driver to monitor a large expanse of traffic safely.\n\n"
+            f"#### ⚠️ **Safety Notice on Vehicle Mirrors:**\n"
+            f"- *'Objects in the mirror are closer than they appear'* — this warning appears because the diminished image makes vehicles behind seem farther away than their true distance.\n\n"
+            f"Would you like to practice ray diagrams or solve a quick 3-question quiz on spherical mirrors?"
+        )
+
+    # B. Dentist / Shaving / Makeup Mirror
+    if ('dentist' in q_lower and 'mirror' in q_lower) or ('shaving' in q_lower and 'mirror' in q_lower) or ('makeup' in q_lower and 'mirror' in q_lower):
+        return thinking + (
+            f"### 🦷 **Dentist & Shaving Mirrors ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"**Concave Mirrors** (अवतल दर्पण) are used by dentists and for shaving / makeup.\n\n"
+            f"#### 🔍 **Scientific Reason (CBSE NCERT):**\n"
+            f"- When an object (such as a tooth or face) is placed **very close to the mirror** (between the **Pole $P$** and the **Principal Focus $F$**), a concave mirror forms a **virtual, erect, and highly magnified (enlarged)** image, allowing fine details and cavities to be seen clearly.\n\n"
+            f"Would you like to practice concave mirror ray diagrams?"
+        )
+
+    # C. Headlights of Cars, Torches, Searchlights, Solar Furnaces
+    if any(k in q_lower for k in ['headlight', 'headlights', 'torch', 'searchlight', 'solar furnace', 'solar cooker']) and any(k in q_lower for k in ['mirror', 'which mirror', 'type of mirror', 'reflector', 'used in']):
+        return thinking + (
+            f"### 🔦 **Mirrors in Headlights, Torches & Solar Furnaces ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"**Concave Mirrors** (अवतल दर्पण) are used as reflectors in car headlights, torches, searchlights, and solar furnaces.\n\n"
+            f"#### 🔍 **Scientific Reasons (CBSE NCERT):**\n"
+            f"1. **In Headlights & Torches:** When the light source/bulb is placed at the **Principal Focus ($F$)** of the concave reflector, the reflected light rays emerge as a **powerful, parallel beam of light** travelling long distances.\n"
+            f"2. **In Solar Furnaces & Cookers:** Large concave mirrors collect parallel sunlight rays and **concentrate them at a single focal point**, generating intense heat.\n\n"
+            f"Would you like a quick 3-question quiz on spherical mirror reflections?"
+        )
+
+    # D. Eye Defects: Myopia, Hypermetropia, Presbyopia
+    if any(k in q_lower for k in ['myopia', 'near-sighted', 'nearsighted', 'short-sighted', 'shortsighted']):
+        return thinking + (
+            f"### 👁️ **Myopia (Near-Sightedness) & Correction ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"**Myopia** is corrected using a **Concave Lens** (Diverging Lens) of suitable focal length / negative optical power ($P < 0$).\n\n"
+            f"#### 🔍 **CBSE NCERT Summary:**\n"
+            f"- **Condition:** A person can see nearby objects clearly, but cannot see distant objects distinctly (far point is closer than infinity).\n"
+            f"- **Causes:**\n"
+            f"  1. Excessive curvature of the eye lens (lens is too thick / high converging power).\n"
+            f"  2. Elongation of the eyeball.\n"
+            f"- **Correction:** The concave lens diverges incoming parallel rays before they enter the eye, shifting the focused image backward onto the **Retina** instead of in front of it.\n\n"
+            f"Would you like to practice a numerical on lens power ($P = 1/f$)?"
+        )
+
+    if any(k in q_lower for k in ['hypermetropia', 'hyperopia', 'far-sighted', 'farsighted', 'long-sighted', 'longsighted']):
+        return thinking + (
+            f"### 👁️ **Hypermetropia (Far-Sightedness) & Correction ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"**Hypermetropia** is corrected using a **Convex Lens** (Converging Lens) of suitable focal length / positive optical power ($P > 0$).\n\n"
+            f"#### 🔍 **CBSE NCERT Summary:**\n"
+            f"- **Condition:** A person can see distant objects clearly, but cannot see nearby objects distinctly (near point is greater than $25\\text{{ cm}}$).\n"
+            f"- **Causes:**\n"
+            f"  1. Focal length of the eye lens is too long (lens is too thin / weak converging power).\n"
+            f"  2. Eyeball has become too small.\n"
+            f"- **Correction:** The convex lens provides additional converging power to focus the rays precisely onto the **Retina** instead of behind it.\n\n"
+            f"Would you like to solve a numerical on calculating required lens power?"
+        )
+
+    if any(k in q_lower for k in ['presbyopia', 'bifocal']):
+        return thinking + (
+            f"### 👁️ **Presbyopia & Bifocal Lenses ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"**Presbyopia** (old-age far-sightedness) is corrected using **Bifocal Lenses**.\n\n"
+            f"#### 🔍 **CBSE NCERT Summary:**\n"
+            f"- **Causes:** Gradual weakening of **ciliary muscles** and diminishing flexibility of the crystalline eye lens due to aging.\n"
+            f"- **Bifocal Lens Structure:**\n"
+            f"  - **Upper part:** Concave lens (facilitates distant vision).\n"
+            f"  - **Lower part:** Convex lens (facilitates near reading vision).\n\n"
+            f"Would you like a quick 3-question quiz on human eye defects?"
+        )
+
+    # E. Atmospheric Optics: Why Sky is Blue, Why Stars Twinkle, Danger Signal Red
+    if 'sky' in q_lower and any(k in q_lower for k in ['blue', 'color', 'colour', 'why']):
+        return thinking + (
+            f"### 🌌 **Why is the Sky Blue? ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"The sky appears blue due to the **Rayleigh Scattering of Sunlight** by air molecules ($N_2, O_2$) in Earth's atmosphere.\n\n"
+            f"#### 🔍 **Scientific Reason (CBSE NCERT):**\n"
+            f"1. **Rayleigh Scattering Law:** $\\text{{Scattering Intensity}} \\propto \\frac{{1}}{{\\lambda^4}}$ (inversely proportional to the 4th power of wavelength).\n"
+            f"2. **Wavelength Contrast:** Blue light has a much shorter wavelength ($\\approx 400\\text{{ nm}}$) than red light ($\\approx 700\\text{{ nm}}$).\n"
+            f"3. **Result:** Blue light is scattered nearly **16 times more** than red light across the sky and enters our eyes from all directions.\n"
+            f"- *Note:* In outer space with no atmosphere, the sky appears pitch black because no scattering occurs.\n\n"
+            f"Would you like a quick 3-question quiz on atmospheric optical phenomena?"
+        )
+
+    if 'twinkle' in q_lower or 'twinkling' in q_lower:
+        return thinking + (
+            f"### ✨ **Why Do Stars Twinkle? ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"Stars twinkle due to **Atmospheric Refraction of Starlight** through continuously shifting layers of the atmosphere.\n\n"
+            f"#### 🔍 **Scientific Explanation (CBSE NCERT):**\n"
+            f"1. **Stars Twinkle:** Stars are point sources of light located extremely far away. As starlight passes through atmospheric layers with constantly fluctuating temperatures and optical densities, the path of light bends erratically, causing the apparent position and brightness to flicker (twinkle).\n"
+            f"2. **Planets Do NOT Twinkle:** Planets are much closer to Earth and act as extended sources containing numerous point sources. The fluctuations from individual points average out to zero, nullifying the twinkling effect.\n\n"
+            f"Would you like a quick 3-question quiz on atmospheric refraction?"
+        )
+
+    if 'danger' in q_lower and any(k in q_lower for k in ['red', 'signal', 'light', 'stop']):
+        return thinking + (
+            f"### 🛑 **Why Are Danger Signal Lights Red? ({grade} - {subject})**\n\n"
+            f"#### 🎯 **Direct Answer:**\n"
+            f"Danger signal lights are red because **red light has the longest wavelength** in the visible spectrum and is **scattered the least** by smoke, fog, and air particles.\n\n"
+            f"#### 🔍 **Scientific Reason:**\n"
+            f"- Under Rayleigh's scattering law ($\\text{{Scattering}} \\propto 1/\\lambda^4$), red light ($\\lambda \\approx 700\\text{{ nm}}$) undergoes minimal scattering, enabling it to travel the maximum distance through thick fog or smoke without losing visibility.\n\n"
+            f"Would you like a quick 3-question quiz on light scattering?"
+        )
 
     if any(k in q_lower for k in ['light', 'reflection', 'refraction', 'mirror', 'lens', 'optics', 'prism']):
         return thinking + (
