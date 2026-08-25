@@ -2423,9 +2423,17 @@ def detect_subject_from_query(query, default_subject="General Science", history=
     """
     def _find_subject_in_text(text):
         q = text.lower()
-        if any(k in q for k in ['c++', 'cpp', 'int main', 'cout', 'cin', '#include', 'java', 'python', 'coding', 'computer science', 'programming', 'loop', 'loops', 'algorithm', 'sql', 'variable', 'variables', 'syntax error', 'html', 'css', 'javascript']):
+        if any(k in q for k in ['artificial intelligence', 'ai 417', 'subject code 417', 'code 417', 'ai project cycle', 'computer vision', 'natural language processing', 'ai ethics', 'ai syllabus', 'neural network', '417']):
+            return "Artificial Intelligence (Subject Code 417)"
+        if any(k in q for k in ['information technology', 'it 402', 'code 402', 'it-ites', 'it syllabus', '402']):
+            return "Information Technology (Subject Code 402)"
+        if any(k in q for k in ['computer application', 'computer applications', 'code 165', '165 syllabus', '165']):
+            return "Computer Applications (Subject Code 165)"
+        if any(k in q for k in ['informatics practices', 'ip 065', 'code 065', 'ip syllabus', '065']):
+            return "Informatics Practices (IP - Code 065)"
+        if any(k in q for k in ['c++', 'cpp', 'int main', 'cout', 'cin', '#include', 'java', 'python', 'coding', 'computer science', 'programming', 'loop', 'loops', 'algorithm', 'sql', 'variable', 'variables', 'syntax error', 'html', 'css', 'javascript', 'code 083', 'cs syllabus', '083']):
             return "Computer Science"
-        if any(k in q for k in ['english', 'grammar', 'essay', 'paragraph', 'letter', 'speech', 'leave application', 'composition', 'poem', 'story', 'preposition', 'reported speech', 'active passive']):
+        if any(k in q for k in ['english', 'grammar', 'essay', 'paragraph', 'letter', 'speech', 'leave application', 'composition', 'poem', 'story', 'preposition', 'reported speech', 'active passive', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301']):
             return "English"
         if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy']):
             return "Physics"
@@ -2818,6 +2826,37 @@ NCERT_SYLLABUS_REGISTRY = {
             ("Geography: Contemporary India - I", "India - Size and Location, Physical Features of India (Himalayas, Plains, Plateau, Coastal, Islands), Drainage, Climate, Population"),
             ("Civics: Democratic Politics - I", "What is Democracy? Why Democracy?, Constitutional Design, Electoral Politics, Working of Institutions, Democratic Rights"),
             ("Economics", "The Story of Village Palampur, People as Resource, Poverty as a Challenge, Food Security in India")
+        ],
+        "Artificial Intelligence (Subject Code 417)": [
+            ("Part A: Unit 1 - Communication Skills-I", "Methods of communication (Verbal & Non-verbal), Communication cycle, Perspectives & Barriers, 7 Cs of communication"),
+            ("Part A: Unit 2 - Self-Management Skills-I", "Self-confidence, Positive thinking, Personal hygiene, Grooming, Goal setting"),
+            ("Part A: Unit 3 - ICT Skills-I", "Computer fundamentals, Operating systems, Keyboard shortcuts, Internet, Email, Cyber safety basics"),
+            ("Part A: Unit 4 - Entrepreneurial Skills-I", "Types of businesses (Product vs Service), Role & Characteristics of an entrepreneur"),
+            ("Part A: Unit 5 - Green Skills-I", "Society & Environment, Ecosystem, Natural resource conservation, Sustainable development basics"),
+            ("Part B: Unit 1 - Introduction to AI", "What is AI vs Human Intelligence, 3 Domains of AI (Data, Computer Vision, NLP), Smart cities, AI Ethics & Bias"),
+            ("Part B: Unit 2 - AI Project Cycle", "5 Stages of AI Project Cycle: Problem Scoping (4W Canvas), Data Acquisition, Data Exploration, Modelling (Rule-based vs Learning-based), Evaluation"),
+            ("Part B: Unit 3 - Neural Networks", "Basics of Artificial Neural Networks (ANN), Input/Hidden/Output layers, Human brain neuron vs ANN perceptron"),
+            ("Part B: Unit 4 - Introduction to Python", "Jupyter Notebook, Python variables, Lists, Loops, Arithmetic & Logical operators, Conditional statements (if-else)")
+        ],
+        "Information Technology (Subject Code 402)": [
+            ("Part A: Employability Skills", "Communication-I, Self-Management-I, Basic ICT Skills-I, Entrepreneurship-I, Green Skills-I"),
+            ("Part B: Unit 1 - Introduction to IT-ITeS", "IT applications in BPO/BPM, Banking, Healthcare, Education, Engineering, CAD"),
+            ("Part B: Unit 2 - Data Entry & Keyboarding Skills", "Touch typing technique, Typing ergonomics, RapidTyping tutor analysis & speed benchmarks"),
+            ("Part B: Unit 3 - Digital Documentation", "Word Processing: Creating, Formatting, Tables, Headers/Footers, Mail Merge"),
+            ("Part B: Unit 4 - Electronic Spreadsheet", "Spreadsheet fundamentals: Formulas, Functions (SUM, AVERAGE, IF), Charts, Sorting & Filtering"),
+            ("Part B: Unit 5 - Digital Presentation", "Presentation software: Slide layouts, Custom animations, Slide transitions, Exporting presentations")
+        ],
+        "Computer Applications (Subject Code 165)": [
+            ("Unit 1 - Basics of Information Technology", "Computer systems, Memory units (KB, MB, GB, TB), Operating systems, Internet, Web browsers, Search engines"),
+            ("Unit 2 - Cyber Safety", "Safe web browsing, Identity theft prevention, Passwords, Netiquette, Social networking safety"),
+            ("Unit 3 - Office Tools & HTML", "Word processing, Spreadsheets, HTML basics (headings, paragraphs, lists, tables, images, hyperlinks)"),
+            ("Unit 4 - Python / Scratch Basics", "Visual block programming in Scratch, Python interactive mode, variables and conditionals")
+        ],
+        "English Language & Literature (Code 184)": [
+            ("Reading Skills", "Discursive & Case-based factual comprehension passages (inference, vocabulary, analysis)"),
+            ("Writing Skills & Grammar", "Descriptive Paragraph, Story Writing, Diary Entry; Tenses, Modals, Subject-Verb Concord, Reported Speech, Determiners"),
+            ("Literature: Beehive (Prose & Poems)", "The Fun They Had, Sound of Music, Little Girl, Truly Beautiful Mind, Snake & Mirror, My Childhood, Reach for Top, Kathmandu; The Road Not Taken, Wind, Rain on the Roof, Lake Isle of Innisfree, No Men Are Foreign"),
+            ("Literature: Moments (Supplementary)", "The Lost Child, Adventures of Toto, Iswaran the Storyteller, In the Kingdom of Fools, The Happy Prince, The Last Leaf, A House is Not a Home, The Beggar")
         ]
     },
     "Class 10": {
@@ -2857,6 +2896,38 @@ NCERT_SYLLABUS_REGISTRY = {
             ("Geography: Contemporary India - II", "Resources and Development, Forest and Wildlife, Water Resources, Agriculture, Minerals & Energy Resources, Manufacturing Industries, Lifelines of National Economy"),
             ("Civics: Democratic Politics - II", "Power Sharing, Federalism (Decentralization in India), Gender, Religion and Caste, Political Parties, Outcomes of Democracy"),
             ("Economics: Understanding Economic Development", "Development (PCI, HDI), Sectors of Indian Economy (Primary, Secondary, Tertiary), Money and Credit, Globalisation, Consumer Rights")
+        ],
+        "Artificial Intelligence (Subject Code 417)": [
+            ("Part A: Unit 1 - Communication Skills-II", "Communication cycle, Active listening, Writing skills (Parts of speech, Sentence construction)"),
+            ("Part A: Unit 2 - Self-Management Skills-II", "Stress management techniques, Working independently, Self-motivation & Goal setting"),
+            ("Part A: Unit 3 - ICT Skills-II", "Operating system maintenance, File management, Cyber safety, Virus removal & Antivirus"),
+            ("Part A: Unit 4 - Entrepreneurial Skills-II", "Entrepreneurship characteristics, Myths about entrepreneurship, Entrepreneurship as career"),
+            ("Part A: Unit 5 - Green Skills-II", "Sustainable Development Goals (17 SDGs), Green economy role, Environmental policies"),
+            ("Part B: Unit 1 - Introduction to AI", "Revisiting AI Project Cycle, AI Ethics (Privacy, Bias, Transparency), Sustainable Development Goals (SDGs) with AI"),
+            ("Part B: Unit 2 - AI Project Cycle", "Problem Scoping (4Ws Canvas), Data Acquisition, Data Exploration, Modelling (Supervised vs Unsupervised vs Reinforcement), Evaluation"),
+            ("Part B: Unit 3 - Advance Python & Data Science", "Lists, Tuples, Dictionaries, NumPy arrays, Matplotlib plotting, Data Visualization"),
+            ("Part B: Unit 4 - Computer Vision (CV)", "Pixel concepts, RGB channels, OpenCV library basics, Convolution, Image filtering, Applications (Object detection, Facial recognition)"),
+            ("Part B: Unit 5 - Natural Language Processing (NLP)", "Chatbots, Text Normalization (Tokenization, Stopwords, Stemming, Lemmatization), Bag of Words (BoW), TF-IDF, NLTK"),
+            ("Part B: Unit 6 - Evaluation", "Confusion Matrix (TP, TN, FP, FN), Accuracy formula, Precision, Recall, F1 Score calculation & Trade-offs")
+        ],
+        "Information Technology (Subject Code 402)": [
+            ("Part A: Employability Skills", "Communication-II, Self-Management-II, ICT Skills-II, Entrepreneurial-II, Green Skills-II"),
+            ("Part B: Unit 1 - Digital Documentation (Advanced)", "Styles, Images & Drawing objects, Templates, Table of Contents, Mail Merge"),
+            ("Part B: Unit 2 - Electronic Spreadsheet (Advanced)", "Consolidate data, Subtotals, What-If Analysis (Goal Seek, Scenarios), Solver, Macros, Linking worksheets"),
+            ("Part B: Unit 3 - Database Management System (DBMS)", "Relational Database concepts, Primary & Foreign keys, SQL queries (SELECT, INSERT, UPDATE, DELETE), Tables & Forms in LibreOffice Base / MySQL"),
+            ("Part B: Unit 4 - Web Applications & Security", "Accessibility options, Computer network fundamentals, Internet security, Workplace hazards & Health safety")
+        ],
+        "Computer Applications (Subject Code 165)": [
+            ("Unit 1 - Networking & Web Services", "Internet, WWW, Web servers, Protocols (HTTP, FTP, TCP/IP), DNS, E-Governance, E-Commerce, E-Learning"),
+            ("Unit 2 - HTML & CSS", "HTML5 structure, Lists, Tables with attributes (colspan, rowspan), Hyperlinks, Forms, CSS font/color/margin styling"),
+            ("Unit 3 - Cyber Ethics", "Software piracy, Copyright, Plagiarism, Cyber bullying, Open source software (GPL, Creative Commons)"),
+            ("Unit 4 - Python Programming / Scratch", "Python sequential and conditional programs, Lists, Loops, Functions")
+        ],
+        "English Language & Literature (Code 184)": [
+            ("Reading Skills", "Discursive & Case-based factual comprehension passages (inference, vocabulary, analysis)"),
+            ("Writing Skills & Grammar", "Formal Letters (Editor, Complaint, Inquiry, Order), Analytical Paragraph Writing based on charts/data; Tenses, Modals, Subject-Verb Concord, Reported Speech"),
+            ("Literature: First Flight (Prose & Poems)", "Letter to God, Nelson Mandela, Two Stories about Flying, From Diary of Anne Frank, Glimpses of India, Mijbil the Otter, Madam Rides the Bus, The Sermon at Benares, The Proposal; Dust of Snow, Fire & Ice, Tiger in Zoo, Amanda!, Trees, Fog, Custard Dragon, For Anne Gregory"),
+            ("Literature: Footprints Without Feet", "Triumph of Surgery, Thief's Story, Midnight Visitor, Question of Trust, Footprints Without Feet, Making of Scientist, Necklace, Bholi, Book That Saved Earth")
         ]
     },
     "Class 11": {
@@ -2891,6 +2962,24 @@ NCERT_SYLLABUS_REGISTRY = {
             ("Coordinate Geometry & Conic Sections", "Straight line slopes & forms, Circles, Parabola (y^2 = 4ax), Ellipse, Hyperbola"),
             ("Calculus: Limits & Derivatives", "Standard limits (lim sin x / x = 1), First principle of differentiation, Product & Quotient rules"),
             ("Statistics & Probability", "Measures of dispersion (Variance and Standard Deviation), Axiomatic probability, Addition theorem")
+        ],
+        "Biology": [
+            ("Diversity of Living Organisms", "The Living World, Biological Classification (5 Kingdoms), Plant Kingdom (Algae to Angiosperms), Animal Kingdom (Non-chordates to Chordates)"),
+            ("Structural Organisation in Animals and Plants", "Morphology of Flowering Plants (Root, Stem, Leaf, Flower, Fruit, Seed), Anatomy of Flowering Plants (Tissues), Animal Tissues & Frog anatomy"),
+            ("Cell: Structure and Function", "Cell Theory, Prokaryotic vs Eukaryotic cells, Cell Organelles, Biomolecules (Proteins, Lipids, Nucleic acids, Enzymes), Cell Cycle & Division (Mitosis & Meiosis)"),
+            ("Plant Physiology", "Photosynthesis in Higher Plants (Light/Dark reactions, C3/C4 pathways), Respiration in Plants (Glycolysis, Krebs cycle, ETS), Plant Growth & Development (Auxins, Gibberellins)"),
+            ("Human Physiology", "Breathing & Exchange of Gases, Body Fluids & Circulation (Cardiac cycle, ECG), Excretory Products (Nephron & Counter-current), Locomotion & Movement, Neural Control & Chemical Coordination")
+        ],
+        "Computer Science (Python - Code 083)": [
+            ("Unit 1 - Computer Systems and Organisation", "Hardware components, Memory types, Boolean logic, Logic gates, Number systems, Operating system functions"),
+            ("Unit 2 - Computational Thinking and Programming-1", "Problem solving, Flowcharts, Python basics, Data types, Conditional statements, Loops (for, while), Strings, Lists, Tuples, Dictionaries, Modules (math, random)"),
+            ("Unit 3 - Society, Law and Ethics", "Digital footprint, Cyber safety, Cyber crime (phishing, hacking, cyber bullying), IT Act, Intellectual Property Rights (IPR), Open source")
+        ],
+        "Informatics Practices (IP - Code 065)": [
+            ("Unit 1 - Introduction to Computer System", "Computer architecture, Memory units, System & Application software"),
+            ("Unit 2 - Introduction to Python", "Python fundamentals, Data types, Selection and Iteration statements, Lists, Dictionaries"),
+            ("Unit 3 - Database concepts and SQL", "Relational database concepts, SQL DDL/DML commands (CREATE, INSERT, SELECT, UPDATE, DELETE), Where clause, Order by"),
+            ("Unit 4 - Emerging Trends & Society", "AI, Machine Learning, Cloud Computing, Big Data, Blockchain, Cyber security")
         ]
     },
     "Class 12": {
@@ -2919,6 +3008,24 @@ NCERT_SYLLABUS_REGISTRY = {
             ("Differential Equations", "Order and Degree, Variable separable, Homogeneous DE, First-order linear differential equations (dy/dx + Py = Q)"),
             ("Vectors & 3D Geometry", "Dot product, Cross product, Direction cosines, Vector and cartesian line equations, Shortest distance between skew lines"),
             ("Linear Programming & Probability", "LPP formulation, Graphical Corner point method; Conditional probability, Multiplication theorem, Bayes' Theorem, Random variables")
+        ],
+        "Biology": [
+            ("Reproduction", "Sexual Reproduction in Flowering Plants (Micro/Megasporogenesis, Pollination, Double fertilization, Endosperm), Human Reproduction (Gametogenesis, Menstrual cycle, Fertilization, Embryo development), Reproductive Health (Contraception, ART, IVF)"),
+            ("Genetics and Evolution", "Principles of Inheritance & Variation (Mendelian ratios, Incomplete dominance, Sex linkage, Mendelian disorders), Molecular Basis of Inheritance (DNA structure, Replication, Transcription, Genetic code, Translation, Lac Operon), Evolution (Darwinism, Hardy-Weinberg, Human evolution)"),
+            ("Biology and Human Welfare", "Human Health and Diseases (Pathogens, Malaria cycle, Immunity, AIDS, Cancer, Drugs), Microbes in Human Welfare (Household, Industrial, Sewage treatment, Biogas, Biocontrol)"),
+            ("Biotechnology and its Applications", "Biotechnology: Principles and Processes (Recombinant DNA technology, Restriction enzymes, Cloning vectors, PCR, Gel electrophoresis), Applications (Bt Cotton, Gene therapy, Transgenic animals)"),
+            ("Ecology and Environment", "Organisms and Populations (Population attributes, Growth models), Ecosystem (Energy flow, Food chains, Pyramids), Biodiversity and Conservation (Loss of biodiversity, Hotspots, In-situ & Ex-situ)")
+        ],
+        "Computer Science (Python - Code 083)": [
+            ("Unit 1 - Computational Thinking and Programming-2", "Functions (scope, parameters), File Handling (Text files, Binary files with pickle, CSV files with csv module), Exception handling, Data Structures: Stacks using Python lists"),
+            ("Unit 2 - Computer Networks", "Evolution of networking, Data communication terms, Transmission media (Twisted pair, Coaxial, Fiber, Radio/Micro/Satellite), Network topologies (Star, Bus), Protocols (HTTP, FTP, PPP, TCP/IP), Network security"),
+            ("Unit 3 - Database Management", "Relational data model, SQL constraints, SQL queries (Aggregate functions, Group By, Having, Joins - Cartesian, Equi, Natural), Python-MySQL database connectivity (mysql.connector)")
+        ],
+        "Informatics Practices (IP - Code 065)": [
+            ("Unit 1 - Data Handling using Pandas and Visualization", "Pandas Series & DataFrames, Indexing, Slicing, Math operations, Filtering, Importing/Exporting CSV, Data Visualization using Pyplot/Matplotlib (Line, Bar, Histogram)"),
+            ("Unit 2 - Database Query using SQL", "Math functions (POWER, ROUND, MOD), Text functions (UCASE, LCASE, MID, LENGTH), Date functions (NOW, DATE, MONTH), Aggregate functions, GROUP BY, HAVING, Joins"),
+            ("Unit 3 - Introduction to Computer Networks", "Types of networks (LAN, MAN, WAN), Topologies, Network devices (Hub, Switch, Router, Gateway), Web services, Browser settings"),
+            ("Unit 4 - Societal Impacts", "Digital footprint, Netiquette, Data protection, Cyber crime, Phishing, Identity theft, E-waste management, Indian IT Act")
         ]
     }
 }
@@ -3000,20 +3107,30 @@ def generate_ncert_syllabus_overview(query, grade, subject):
             break
             
     target_subject = subject
-    if any(k in q_lower for k in ['math', 'mathematics']):
+    if any(k in q_lower for k in ['artificial intelligence', 'ai 417', 'subject code 417', 'code 417', 'ai syllabus', 'ai curriculum', '417']) or ' ai ' in q_lower or q_lower.startswith('ai '):
+        target_subject = "Artificial Intelligence (Subject Code 417)"
+    elif any(k in q_lower for k in ['information technology', 'it 402', 'code 402', 'it-ites', 'it syllabus', '402']):
+        target_subject = "Information Technology (Subject Code 402)"
+    elif any(k in q_lower for k in ['computer application', 'computer applications', 'code 165', '165 syllabus', '165']):
+        target_subject = "Computer Applications (Subject Code 165)"
+    elif any(k in q_lower for k in ['informatics practices', 'ip 065', 'code 065', 'ip syllabus', 'pandas']):
+        target_subject = "Informatics Practices (IP - Code 065)"
+    elif any(k in q_lower for k in ['computer science', 'c++', 'cpp', 'python', 'coding', 'programming', 'code 083', 'cs syllabus']):
+        target_subject = "Computer Science (Python - Code 083)" if target_grade in ['Class 11', 'Class 12'] else "Computer Applications (Subject Code 165)"
+    elif any(k in q_lower for k in ['english', 'literature', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301']):
+        target_subject = "English Language & Literature (Code 184)"
+    elif any(k in q_lower for k in ['math', 'mathematics', 'algebra', 'geometry', 'trigonometry', 'calculus']):
         target_subject = "Mathematics"
     elif any(k in q_lower for k in ['physics']):
         target_subject = "Physics"
     elif any(k in q_lower for k in ['chemistry']):
         target_subject = "Chemistry"
-    elif any(k in q_lower for k in ['biology']):
+    elif any(k in q_lower for k in ['biology', 'botany', 'zoology']):
         target_subject = "Biology"
-    elif any(k in q_lower for k in ['social', 'history', 'civics', 'geography']):
+    elif any(k in q_lower for k in ['social', 'history', 'civics', 'geography', 'economics', 'sst']):
         target_subject = "Social Science"
-    elif any(k in q_lower for k in ['computer', 'python', 'coding']):
-        target_subject = "Computer Science"
     elif any(k in q_lower for k in ['science']) and 'social' not in q_lower:
-        target_subject = "General Science"
+        target_subject = "General Science" if target_grade in ['Class 6', 'Class 7', 'Class 8', 'Class 9', 'Class 10'] else "Physics"
 
     grade_dict = NCERT_SYLLABUS_REGISTRY.get(target_grade, NCERT_SYLLABUS_REGISTRY["Class 10"])
     
@@ -3021,6 +3138,18 @@ def generate_ncert_syllabus_overview(query, grade, subject):
     matched_subject_key = None
     for k in grade_dict.keys():
         if target_subject.lower() in k.lower() or k.lower() in target_subject.lower():
+            matched_subject_key = k
+            break
+        if 'artificial intelligence' in target_subject.lower() and 'artificial intelligence' in k.lower():
+            matched_subject_key = k
+            break
+        if 'information technology' in target_subject.lower() and 'information technology' in k.lower():
+            matched_subject_key = k
+            break
+        if 'computer' in target_subject.lower() and 'computer' in k.lower():
+            matched_subject_key = k
+            break
+        if 'english' in target_subject.lower() and 'english' in k.lower():
             matched_subject_key = k
             break
             
