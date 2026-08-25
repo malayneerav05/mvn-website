@@ -1899,7 +1899,10 @@ def solve_physics_math_numerical(query, grade="Class 10", subject="General Scien
 
     # --- MATH 7: Direct Arithmetic Expressions & Primary Calculations ---
     # e.g., "5+5=?", "5+5", "10 - 4", "12 * 8", "150 / 5", "2^5", "5 + 5 * 2", "add 5 and 5"
-    arith_raw_match = re.search(r"(\d+(?:\.\d+)?\s*(?:[\+\-\*\/\^\%]|x|X|÷|×)\s*\d+(?:\.\d+)?(?:\s*(?:[\+\-\*\/\^\%]|x|X|÷|×)\s*\d+(?:\.\d+)?)*)", q)
+    if any(k in q.lower() for k in ['fraction', 'fractions', 'explain', 'what are', 'what is', 'pizza', 'metaphor', 'meaning of']):
+        arith_raw_match = None
+    else:
+        arith_raw_match = re.search(r"(\d+(?:\.\d+)?\s*(?:[\+\-\*\/\^\%]|x|X|÷|×)\s*\d+(?:\.\d+)?(?:\s*(?:[\+\-\*\/\^\%]|x|X|÷|×)\s*\d+(?:\.\d+)?)*)", q)
     if not arith_raw_match:
         # Check word forms e.g. "add 5 and 5", "5 plus 5", "multiply 6 and 7"
         w_add = re.search(r"(?:add|sum of|jod)\s+(\d+(?:\.\d+)?)\s+(?:and|with|\+|aur)\s+(\d+(?:\.\d+)?)", q, re.IGNORECASE) or \
@@ -3388,16 +3391,21 @@ def is_greeting(query):
     return len(words) <= 3 and words[0] in ['hi', 'hello', 'hey', 'namaste']
 
 
-def is_simplification_request(query):
-    """Detects if student is struggling, confused, or asking for a simpler explanation."""
+def is_simplification_request(query, history=None):
+    """Detects if student is struggling, confused, or asking for a simpler explanation of a prior message."""
+    if not history or len(history) == 0:
+        return False
     q = query.lower().strip()
+    # Exclude direct queries that ask for specific rules/formulas/theorems
+    if any(k in q for k in ['fleming', 'rule', 'formula', 'theorem', 'difference between', 'what is', 'explain', 'derive']):
+        return False
     return any(k in q for k in [
         "don't understand", "dont understand", "didn't understand", "didnt understand",
         "samajh nahi aaya", "samajh nhi aya", "kuch samajh nahi", "too hard", "too complex",
         "make it simpler", "explain simply", "explain more simply", "simple words", "simple language",
         "easy words", "easy way", "explain like a kid", "explain like im 5", "eli5", "mushkil lag raha",
         "unable to understand", "hard to understand", "not understanding", "samjha do simply",
-        "confused", "im confused", "i am confused"
+        "i am confused", "im confused"
     ])
 
 
@@ -4402,6 +4410,88 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"Would you like to solve a numerical using the Mirror Formula ($\\frac{{1}}{{f}} = \\frac{{1}}{{v}} + \\frac{{1}}{{u}}$)?"
         )
 
+    # Metallurgy: Calcination vs Roasting
+    if any(k in q_lower for k in ['calcination', 'roasting', 'calcination and roasting', 'calcination vs roasting', 'roasting vs calcination']):
+        return thinking + (
+            f"### 🔥 **Calcination vs Roasting (Metallurgy) ({grade} - {subject})**\n\n"
+            f"In the extraction of metals, concentrated ores are converted into metal oxides by either **Roasting** or **Calcination** before reduction.\n\n"
+            f"#### 📊 **1. Comprehensive Comparison Table (CBSE NCERT):**\n"
+            f"| Feature | Roasting 🔥💨 | Calcination 🔥🔒 |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Type of Ore** | Used for **Sulphide Ores** (e.g. Zinc blende $\\text{{ZnS}}$) | Used for **Carbonate / Hydrated Ores** (e.g. Calamine $\\text{{ZnCO}}_3$) |\n"
+            f"| **Air Condition** | Heated strongly in **excess of air (oxygen)** | Heated strongly in **limited / absence of air** |\n"
+            f"| **Gas Released** | Releases poisonous **Sulphur Dioxide gas ($\\text{{SO}}_2 \\uparrow$)** | Releases **Carbon Dioxide gas ($\\text{{CO}}_2 \\uparrow$)** or moisture |\n"
+            f"| **Temperature** | Below the melting point of the metal | Below the melting point of the metal |\n\n"
+            f"#### 🧪 **2. Balanced Chemical Reactions (High-Scoring Exam Standard):**\n\n"
+            f"**A) Roasting of Zinc Blende ($\\text{{ZnS}}$):**\n"
+            f"$$2\\text{{ZnS}} + 3\\text{{O}}_2 \\xrightarrow{{\\Delta}} 2\\text{{ZnO}} + 2\\text{{SO}}_2 \\uparrow$$\n\n"
+            f"**B) Calcination of Calamine ($\\text{{ZnCO}}_3$):**\n"
+            f"$$\\text{{ZnCO}}_3 \\xrightarrow{{\\Delta}} \\text{{ZnO}} + \\text{{CO}}_2 \\uparrow$$\n\n"
+            f"**C) Calcination of Hydrated Aluminium Oxide (Bauxite):**\n"
+            f"$$\\text{{Al}}_2\\text{{O}}_3 \\cdot 2\\text{{H}}_2\\text{{O}} \\xrightarrow{{\\Delta}} \\text{{Al}}_2\\text{{O}}_3 + 2\\text{{H}}_2\\text{{O}} \\uparrow$$\n\n"
+            f"Would you like a quick 3-question quiz on metallurgy and metal extraction?"
+        )
+
+    # Balancing Chemical Equations Step-by-Step Method & Trick
+    if any(k in q_lower for k in ['balance chemical equation', 'balancing chemical equation', 'balancing equation', 'balance equation', 'equation balance karne']):
+        return thinking + (
+            f"### ⚖️ **How to Balance Chemical Equations: 4-Step Master Method ({grade} - {subject})**\n\n"
+            f"#### 🎯 **1. Golden Rule of Balancing:**\n"
+            f"According to the **Law of Conservation of Mass**, matter cannot be created or destroyed. The number of atoms of each element on the Reactant side (LHS) must equal the Product side (RHS).\n\n"
+            f"#### 🪜 **2. Step-by-Step Hit-and-Trial Method (NCERT Method):**\n"
+            f"Let's balance: $$\\text{{Fe}} + \\text{{H}}_2\\text{{O}} \\rightarrow \\text{{Fe}}_3\\text{{O}}_4 + \\text{{H}}_2$$\n\n"
+            f"1. **Step 1: Put boxes around all chemical formulas:**\n"
+            f"   $$\\text{{[Fe]}} + \\text{{[H}}_2\\text{{O]}} \\rightarrow \\text{{[Fe}}_3\\text{{O}}_4\\text{{]}} + \\text{{[H}}_2\\text{{]}}$$\n"
+            f"   *(Never change the internal chemical formula subscripts like $O_4$ or $H_2$!)*\n\n"
+            f"2. **Step 2: Count atoms of each element:**\n"
+            f"   - $\\text{{Fe}}$: LHS = 1, RHS = 3\n"
+            f"   - $\\text{{H}}$: LHS = 2, RHS = 2\n"
+            f"   - $\\text{{O}}$: LHS = 1, RHS = 4\n\n"
+            f"3. **Step 3: Balance the element with the highest number of atoms first (Oxygen $\\text{{O}}$):**\n"
+            f"   - Multiply $\\text{{H}}_2\\text{{O}}$ on LHS by 4 $\\rightarrow$ $\\text{{Fe}} + 4\\text{{H}}_2\\text{{O}} \\rightarrow \\text{{Fe}}_3\\text{{O}}_4 + \\text{{H}}_2$\n"
+            f"   - Now $\\text{{H}}$ on LHS = 8 ($4 \\times 2$). Balance $\\text{{H}}$ on RHS by multiplying $\\text{{H}}_2$ by 4 $\\rightarrow 4\\text{{H}}_2$.\n\n"
+            f"4. **Step 4: Balance Iron ($\\text{{Fe}}$):**\n"
+            f"   - Multiply $\\text{{Fe}}$ on LHS by 3 $\\rightarrow 3\\text{{Fe}}$.\n\n"
+            f"#### ✅ **Final Balanced Equation:**\n"
+            f"$$\\mathbf{{3\\text{{Fe (s)}} + 4\\text{{H}}_2\\text{{O (g)}} \\rightarrow \\text{{Fe}}_3\\text{{O}}_4\\text{{ (s)}} + 4\\text{{H}}_2\\text{{ (g)}}}}$$\n\n"
+            f"Type any unbalanced chemical equation and I will balance it step-by-step for you!"
+        )
+
+    # Optics: Real Image vs Virtual Image
+    if any(k in q_lower for k in ['real image and virtual image', 'real vs virtual image', 'real image vs virtual image', 'difference between real and virtual image']):
+        return thinking + (
+            f"### 🪞 **Real Image vs Virtual Image ({grade} - {subject})**\n\n"
+            f"#### 📊 **1. Comprehensive Comparison Table (CBSE NCERT):**\n"
+            f"| Feature | Real Image 🎬 | Virtual Image 🪞 |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Formation** | Formed by **actual intersection** of reflected or refracted light rays | Formed when light rays **only appear to meet/diverge** from a point |\n"
+            f"| **Screen Capture** | **Can be captured / obtained on a screen** | **Cannot be obtained on a screen** (can only be seen with eyes) |\n"
+            f"| **Orientation** | Always **Inverted (Upside down)** | Always **Erect (Upright)** |\n"
+            f"| **Sign of Magnification** | $m < 0$ (Negative) | $m > 0$ (Positive) |\n"
+            f"| **Examples** | Image on cinema screen, image formed by concave mirror (Cases 1–5), convex lens | Image in bathroom dressing plane mirror, convex mirror, concave lens |\n\n"
+            f"Would you like a quick 3-question quiz on optical image formation?"
+        )
+
+    # Physics: Fleming's Left-Hand Rule vs Right-Hand Rule (Electric Motor vs Generator)
+    if any(k in q_lower for k in ["fleming's left hand rule", "fleming's right hand rule", "left hand rule vs right hand rule", "fleming left vs right", "electric motor rule", "generator rule", "rule for electric motor", "used for electric motor", "used for electric motors"]):
+        return thinking + (
+            f"### 🧲 **Fleming's Left-Hand Rule vs Right-Hand Rule ({grade} - {subject})**\n\n"
+            f"#### 🧠 **The Simple Memory Mnemonic (FBI / Motors vs Generators):**\n"
+            f"- **Left-Hand Rule:** Used for **Electric Motors** (where electrical energy $\\rightarrow$ mechanical force / motion).\n"
+            f"- **Right-Hand Rule:** Used for **Electric Generators** (where motion in magnetic field $\\rightarrow$ induced current / EMI).\n\n"
+            f"#### ✋ **1. Fleming's Left-Hand Rule (Electric Motors):**\n"
+            f"Stretch the thumb, forefinger, and middle finger of the **left hand** mutually perpendicular:\n"
+            f"- **Thumb ($F$):** Direction of **Force / Motion** (Thrust on conductor).\n"
+            f"- **Forefinger ($B$):** Direction of **Magnetic Field** (North to South).\n"
+            f"- **Middle Finger ($I$):** Direction of **Electric Current**.\n\n"
+            f"#### ✋ **2. Fleming's Right-Hand Rule (Generators & Induced Current):**\n"
+            f"Stretch the thumb, forefinger, and middle finger of the **right hand** mutually perpendicular:\n"
+            f"- **Thumb ($F$):** Direction of **Motion of Conductor**.\n"
+            f"- **Forefinger ($B$):** Direction of **Magnetic Field**.\n"
+            f"- **Middle Finger ($I$):** Direction of **Induced Current**.\n\n"
+            f"Would you like a quick 3-question quiz on magnetic forces and induction?"
+        )
+
     # 3.1. Specific Direct NCERT Optics Questions:
     # A. Rear-View / Side Mirror in Vehicles
     if any(k in q_lower for k in ['rear view', 'side mirror', 'rear-view', 'side-view', 'wing mirror', 'rear view of car', 'rear view of vehicle', 'rear-view mirror']) or ('mirror' in q_lower and any(k in q_lower for k in ['car', 'cars', 'vehicle', 'vehicles', 'automobile', 'bike', 'motorcycle', 'driver'])):
@@ -4939,6 +5029,200 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"   - जो शब्द किसी गुण, दोष, अवस्था, दशा या भाव का बोध कराते हैं (जिन्हें देखा/छुआ नहीं जा सकता, केवल अनुभव किया जाता है)।\n"
             f"   - *उदाहरण:* **बचपन**, **ईमानदारी**, **मिठास**, **सुंदरता**, **क्रोध**।\n\n"
             f"क्या आप संज्ञा के भेदों पर एक छोटा सा 3-question अभ्यास टेस्ट हल करना चाहेंगे?"
+        )
+
+    # Biology (Environment): 10% Energy Law & Biological Magnification
+    if any(k in q_lower for k in ['biological magnification', 'biomagnification', '10% law', 'ten percent law', 'lindeman', 'trophic level', 'energy flow in ecosystem']):
+        return thinking + (
+            f"### 🌍 **Ecosystem: 10% Energy Law & Biological Magnification ({grade} - {subject})**\n\n"
+            f"#### ⚡ **1. Lindeman's 10% Energy Law (1942):**\n"
+            f"- In an ecosystem, only **$10\\%$ of the total energy** available at a trophic level is transferred to the next higher trophic level.\n"
+            f"- The remaining **$90\\%$ is lost** to the environment as metabolic heat during respiration, digestion, and daily activities.\n\n"
+            f"**Classic Board Exam Numerical:**\n"
+            f"- If Sun provides $1,000,000\\text{{ J}}$ of solar energy:\n"
+            f"  1. **Producers (Green Plants):** Trap $1\\%$ of solar energy = **$10,000\\text{{ J}}$**\n"
+            f"  2. **Primary Consumers (Herbivore / Deer):** $10\\%$ of $10,000\\text{{ J}}$ = **$1,000\\text{{ J}}$**\n"
+            f"  3. **Secondary Consumers (Carnivore / Tiger):** $10\\%$ of $1,000\\text{{ J}}$ = **$100\\text{{ J}}$**\n"
+            f"  4. **Top Carnivore (Apex Predator):** $10\\%$ of $100\\text{{ J}}$ = **$10\\text{{ J}}$**\n"
+            f"- *Why food chains have only 3–4 trophic levels:* Beyond 4 levels, the residual energy is too small to sustain an organism.\n\n"
+            f"#### ☣️ **2. Biological Magnification (Biomagnification):**\n"
+            f"- **Definition:** The progressive accumulation and increase in concentration of **non-biodegradable harmful chemicals** (e.g. **DDT**, heavy metals, pesticides) at each successive trophic level in a food chain.\n"
+            f"- **Why it happens:** Non-biodegradable toxins cannot be broken down or excreted by organisms.\n"
+            f"- **Maximum Concentration:** Organisms at the highest trophic level (**Humans / Apex Predators**) accumulate the **maximum concentration of toxins**.\n\n"
+            f"Would you like a quick 3-question quiz on our environment?"
+        )
+
+    # Primary Science: How Fishes Breathe / Gills
+    if any(k in q_lower for k in ['fish breathe', 'fishes breathe', 'gills', 'how do fish breathe', 'breathe underwater']):
+        return thinking + (
+            f"### 🐟 **How Do Fishes Breathe Underwater? ({grade} - {subject})**\n\n"
+            f"#### 🌊 **1. Do Fishes Breathe Air?**\n"
+            f"Yes! But fishes do not breathe air from the sky like humans. Instead, they breathe **dissolved oxygen ($O_2$)** present in water!\n\n"
+            f"#### 🫁 **2. What are Gills (Galfade)?**\n"
+            f"- Humans have **Lungs** to breathe air, but fishes have special organs called **Gills** located on both sides of their head.\n"
+            f"- Gills look like red, feathery combs packed with thousands of tiny blood vessels.\n\n"
+            f"#### 🔄 **3. The 3 Steps of Underwater Breathing:**\n"
+            f"1. **Drinking Water In:** The fish opens its mouth and gulps in water rich in dissolved oxygen.\n"
+            f"2. **Flowing over Gills:** The water passes over the feathery gill filaments.\n"
+            f"3. **Oxygen Exchange:** The blood vessels in the gills absorb the dissolved oxygen directly into the bloodstream and release waste carbon dioxide ($CO_2$) back into the water.\n"
+            f"4. The used water flows out through the gill slits (operculum).\n\n"
+            f"Would you like to learn how other water animals (like whales and dolphins) breathe?"
+        )
+
+    # Primary Math: Fractions with Pizza Example
+    if any(k in q_lower for k in ['fraction', 'fractions', 'pizza example', '1/2 and 1/4', 'half and quarter']):
+        return thinking + (
+            f"### 🍕 **Fractions Explained Simply with Pizza! ({grade} - Mathematics)**\n\n"
+            f"#### 🎯 **1. What is a Fraction?**\n"
+            f"A **Fraction** represents a part of a whole thing! It is written as:\n"
+            f"$$\\text{{Fraction}} = \\frac{{\\text{{Numerator (Parts you have)}}}}{{\\text{{Denominator (Total equal parts)}}}}$$\n\n"
+            f"#### 🍕 **2. The Pizza Slices Metaphor:**\n"
+            f"- 🍕 **One Whole ($1$):** A full, uncut delicious pizza.\n"
+            f"- 🌓 **One Half ($\\frac{{1}}{{2}}$):** Cut the pizza into **2 equal pieces**. If you eat 1 piece, you ate $\\frac{{1}}{{2}}$ of the pizza!\n"
+            f"- 🍕 **One Quarter ($\\frac{{1}}{{4}}$):** Cut the pizza into **4 equal pieces**. If you take 1 piece, you have $\\frac{{1}}{{4}}$ (one quarter).\n"
+            f"- 🍕 **Three Quarters ($\\frac{{3}}{{4}}$):** 3 pieces out of the 4 equal slices!\n\n"
+            f"#### 🧮 **3. Fun Fraction Rules:**\n"
+            f"- $\\frac{{1}}{{2}} + \\frac{{1}}{{2}} = 1$ (Two halves make a whole pizza!)\n"
+            f"- $\\frac{{1}}{{4}} + \\frac{{1}}{{4}} + \\frac{{1}}{{4}} + \\frac{{1}}{{4}} = 1$ (Four quarters make a whole pizza!)\n\n"
+            f"Would you like to try a fun 3-question pizza fraction quiz? 🎮"
+        )
+
+    # Primary Science: Rain Formation, Condensation & Precipitation
+    if any(k in q_lower for k in ['rain formed', 'how is rain formed', 'condensation and precipitation', 'condensation', 'precipitation', 'water cycle']):
+        return thinking + (
+            f"### 🌧️ **How is Rain Formed? The Magic Water Cycle ({grade} - {subject})**\n\n"
+            f"Rain is part of the Earth's never-ending **Water Cycle**! Here is the 4-step journey of a water droplet:\n\n"
+            f"#### ☀️ **Step 1: Evaporation (Bhaap Banna):**\n"
+            f"- The warm sun heats up water in oceans, rivers, lakes, and puddles.\n"
+            f"- Liquid water turns into invisible gas called **Water Vapour** and rises high into the sky.\n\n"
+            f"#### ☁️ **Step 2: Condensation (Badal Banna):**\n"
+            f"- High up in the sky, it is very cold!\n"
+            f"- The rising water vapour cools down and turns back into tiny floating water droplets around dust particles, forming **Clouds** ☁️.\n\n"
+            f"#### 🌧️ **Step 3: Precipitation (Baarish Girna):**\n"
+            f"- Inside clouds, millions of tiny droplets bump into each other and grow bigger and heavier.\n"
+            f"- When they become too heavy to float in the air, gravity pulls them down as **Rain** 🌧️ (or Snow ❄️ if it's freezing cold)!\n\n"
+            f"#### 🌊 **Step 4: Collection (Vaapis Paani Me):**\n"
+            f"- Rainwater flows into streams, rivers, and oceans, soaking into the soil for plants. Then the cycle repeats forever!\n\n"
+            f"Would you like a fun 3-question quiz on clouds and the water cycle?"
+        )
+
+    # Senior Physics: Photoelectric Effect & Einstein's Equation
+    if any(k in q_lower for k in ['photoelectric effect', 'photoelectric', 'work function', 'threshold frequency', 'stopping potential', 'einstein photoelectric']):
+        return thinking + (
+            f"### 💡 **Photoelectric Effect & Einstein's Quantum Equation ({grade} - {subject})**\n\n"
+            f"#### 📜 **1. Definition:**\n"
+            f"The **Photoelectric Effect** is the phenomenon of instantaneous emission of electrons (photoelectrons) from a metal surface when electromagnetic radiation of frequency greater than a minimum **Threshold Frequency ($\\nu_0$)** is incident upon it.\n\n"
+            f"#### ⚛️ **2. Einstein's Photoelectric Equation:**\n"
+            f"According to Einstein's photon hypothesis, light consists of packets of energy called **Photons** ($E = h\\nu$). When a photon collides with an electron in metal, its energy is divided into two parts:\n"
+            f"$$h\\nu = \\Phi_0 + K_{{\\text{{max}}}}$$\n"
+            f"- **Work Function ($\\Phi_0 = h\\nu_0$):** Minimum energy required to liberate an electron from metal surface.\n"
+            f"- **Maximum Kinetic Energy ($K_{{\\text{{max}}}}$):**\n"
+            f"  $$K_{{\\text{{max}}}} = h\\nu - \\Phi_0 = h(\\nu - \\nu_0) = \\frac{{1}}{{2}}m v_{{\\text{{max}}}}^2 = e V_0$$\n"
+            f"*(Where $h = 6.626 \\times 10^{{-34}}\\text{{ J}}\\cdot\\text{{s}}$, $V_0 = \\text{{Stopping Potential}}$, $e = 1.6 \\times 10^{{-19}}\\text{{ C}})*\n\n"
+            f"#### 🔍 **3. Key Laws of Photoelectric Emission:**\n"
+            f"1. **No Time Lag:** Emission is instantaneous ($< 10^{{-9}}\\text{{ s}}$).\n"
+            f"2. **Intensity vs Frequency:** Photocurrent is directly proportional to light **Intensity**; $K_{{\\text{{max}}}}$ depends only on light **Frequency ($\\nu$)**, independent of intensity.\n"
+            f"3. No emission occurs if $\\nu < \\nu_0$ regardless of how intense the incident light is.\n\n"
+            f"Would you like to solve a numerical calculating stopping potential or threshold wavelength?"
+        )
+
+    # Senior Physics: Doppler Effect in Sound
+    if any(k in q_lower for k in ['doppler effect', 'doppler', 'apparent frequency', 'doppler shift']):
+        return thinking + (
+            f"### 🔊 **Doppler Effect in Sound ({grade} - {subject})**\n\n"
+            f"#### 📜 **1. Definition:**\n"
+            f"The **Doppler Effect** is the apparent change in the observed pitch (frequency) of a sound wave when there is relative motion between the **Source of sound ($S$)** and the **Observer ($O$)**.\n\n"
+            f"#### 📐 **2. General Master Formula:**\n"
+            f"$$f' = f \\left( \\frac{{v \\pm v_o}}{{v \\mp v_s}} \\right)$$\n"
+            f"*(Where $f = \\text{{actual frequency}}, f' = \\text{{apparent observed frequency}}, v = \\text{{speed of sound in medium}}, v_o = \\text{{velocity of observer}}, v_s = \\text{{velocity of source}})*\n\n"
+            f"#### 📊 **3. Common Motion Cases:**\n"
+            f"1. **Source moves towards stationary observer ($v_o = 0$):**\n"
+            f"   $$f' = f \\left( \\frac{{v}}{{v - v_s}} \\right) > f \\quad (\\text{{Pitch increases - High pitch siren}})$$\n"
+            f"2. **Source moves away from stationary observer:**\n"
+            f"   $$f' = f \\left( \\frac{{v}}{{v + v_s}} \\right) < f \\quad (\\text{{Pitch decreases}})$$\n"
+            f"3. **Observer moves towards stationary source ($v_s = 0$):**\n"
+            f"   $$f' = f \\left( \\frac{{v + v_o}}{{v}} \\right) > f$$\n\n"
+            f"Would you like to solve a numerical calculating the apparent frequency of an approaching train?"
+        )
+
+    # Senior Biology: DNA Double Helix Structure
+    if any(k in q_lower for k in ['double helix', 'dna structure', 'watson and crick', 'structure of dna', 'chargaff', 'polynucleotide']):
+        return thinking + (
+            f"### 🧬 **Structure of DNA: Double Helix Model ({grade} - {subject})**\n\n"
+            f"In 1953, **James Watson and Francis Crick** proposed the iconic **Double Helix Model** of Deoxyribonucleic Acid (DNA) based on Rosalind Franklin's X-ray diffraction data.\n\n"
+            f"#### 🌟 **1. Salient Features of the DNA Double Helix:**\n"
+            f"1. **Two Polynucleotide Chains:** Composed of two helical strands running in **antiparallel polarity** ($5' \\rightarrow 3'$ and $3' \\rightarrow 5'$).\n"
+            f"2. **Sugar-Phosphate Backbone:** The outer structural rails consist of alternating **Deoxyribose sugar** and **Phosphate groups**; the nitrogenous bases project inward.\n"
+            f"3. **Complementary Base Pairing (Hydrogen Bonds):**\n"
+            f"   - **Adenine ($A$)** pairs with **Thymine ($T$)** via **2 Hydrogen Bonds** ($A = T$).\n"
+            f"   - **Guanine ($G$)** pairs with **Cytosine ($C$)** via **3 Hydrogen Bonds** ($G \\equiv C$).\n"
+            f"4. **Chargaff's Rule:** In double-stranded DNA, the ratio of purines to pyrimidines is always equal: $[A] + [G] = [T] + [C]$, hence $\\frac{{[A] + [G]}}{{[T] + [C]}} = 1$.\n"
+            f"5. **Helical Dimensions:**\n"
+            f"   - Pitch of the helix = **$3.4\\text{{ nm}}$ ($34\\text{{ \\AA}}$)** per complete turn.\n"
+            f"   - Distance between two adjacent base pairs $\\approx$ **$0.34\\text{{ nm}}$ ($3.4\\text{{ \\AA}}$)** with $\\approx 10\\text{{ bp}}$ per helical turn.\n"
+            f"   - Diameter of the helix = **$2.0\\text{{ nm}}$ ($20\\text{{ \\AA}}$)**.\n\n"
+            f"Would you like a quick 3-question quiz on DNA replication and molecular genetics?"
+        )
+
+    # Senior CS: SQL WHERE vs HAVING
+    if any(k in q_lower for k in ['where vs having', 'difference between where and having', 'where and having', 'having clause', 'where clause']):
+        return thinking + (
+            f"### 🗄️ **SQL: WHERE vs HAVING Clause Explained ({grade} - {subject})**\n\n"
+            f"#### 📊 **1. Key Difference Comparison Table:**\n"
+            f"| Feature | `WHERE` Clause 🔍 | `HAVING` Clause 📊 |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Target** | Filters individual **rows / records** | Filters **groups formed by `GROUP BY`** |\n"
+            f"| **Execution Timing** | Applied **before** grouping / aggregation | Applied **after** grouping / aggregation |\n"
+            f"| **Aggregate Functions** | **Cannot** use aggregate functions (`SUM`, `AVG`, `COUNT`, `MAX`, `MIN`) | **Can** use aggregate functions (`HAVING COUNT(*) > 5`) |\n"
+            f"| **Usage with `GROUP BY`** | Can be used without `GROUP BY` | Almost always used alongside `GROUP BY` |\n\n"
+            f"#### 💻 **2. Code Examples (CBSE Class 12 CS / IP Standard):**\n\n"
+            f"**A) Using `WHERE` (Filtering rows before grouping):**\n"
+            f"```sql\n"
+            f"SELECT StudentName, Marks \n"
+            f"FROM Students \n"
+            f"WHERE Marks >= 90; -- Filters individual student rows\n"
+            f"```\n\n"
+            f"**B) Using `HAVING` (Filtering aggregate groups):**\n"
+            f"```sql\n"
+            f"SELECT Department, AVG(Salary) \n"
+            f"FROM Employees \n"
+            f"GROUP BY Department \n"
+            f"HAVING AVG(Salary) > 50000; -- Filters grouped departments\n"
+            f"```\n\n"
+            f"Would you like to write a custom SQL query using both `WHERE` and `HAVING`?"
+        )
+
+    # Senior CS: Linear Search vs Binary Search in Python
+    if any(k in q_lower for k in ['linear search vs binary search', 'linear search and binary search', 'binary search', 'linear search', 'time complexity of search']):
+        return thinking + (
+            f"### 🐍 **Linear Search vs Binary Search in Python ({grade} - {subject})**\n\n"
+            f"#### 📊 **1. Comparison Table:**\n"
+            f"| Feature | Linear Search 🚶 | Binary Search ⚡ |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Array Requirement** | Works on **both Unsorted and Sorted** lists | Strictly requires a **Sorted array** |\n"
+            f"| **Methodology** | Sequential element-by-element scanning | Divide and Conquer (halves search space) |\n"
+            f"| **Best Case Time** | $O(1)$ (Element at index 0) | $O(1)$ (Element at middle index) |\n"
+            f"| **Worst Case Time** | **$O(n)$** (Linear time) | **$O(\\log n)$** (Logarithmic time - extremely fast) |\n"
+            f"| **Space Complexity** | $O(1)$ | $O(1)$ iterative / $O(\\log n)$ recursive |\n\n"
+            f"#### 💻 **2. Python Binary Search Implementation:**\n"
+            f"```python\n"
+            f"def binary_search(arr, target):\n"
+            f"    low = 0\n"
+            f"    high = len(arr) - 1\n"
+            f"    while low <= high:\n"
+            f"        mid = (low + high) // 2\n"
+            f"        if arr[mid] == target:\n"
+            f"            return mid  # Target found!\n"
+            f"        elif arr[mid] < target:\n"
+            f"            low = mid + 1  # Search right half\n"
+            f"        else:\n"
+            f"            high = mid - 1  # Search left half\n"
+            f"    return -1  # Target not in list\n\n"
+            f"# Example test\n"
+            f"numbers = [10, 20, 30, 40, 50, 60, 70]\n"
+            f"print(\"Index of 40:\", binary_search(numbers, 40))  # Output: 3\n"
+            f"```\n\n"
+            f"Would you like to trace this search with custom numbers or write the recursive version?"
         )
 
     # Primary Math Concepts (Classes 1-5)
