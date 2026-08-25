@@ -17,11 +17,19 @@
 
         {% if news %}
             <!-- Featured News (First Item) -->
-            <div class="mb-16" data-aos="fade-up" data-aos-delay="100">
+            <div class="mb-16" data-aos="fade-up" data-aos-delay="100" id="news-{{ news[0].id }}">
                 {% set featured = news[0] %}
                 <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col lg:flex-row border border-white hover-lift">
                     <div class="lg:w-1/2 relative h-64 lg:h-auto">
-                        <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=800&q=80" alt="Featured News" class="absolute inset-0 w-full h-full object-cover">
+                        {% if featured.image_path %}
+                            {% if featured.image_path.startswith('http') %}
+                            <img src="{{ featured.image_path }}" alt="{{ featured.title }}" class="absolute inset-0 w-full h-full object-cover">
+                            {% else %}
+                            <img src="{{ url_for('static', filename=featured.image_path) }}" alt="{{ featured.title }}" class="absolute inset-0 w-full h-full object-cover">
+                            {% endif %}
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=800&q=80" alt="Featured News" class="absolute inset-0 w-full h-full object-cover">
+                        {% endif %}
                         <div class="absolute inset-0 bg-blue-900/20"></div>
                         <div class="absolute top-6 left-6">
                             <span class="bg-blue-600 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-lg">Featured</span>
@@ -34,7 +42,7 @@
                         </div>
                         <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-6 leading-tight">{{ featured.title }}</h2>
                         <p class="text-lg text-slate-600 leading-relaxed mb-8">{{ featured.content }}</p>
-                        <a href="#" class="inline-flex items-center text-blue-600 font-bold hover:text-blue-800 transition group">
+                        <a href="{{ url_for('news_detail', news_id=featured.id) }}" class="inline-flex items-center text-blue-600 font-bold hover:text-blue-800 transition group">
                             Full Story
                             <svg class="h-5 w-5 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </a>
@@ -45,29 +53,47 @@
             <!-- News Grid (Remaining Items) -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                 {% for item in news[1:] %}
-                <div class="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100 hover-lift flex flex-col" data-aos="fade-up" data-aos-delay="{{ 100 * (loop.index % 3) }}">
-                    <div class="flex items-center text-slate-400 text-xs font-bold mb-4 uppercase tracking-widest">
-                        <svg class="h-4 w-4 mr-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                        {{ item.date_posted.strftime('%B %d, %Y') if item.date_posted else 'Recent' }}
+                <div id="news-{{ item.id }}" class="bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 hover-lift flex flex-col overflow-hidden" data-aos="fade-up" data-aos-delay="{{ 100 * (loop.index % 3) }}">
+                    {% if item.image_path %}
+                    <div class="h-48 overflow-hidden">
+                        {% if item.image_path.startswith('http') %}
+                        <img src="{{ item.image_path }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+                        {% else %}
+                        <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}" class="w-full h-full object-cover">
+                        {% endif %}
                     </div>
-                    <h3 class="text-xl font-bold text-slate-900 mb-4 leading-snug">{{ item.title }}</h3>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-8 flex-grow">{{ item.content }}</p>
-                    <div class="pt-6 border-t border-slate-50">
-                        <a href="#" class="text-blue-600 text-sm font-bold hover:text-blue-800 transition inline-flex items-center group">
-                            Read More
-                            <svg class="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </a>
+                    {% endif %}
+                    <div class="p-8 flex flex-col flex-grow">
+                        <div class="flex items-center text-slate-400 text-xs font-bold mb-4 uppercase tracking-widest">
+                            <svg class="h-4 w-4 mr-2 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            {{ item.date_posted.strftime('%B %d, %Y') if item.date_posted else 'Recent' }}
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-4 leading-snug">{{ item.title }}</h3>
+                        <p class="text-slate-500 text-sm leading-relaxed mb-8 flex-grow">{{ item.content }}</p>
+                        <div class="pt-6 border-t border-slate-50">
+                            <a href="{{ url_for('news_detail', news_id=item.id) }}" class="text-blue-600 text-sm font-bold hover:text-blue-800 transition inline-flex items-center group">
+                                Read More
+                                <svg class="h-4 w-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="bg-white rounded-3xl p-16 text-center shadow-2xl border border-slate-100" data-aos="zoom-in">
-                <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-slate-50 mb-6">
-                    <svg class="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5L18.5 7H20"></path></svg>
+            <div class="bg-white rounded-3xl p-10 md:p-14 text-center shadow-xl border border-slate-100 max-w-3xl mx-auto" data-aos="zoom-in">
+                <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-indigo-50 text-indigo-600 text-3xl mb-6 shadow-md shadow-indigo-100">
+                    ✨
                 </div>
-                <h3 class="text-2xl font-bold text-slate-900">No news articles yet</h3>
-                <p class="text-slate-500 mt-2 max-w-sm mx-auto">We're busy preparing exciting updates for you. Please check back later!</p>
+                <div class="inline-block bg-indigo-100 text-indigo-800 text-xs font-black px-3 py-1 rounded-full uppercase tracking-wider mb-3">Campus Innovation</div>
+                <h3 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4">Maya AI Tutor is Now Live for All Students!</h3>
+                <p class="text-slate-600 text-base max-w-xl mx-auto leading-relaxed mb-8">
+                    Maya Vidya Niketan has officially launched <strong>Maya AI</strong>—a 24/7 dedicated learning assistant for CBSE Classes 1 to 12. Students can now ask doubts in Science, Math, English & Social Science, generate custom practice quizzes, and get step-by-step problem solutions.
+                </p>
+                <a href="{{ url_for('ai_tutor') }}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-8 rounded-full shadow-lg shadow-indigo-200 transition transform hover:scale-105 active:scale-95 text-sm">
+                    <span>Try Maya AI Tutor</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
             </div>
         {% endif %}
     </div>

@@ -1,0 +1,16 @@
+runtime: python312
+
+entrypoint: gunicorn -b :$PORT app:app
+
+env_variables:
+  SECRET_KEY: "eabebc878eba6c6c1e9de1d49dcf9739641de9e026398f50"
+  ADMIN_USERNAME: "admin"
+  ADMIN_PASS_HASH: "$2b$12$04fv3NoT.iV0Rozwy/hjH.sQk.poZ9xxUWcMnZoLhj9eFHSshxyVW"
+  MYSQL_HOST: "/cloudsql/mvn-website:asia-south1:mvn-db"
+  MYSQL_USER: "root"
+  MYSQL_PASSWORD: "mvnDbase@4332"
+  MYSQL_DB: "mvn_website"
+  ENCRYPTION_KEY: "YS12ZXJ5LXNlY3JldC1rZXktMzItY2hhcnMtbG9uZyE="
+
+beta_settings:
+  cloud_sql_instances: mvn-website:asia-south1:mvn-db

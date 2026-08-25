@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.title }} | Maya Vidya Niketan{% endblock %}
+
+{% block content %}
+<div class="bg-slate-50 py-24 min-h-screen">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <a href="{{ url_for('news') }}" class="inline-flex items-center text-blue-600 font-bold hover:text-blue-800 transition mb-12 group">
+            <svg class="h-5 w-5 mr-2 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path></svg>
+            Back to All News
+        </a>
+
+        <div class="bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-white p-8 md:p-16" data-aos="fade-up">
+            <div class="flex items-center text-slate-400 text-sm font-semibold mb-6">
+                <svg class="h-5 w-5 mr-2 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                {{ item.date_posted.strftime('%B %d, %Y') if item.date_posted else 'Recent' }}
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-10 leading-tight">{{ item.title }}</h1>
+            
+            {% if item.image_path %}
+            <div class="mb-12 rounded-3xl overflow-hidden shadow-lg border border-slate-100">
+                {% if item.image_path.startswith('http') %}
+                <img src="{{ item.image_path }}" alt="{{ item.title }}" class="w-full h-auto object-cover max-h-[500px]">
+                {% else %}
+                <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.title }}" class="w-full h-auto object-cover max-h-[500px]">
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <div class="prose prose-lg prose-slate max-w-none">
+                <p class="text-xl text-slate-700 leading-relaxed whitespace-pre-wrap">{{ item.content }}</p>
+            </div>
+
+            <div class="mt-16 pt-10 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-slate-900">Official Announcement</p>
+                        <p class="text-xs text-slate-500">Maya Vidya Niketan Administration</p>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button onclick="window.print()" class="px-6 py-2 rounded-full border border-slate-200 text-slate-600 font-bold text-sm hover:bg-slate-50 transition">Print Article</button>
+                    <button class="px-6 py-2 rounded-full bg-blue-600 text-white font-bold text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-200">Share Update</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

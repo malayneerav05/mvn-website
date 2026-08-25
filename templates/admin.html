@@ -9,10 +9,100 @@
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <div class="flex flex-wrap gap-4">
+                <form action="{{ url_for('admin_init_db') }}" method="POST" onsubmit="return confirm('Update database schema?')">
+                    <button type="submit" class="bg-slate-800 text-white font-semibold py-2 px-4 rounded hover:bg-black transition text-sm">Init DB</button>
+                </form>
+                <form action="{{ url_for('admin_seed_students') }}" method="POST" onsubmit="return confirm('Import/Refresh student list from CSV?')">
+                    <button type="submit" class="bg-indigo-600 text-white font-semibold py-2 px-4 rounded hover:bg-indigo-700 transition text-sm">Sync Students</button>
+                </form>
+                <a href="#ai-settings" class="bg-purple-100 text-purple-700 hover:bg-purple-200 font-semibold py-2 px-4 rounded transition">✨ AI Tutor Settings</a>
                 <a href="#news-manager" class="bg-blue-100 text-blue-700 hover:bg-blue-200 font-semibold py-2 px-4 rounded transition">News Manager</a>
+                <a href="#notice-manager" class="bg-amber-100 text-amber-700 hover:bg-amber-200 font-semibold py-2 px-4 rounded transition">Notice Manager</a>
                 <a href="#media-manager" class="bg-indigo-100 text-indigo-700 hover:bg-indigo-200 font-semibold py-2 px-4 rounded transition">Media Manager</a>
+                <a href="#aadhaar-submissions" class="bg-green-100 text-green-700 hover:bg-green-200 font-semibold py-2 px-4 rounded transition">Aadhaar Data</a>
                 <a href="#admissions" class="bg-slate-100 text-slate-700 hover:bg-slate-200 font-semibold py-2 px-4 rounded transition">Applications</a>
                 <a href="{{ url_for('logout') }}" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow-sm transition">Logout</a>
+            </div>
+        </div>
+
+        <!-- Maya AI Settings Card -->
+        <div id="ai-settings" class="bg-gradient-to-r from-indigo-900 to-purple-900 rounded-xl shadow-lg border border-purple-800 overflow-hidden mb-12 text-white">
+            <div class="px-6 py-4 flex justify-between items-center border-b border-purple-800/60">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">✨</span>
+                    <div>
+                        <h2 class="text-xl font-extrabold text-white">Maya AI Tutor Configuration</h2>
+                        <span class="text-xs text-purple-200">Connect Google Gemini for infinite deep reasoning</span>
+                    </div>
+                </div>
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold py-1.5 px-3 rounded-lg transition border border-purple-400">
+                    Get Free Gemini Key ↗
+                </a>
+            </div>
+            <div class="p-6">
+                <form action="{{ url_for('update_ai_key') }}" method="POST" class="flex flex-col sm:flex-row gap-4 items-end">
+                    <div class="flex-1 w-full">
+                        <label class="block text-xs font-bold text-purple-200 uppercase mb-1.5">Google Gemini API Key</label>
+                        <input type="password" name="gemini_api_key" placeholder="AIzaSy..." class="w-full px-4 py-2.5 bg-purple-950/60 border border-purple-700 text-white placeholder-purple-400 rounded-lg focus:ring-2 focus:ring-purple-400 outline-none text-sm font-mono">
+                    </div>
+                    <button type="submit" class="bg-white text-purple-900 hover:bg-purple-100 font-extrabold py-2.5 px-6 rounded-lg shadow-md transition text-sm whitespace-nowrap">
+                        Save API Key
+                    </button>
+                </form>
+                <p class="text-xs text-purple-300 mt-3">
+                    💡 Once saved, Maya AI will instantly activate live Generative AI across the entire school website to solve complex questions, grade tests, and explain in Hindi & English.
+                </p>
+            </div>
+        </div>
+
+        <!-- Add Student Form -->
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden mb-12">
+            <div class="bg-slate-800 px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-white">Manual Student Registration</h2>
+                <span class="text-xs text-slate-400">Add new admissions to the portal list</span>
+            </div>
+            <div class="p-6">
+                <form action="{{ url_for('add_student') }}" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Admission No</label>
+                        <input type="text" name="adm_no" required placeholder="e.g. 3001" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Student Name</label>
+                        <input type="text" name="student_name" required placeholder="Full Name" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Father's Name</label>
+                        <input type="text" name="father_name" required placeholder="Father's Name" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Mobile (Login Password)</label>
+                        <input type="tel" name="mobile" required placeholder="10-digit number" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Class</label>
+                        <select name="class" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option>M-I</option><option>M-II</option><option>I</option><option>II</option><option>III</option>
+                            <option>IV</option><option>V</option><option>VI</option><option>VII</option><option>VIII</option>
+                            <option>IX</option><option>X</option><option>XI</option><option>XII</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Section</label>
+                        <input type="text" name="section" placeholder="A" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 uppercase mb-1">Category</label>
+                        <select name="category" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="DAYSCHOLAR">DAYSCHOLAR</option>
+                            <option value="HOSTEL">HOSTEL</option>
+                            <option value="TRANSPORT">TRANSPORT</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700 transition shadow-md">Register Student</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -24,10 +114,14 @@
                     <h2 class="text-xl font-bold text-white">Post New Highlight</h2>
                 </div>
                 <div class="p-6">
-                    <form action="{{ url_for('add_news') }}" method="POST" class="space-y-4">
+                    <form action="{{ url_for('add_news') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Article Title</label>
                             <input type="text" name="title" required placeholder="e.g. Science Fair 2026 Results" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Article Image (Optional)</label>
+                            <input type="file" name="image" accept="image/*" class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                         </div>
                         <div>
                             <label class="block text-sm font-bold text-gray-700 mb-1">Content</label>
@@ -59,8 +153,21 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                         {{ item.date_posted.strftime('%Y-%m-%d') if item.date_posted else 'N/A' }}
                                     </td>
-                                    <td class="px-6 py-4 text-sm font-bold text-gray-900">{{ item.title }}</td>
-                                    <td class="px-6 py-4 text-right">
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-900">
+                                        {{ item.title }}
+                                        {% if item.image_path %}
+                                            <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                With Image
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 text-right flex justify-end gap-3">
+                                        <button onclick='openEditModal({{ {"id": item.id, "title": item.title, "content": item.content}|tojson }})' class="text-blue-600 hover:text-blue-900 font-bold text-sm">Edit</button>
+                                        {% if item.image_path %}
+                                        <form action="{{ url_for('delete_news_image', news_id=item.id) }}" method="POST" onsubmit="return confirm('Remove image from this article?')">
+                                            <button type="submit" class="text-amber-600 hover:text-amber-900 font-bold text-sm">Remove Image</button>
+                                        </form>
+                                        {% endif %}
                                         <form action="{{ url_for('delete_news', news_id=item.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this news article?')">
                                             <button type="submit" class="text-red-600 hover:text-red-900 font-bold text-sm">Delete</button>
                                         </form>
@@ -74,6 +181,103 @@
                             {% endif %}
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notice Manager Section -->
+        <div id="notice-manager" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <!-- Add Notice Form -->
+            <div class="lg:col-span-1 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div class="bg-amber-600 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">Add New Notice</h2>
+                </div>
+                <div class="p-6">
+                    <form action="{{ url_for('add_notice') }}" method="POST" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Notice Title / Text</label>
+                            <textarea name="title" required rows="3" placeholder="e.g. School remains closed on Monday due to..." class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Link (Optional)</label>
+                            <input type="url" name="link" placeholder="https://example.com/circular.pdf" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-amber-500 outline-none">
+                        </div>
+                        <button type="submit" class="w-full bg-amber-600 text-white font-bold py-3 rounded-lg hover:bg-amber-700 transition">Post to Notice Board</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Manage Notices Table -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-md border border-gray-200 overflow-hidden">
+                <div class="bg-slate-700 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">Manage Notice Board</h2>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Notice</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            {% if notices %}
+                                {% for item in notices %}
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ item.date_posted.strftime('%Y-%m-%d') if item.date_posted else 'N/A' }}
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-900">
+                                        <div class="font-bold">{{ item.title }}</div>
+                                        {% if item.link %}
+                                            <a href="{{ item.link }}" target="_blank" class="text-blue-600 text-xs hover:underline">View Link</a>
+                                        {% endif %}
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <form action="{{ url_for('delete_notice', notice_id=item.id) }}" method="POST" onsubmit="return confirm('Delete this notice?')">
+                                            <button type="submit" class="text-red-600 hover:text-red-900 font-bold text-sm">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="px-6 py-8 text-center text-gray-500">Notice board is empty.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit News Modal -->
+        <div id="edit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full overflow-hidden">
+                <div class="bg-blue-600 px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-white">Edit News Highlight</h2>
+                    <button onclick="closeEditModal()" class="text-white hover:text-gray-200 text-2xl">&times;</button>
+                </div>
+                <div class="p-6">
+                    <form id="edit-form" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Article Title</label>
+                            <input type="text" name="title" id="edit-title" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Update Image (Optional)</label>
+                            <input type="file" name="image" accept="image/*" class="w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">Content</label>
+                            <textarea name="content" id="edit-content" required rows="5" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                        </div>
+                        <div class="flex gap-4">
+                            <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-200 text-gray-800 font-bold py-3 rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                            <button type="submit" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition">Update Article</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -127,6 +331,68 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+
+        <!-- Aadhaar Submissions Table -->
+        <div id="aadhaar-submissions" class="bg-white rounded-xl shadow-md overflow-hidden mb-12 border border-gray-200">
+            <div class="bg-green-700 px-6 py-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-white">UDISE Aadhaar Submissions</h2>
+                <div class="text-xs text-green-100 italic bg-green-800/40 px-3 py-1 rounded-full">Encrypted at rest</div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Adm No</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Name</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">DOB</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student Aadhaar</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Father's Aadhaar</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted On</th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        {% if aadhaar_data %}
+                            {% for row in aadhaar_data %}
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">{{ row.adm_no }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ row.student_name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ row.class }}-{{ row.section }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                                    {{ row.dob.strftime('%Y-%m-%d') if row.dob else 'N/A' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono">
+                                    {% set dec_stu = decrypt(row.student_aadhaar_encrypted) %}
+                                    <div class="flex items-center gap-2">
+                                        <span id="stu-{{ loop.index }}" class="text-blue-600">XXXX-XXXX-{{ dec_stu[-4:] if dec_stu != 'Decryption Error' else 'Error' }}</span>
+                                        <button onclick="toggleReveal('stu-{{ loop.index }}', '{{ dec_stu }}')" class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded text-gray-600">Reveal</button>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-mono">
+                                    {% set dec_fath = decrypt(row.father_aadhaar_encrypted) %}
+                                    <div class="flex items-center gap-2">
+                                        <span id="fath-{{ loop.index }}" class="text-amber-600">XXXX-XXXX-{{ dec_fath[-4:] if dec_fath != 'Decryption Error' else 'Error' }}</span>
+                                        <button onclick="toggleReveal('fath-{{ loop.index }}', '{{ dec_fath }}')" class="text-xs bg-gray-100 hover:bg-gray-200 px-2 py-1 rounded text-gray-600">Reveal</button>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ row.submission_date.strftime('%Y-%m-%d') }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <form action="{{ url_for('delete_aadhaar', submission_id=row.id) }}" method="POST" onsubmit="return confirm('Delete this submission?')">
+                                        <button type="submit" class="text-red-600 hover:text-red-900 font-bold">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="px-6 py-8 text-center text-gray-500">No Aadhaar submissions received yet.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -226,4 +492,34 @@
 
     </div>
 </div>
+
+<script>
+    function openEditModal(data) {
+        document.getElementById('edit-modal').classList.remove('hidden');
+        document.getElementById('edit-title').value = data.title;
+        document.getElementById('edit-content').value = data.content;
+        document.getElementById('edit-form').action = "/admin/edit_news/" + data.id;
+    }
+
+    function closeEditModal() {
+        document.getElementById('edit-modal').classList.add('hidden');
+    }
+
+    function toggleReveal(id, fullValue) {
+        let el = document.getElementById(id);
+        if (el.innerText.includes('XXXX')) {
+            el.innerText = fullValue;
+        } else {
+            el.innerText = 'XXXX-XXXX-' + fullValue.slice(-4);
+        }
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        let modal = document.getElementById('edit-modal');
+        if (event.target == modal) {
+            closeEditModal();
+        }
+    }
+</script>
 {% endblock %}

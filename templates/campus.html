@@ -20,7 +20,12 @@
                 <div class="lg:w-1/2" data-aos="fade-right">
                     <div class="group relative">
                         <div class="absolute -inset-4 bg-blue-100 rounded-[2.5rem] transform rotate-2 group-hover:rotate-0 transition-transform duration-500 z-0"></div>
-                        <img src="{{ url_for('static', filename=images.get('physics_lab', 'images/physics_lab.png')) }}" alt="Senior Secondary Physics Laboratory" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% set p_img = images.get('physics_lab', 'images/physics_lab.png') %}
+                        {% if p_img.startswith('http') %}
+                        <img src="{{ p_img }}" alt="Senior Secondary Physics Laboratory" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% else %}
+                        <img src="{{ url_for('static', filename=p_img) }}" alt="Senior Secondary Physics Laboratory" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% endif %}
                     </div>
                 </div>
                 <div class="lg:w-1/2" data-aos="fade-left">
@@ -49,7 +54,12 @@
                 <div class="lg:w-1/2" data-aos="fade-left">
                     <div class="group relative">
                         <div class="absolute -inset-4 bg-emerald-100 rounded-[2.5rem] transform -rotate-2 group-hover:rotate-0 transition-transform duration-500 z-0"></div>
-                        <img src="{{ url_for('static', filename=images.get('chemistry_lab', 'images/chemistry_lab.png')) }}" alt="Chemistry Laboratory" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% set c_img = images.get('chemistry_lab', 'images/chemistry_lab.png') %}
+                        {% if c_img.startswith('http') %}
+                        <img src="{{ c_img }}" alt="Chemistry Laboratory" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% else %}
+                        <img src="{{ url_for('static', filename=c_img) }}" alt="Chemistry Laboratory" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% endif %}
                     </div>
                 </div>
                 <div class="lg:w-1/2" data-aos="fade-right">
@@ -78,7 +88,12 @@
                 <div class="lg:w-1/2" data-aos="fade-right">
                     <div class="group relative">
                         <div class="absolute -inset-4 bg-indigo-100 rounded-[2.5rem] transform rotate-2 group-hover:rotate-0 transition-transform duration-500 z-0"></div>
-                        <img src="{{ url_for('static', filename=images.get('classroom', 'images/classroom_benq.png')) }}" alt="Interactive Classrooms" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% set cl_img = images.get('classroom', 'images/classroom_benq.png') %}
+                        {% if cl_img.startswith('http') %}
+                        <img src="{{ cl_img }}" alt="Interactive Classrooms" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% else %}
+                        <img src="{{ url_for('static', filename=cl_img) }}" alt="Interactive Classrooms" class="relative z-10 rounded-3xl shadow-2xl w-full aspect-video object-cover transition-transform duration-500 group-hover:scale-[1.02]">
+                        {% endif %}
                     </div>
                 </div>
                 <div class="lg:w-1/2" data-aos="fade-left">

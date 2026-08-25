@@ -1,0 +1,12 @@
+.gcloudignore
+.git
+.gitignore
+.DS_Store
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+database.db
+static/images/uploads/

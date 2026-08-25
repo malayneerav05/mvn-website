@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}Mandatory Public Disclosure | Maya Vidya Niketan{% endblock %}
+
+{% block content %}
+<div class="bg-slate-50 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="text-center mb-16">
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Mandatory Public Disclosure</h1>
+            <p class="text-lg text-slate-600">In compliance with CBSE directives (Appendix-IX)</p>
+            <div class="mt-4 w-24 h-1 bg-blue-600 mx-auto rounded-full"></div>
+        </div>
+
+        <div class="space-y-12">
+            
+            <!-- A: GENERAL INFORMATION -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">A: GENERAL INFORMATION</h2>
+                </div>
+                <div class="p-6">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50 w-1/3">NAME OF THE SCHOOL</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">MAYA VIDYA NIKETAN</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">AFFILIATION NO.</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">331074</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">SCHOOL CODE</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">66810</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">COMPLETE ADDRESS</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">Ward No- 01, Nayanagar, Madanpur, Landmark- Near the indoor stadium, Madhepura, BIHAR - 852113</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">PRINCIPAL NAME & QUALIFICATION</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">MRS. MEERA KUMARI (M.A., B.Ed.)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">SCHOOL EMAIL ID</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">mvnm001@gmail.com</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">CONTACT DETAILS</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">9304938841</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- B: DOCUMENTS AND INFORMATION -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">B: DOCUMENTS AND INFORMATION</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% set docs = [
+                            ('COPIES OF AFFILIATION/UPGRADATION LETTER AND RECENT EXTENSION OF AFFILIATION, IF ANY', '#'),
+                            ('COPIES OF SOCIETIES/TRUST/COMPANY REGISTRATION/RENEWAL CERTIFICATE, AS APPLICABLE', 'https://www.mayavidyaniketan.com/wp-content/uploads/2021/04/Trust_Certificate.pdf'),
+                            ('COPY OF NO OBJECTION CERTIFICATE (NOC) ISSUED, IF APPLICABLE, BY THE STATE GOVT./UT', 'https://www.mayavidyaniketan.com/wp-content/uploads/2021/04/NOC.pdf'),
+                            ('COPIES OF RECOGNITION CERTIFICATE UNDER RTE ACT, 2009, AND ITS RENEWAL IF ANY', 'https://www.mayavidyaniketan.com/wp-content/uploads/2021/04/Recognition_Certificate_renewal.pdf'),
+                            ('COPY OF VALID BUILDING SAFETY CERTIFICATE AS PER THE NATIONAL BUILDING CODE', 'https://www.mayavidyaniketan.com/wp-content/uploads/2021/04/Building_Certificate.pdf'),
+                            ('COPY OF VALID FIRE SAFETY CERTIFICATE ISSUED BY THE COMPETENT AUTHORITY', 'https://www.mayavidyaniketan.com/wp-content/uploads/2021/04/Fire_Certificate.pdf'),
+                            ('COPY OF THE DEO CERTIFICATE SUBMITTED BY THE SCHOOL FOR AFFILIATION/UPGRADATION/EXTENSION OF AFFILIATION', 'https://www.mayavidyaniketan.com/wp-content/uploads/2021/04/DEO_Certificate.pdf'),
+                            ('COPIES OF VALID WATER, HEALTH AND SANITATION CERTIFICATES', 'https://www.mayavidyaniketan.com/wp-content/uploads/2021/04/Water_Health_Certificate.pdf')
+                        ] %}
+                        {% for title, link in docs %}
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 group hover:border-blue-300 transition-colors">
+                            <span class="text-xs font-bold text-slate-700 leading-tight uppercase pr-4">{{ title }}</span>
+                            <a href="{{ link }}" class="flex-shrink-0 bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-700 transition shadow-sm">VIEW PDF</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- C: RESULT AND ACADEMICS -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">C: RESULT AND ACADEMICS</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% set academic_docs = [
+                            ('FEE STRUCTURE OF THE SCHOOL', 'https://www.mayavidyaniketan.com/fee-structure/'),
+                            ('ANNUAL ACADEMIC CALENDER', 'https://www.mayavidyaniketan.com/academic-calander/'),
+                            ('LIST OF SCHOOL MANAGEMENT COMMITTEE (SMC)', 'https://www.mayavidyaniketan.com/managing-committee/'),
+                            ('LIST OF PARENTS TEACHERS ASSOCIATION (PTA) MEMBERS', 'https://www.mayavidyaniketan.com/pta-executive/'),
+                            ('LAST THREE-YEAR RESULT OF THE BOARD EXAMINATION AS PER APPLICABILITY', 'https://www.mayavidyaniketan.com/results/')
+                        ] %}
+                        {% for title, link in academic_docs %}
+                        <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100 hover:border-blue-300 transition-colors">
+                            <span class="text-xs font-bold text-slate-700 uppercase">{{ title }}</span>
+                            <a href="{{ link }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-700 transition">VIEW PDF</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- D: STAFF (TEACHING) -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="bg-slate-800 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">D: STAFF (TEACHING)</h2>
+                </div>
+                <div class="p-6">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50 w-1/2">PRINCIPAL</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">MRS. MEERA KUMARI</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">TOTAL NO. OF TEACHERS</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">14</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50 pl-12">○ PGT</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">4</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50 pl-12">○ TGT</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">2</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50 pl-12">○ PRT</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">8</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">TEACHERS SECTION RATIO</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">1:1.5</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">DETAILS OF SPECIAL EDUCATOR</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">1</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">DETAILS OF COUNSELLOR AND WELLNESS TEACHER</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">1</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- E: SCHOOL INFRASTRUCTURE -->
+            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-12">
+                <div class="bg-slate-800 px-6 py-4">
+                    <h2 class="text-xl font-bold text-white">E: SCHOOL INFRASTRUCTURE</h2>
+                </div>
+                <div class="p-6">
+                    <table class="min-w-full divide-y divide-slate-200">
+                        <tbody class="divide-y divide-slate-200">
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50 w-1/2">TOTAL CAMPUS AREA OF THE SCHOOL (IN SQUARE MTR)</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">9226.83</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">NO. AND SIZE OF THE CLASS ROOMS (IN SQ MTR)</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">9 (158 SQ MTR)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">NO. AND SIZE OF LABORATORIES INCLUDING COMPUTER LABS (IN SQ MTR)</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">2 (183 SQ MTR)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">INTERNET FACILITY (Y/N)</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">YES</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">NO. OF GIRLS TOILETS</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">6</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">NO. OF BOYS TOILETS</td>
+                                <td class="px-6 py-4 text-sm text-slate-900">8</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-sm font-bold text-slate-700 bg-slate-50">LINK OF YOUTUBE VIDEO OF THE INSPECTION OF SCHOOL COVERING THE INFRASTRUCTURE OF THE SCHOOL</td>
+                                <td class="px-6 py-4 text-sm text-blue-600 font-bold"><a href="https://www.youtube.com/channel/UCqSUHmknJ6rTakut9vgm7mA" target="_blank">VIEW VIDEO</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
