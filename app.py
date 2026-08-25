@@ -2440,9 +2440,9 @@ def detect_subject_from_query(query, default_subject="General Science", history=
             return "English"
         if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy', 'mirror', 'mirrors', 'lens', 'lenses', 'rear view', 'convex', 'concave', 'refraction', 'reflection', 'focal length', 'myopia', 'hypermetropia', 'presbyopia', 'prism', 'spectrum', 'rainbow', 'twinkle', 'twinkling', 'scattering of light', 'ray diagram', 'ray diagrams', 'magnification', 'solenoid', 'fleming']):
             return "Physics"
-        if any(k in q for k in ['chemistry', 'chemical reaction', 'atomic structure', 'valency', 'periodic table', 'acid', 'base', 'salt', 'mole concept', 'metals', 'non-metals', 'carbon', 'combustion', 'states of matter', 'corrosion', 'rusting', 'galvanization', 'saponification', 'esterification', 'redox', 'decomposition', 'displacement', 'neutralization', 'amphoteric', 'hydrocarbon', 'alkane', 'alkene', 'alkyne', 'micelle', 'plaster of paris', 'baking soda', 'washing soda']):
+        if any(k in q for k in ['chemistry', 'chemical reaction', 'atomic structure', 'valency', 'periodic table', 'acid', 'base', 'salt', 'mole concept', 'metals', 'non-metals', 'carbon', 'combustion', 'states of matter', 'corrosion', 'rusting', 'galvanization', 'saponification', 'esterification', 'redox', 'decomposition', 'displacement', 'neutralization', 'amphoteric', 'hydrocarbon', 'alkane', 'alkene', 'alkyne', 'micelle', 'plaster of paris', 'baking soda', 'washing soda', 'calcination', 'roasting', 'metallurgy', 'ore', 'ores', 'bauxite']):
             return "Chemistry"
-        if any(k in q for k in ['biology', 'photosynthesis', 'mitosis', 'chlorophyll', 'respiration', 'digestive', 'circulatory', 'cell division', 'microorganism', 'microbes', 'cell structure', 'reproduction', 'tissue', 'tissues', 'xylem', 'phloem', 'parenchyma', 'collenchyma', 'sclerenchyma', 'meristematic', 'life processes', 'heredity', 'control and coordination', 'neuron', 'nephron', 'synapse', 'reflex arc', 'brain', 'hormone', 'hormones', 'mendel', 'monohybrid', 'dihybrid', 'alveoli', 'double circulation', 'heart', 'excretion', 'kidney', 'stomata', 'ecosystem', 'food chain', 'ozone']):
+        if any(k in q for k in ['biology', 'photosynthesis', 'mitosis', 'chlorophyll', 'respiration', 'digestive', 'circulatory', 'cell division', 'microorganism', 'microbes', 'cell structure', 'reproduction', 'tissue', 'tissues', 'xylem', 'phloem', 'parenchyma', 'collenchyma', 'sclerenchyma', 'meristematic', 'life processes', 'heredity', 'control and coordination', 'neuron', 'nephron', 'synapse', 'reflex arc', 'brain', 'hormone', 'hormones', 'mendel', 'monohybrid', 'dihybrid', 'alveoli', 'double circulation', 'heart', 'excretion', 'kidney', 'stomata', 'ecosystem', 'food chain', 'ozone', 'biological magnification', 'biomagnification', '10% law', 'lindeman', 'trophic', 'dna', 'rna', 'watson']):
             return "Biology"
         # Detect Mathematics via arithmetic regex patterns or mathematical keywords
         if (re.search(r'\d+\s*[\+\-\*\/\^\%xX÷×]\s*\d+', q) or 
@@ -3775,6 +3775,67 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
 
     # 8. State A: Subject Concepts & Step-by-Step Problem Solving
     thinking = format_thinking_block(user_query, "State A (Concept Request)", "Explain simply in student language without complex formulas. End by asking if they want a quiz")
+
+    # Senior CS: Linear Search vs Binary Search in Python
+    if any(k in q_lower for k in ['linear search vs binary search', 'linear search and binary search', 'binary search', 'linear search', 'time complexity of search']):
+        return thinking + (
+            f"### 🐍 **Linear Search vs Binary Search in Python ({grade} - {subject})**\n\n"
+            f"#### 📊 **1. Comparison Table:**\n"
+            f"| Feature | Linear Search 🚶 | Binary Search ⚡ |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Array Requirement** | Works on **both Unsorted and Sorted** lists | Strictly requires a **Sorted array** |\n"
+            f"| **Methodology** | Sequential element-by-element scanning | Divide and Conquer (halves search space) |\n"
+            f"| **Best Case Time** | $O(1)$ (Element at index 0) | $O(1)$ (Element at middle index) |\n"
+            f"| **Worst Case Time** | **$O(n)$** (Linear time) | **$O(\\log n)$** (Logarithmic time - extremely fast) |\n"
+            f"| **Space Complexity** | $O(1)$ | $O(1)$ iterative / $O(\\log n)$ recursive |\n\n"
+            f"#### 💻 **2. Python Binary Search Implementation:**\n"
+            f"```python\n"
+            f"def binary_search(arr, target):\n"
+            f"    low = 0\n"
+            f"    high = len(arr) - 1\n"
+            f"    while low <= high:\n"
+            f"        mid = (low + high) // 2\n"
+            f"        if arr[mid] == target:\n"
+            f"            return mid  # Target found!\n"
+            f"        elif arr[mid] < target:\n"
+            f"            low = mid + 1  # Search right half\n"
+            f"        else:\n"
+            f"            high = mid - 1  # Search left half\n"
+            f"    return -1  # Target not in list\n\n"
+            f"# Example test\n"
+            f"numbers = [10, 20, 30, 40, 50, 60, 70]\n"
+            f"print(\"Index of 40:\", binary_search(numbers, 40))  # Output: 3\n"
+            f"```\n\n"
+            f"Would you like to trace this search with custom numbers or write the recursive version?"
+        )
+
+    # Senior CS: SQL WHERE vs HAVING
+    if any(k in q_lower for k in ['where vs having', 'difference between where and having', 'where and having', 'having clause', 'where clause']):
+        return thinking + (
+            f"### 🗄️ **SQL: WHERE vs HAVING Clause Explained ({grade} - {subject})**\n\n"
+            f"#### 📊 **1. Key Difference Comparison Table:**\n"
+            f"| Feature | `WHERE` Clause 🔍 | `HAVING` Clause 📊 |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Target** | Filters individual **rows / records** | Filters **groups formed by `GROUP BY`** |\n"
+            f"| **Execution Timing** | Applied **before** grouping / aggregation | Applied **after** grouping / aggregation |\n"
+            f"| **Aggregate Functions** | **Cannot** use aggregate functions (`SUM`, `AVG`, `COUNT`, `MAX`, `MIN`) | **Can** use aggregate functions (`HAVING COUNT(*) > 5`) |\n"
+            f"| **Usage with `GROUP BY`** | Can be used without `GROUP BY` | Almost always used alongside `GROUP BY` |\n\n"
+            f"#### 💻 **2. Code Examples (CBSE Class 12 CS / IP Standard):**\n\n"
+            f"**A) Using `WHERE` (Filtering rows before grouping):**\n"
+            f"```sql\n"
+            f"SELECT StudentName, Marks \n"
+            f"FROM Students \n"
+            f"WHERE Marks >= 90; -- Filters individual student rows\n"
+            f"```\n\n"
+            f"**B) Using `HAVING` (Filtering aggregate groups):**\n"
+            f"```sql\n"
+            f"SELECT Department, AVG(Salary) \n"
+            f"FROM Employees \n"
+            f"GROUP BY Department \n"
+            f"HAVING AVG(Salary) > 50000; -- Filters grouped departments\n"
+            f"```\n\n"
+            f"Would you like to write a custom SQL query using both `WHERE` and `HAVING`?"
+        )
 
     # 4. Subject Concepts & Step-by-Step Problem Solving
     if any(k in q_lower for k in ['python', 'coding', 'programming', 'loop', 'loops', 'variable', 'variables', 'for loop', 'while loop']):
