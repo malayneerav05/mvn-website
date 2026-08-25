@@ -3921,7 +3921,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
                 f"Would you like a quick 3-question quiz to test this concept?"
             )
 
-    if any(k in q_lower for k in ['algorithm', 'computer', 'cpu', 'ram', 'database', 'sql', 'hardware', 'software']):
+    if any(k in q_lower for k in ['algorithm', 'cpu', 'ram', 'database', 'sql', 'hardware', 'software']) or ('computer' in q_lower and not any(k in q_lower for k in ['vision', 'application', 'applications', 'network', 'networks'])):
         return thinking + (
             f"### 💻 **Computer Science & Architecture ({grade} - {subject})**\n\n"
             "#### 1. **Core Concept Overview**\n"
@@ -4459,6 +4459,100 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             "- **Cone:** $\\text{Curved Surface Area} = \\pi rl, \\quad \\text{Volume} = \\frac{1}{3}\\pi r^2 h$\n"
             "- **Sphere:** $\\text{Surface Area} = 4\\pi r^2, \\quad \\text{Volume} = \\frac{4}{3}\\pi r^3$\n\n"
             "Would you like a quick 3-question quiz to test this concept?"
+        )
+
+    # 4.7. AI (Code 417) Model Evaluation: Accuracy, Precision, Recall, F1 Score, Confusion Matrix
+    if any(k in q_lower for k in ['accuracy', 'precision', 'recall', 'f1 score', 'f1-score', 'confusion matrix', 'true positive', 'false positive', 'true negative', 'false negative', 'type 1 error', 'type 2 error', 'type i error', 'type ii error', 'evaluation metric']):
+        return thinking + (
+            f"### 🎯 **Accuracy, Precision, Recall & Confusion Matrix ({grade} - {subject})**\n\n"
+            f"In **Class 10 CBSE Artificial Intelligence (Subject Code 417 - Evaluation Unit)**, evaluation metrics determine how effectively a classification model performs.\n\n"
+            f"#### 📊 **1. The Confusion Matrix (2×2 Evaluation Grid):**\n"
+            f"| | **Predicted: Yes (1)** | **Predicted: No (0)** |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Reality: Yes (1)** | **True Positive (TP)** *(Correct Detection)* | **False Negative (FN)** *(Type II Error / Missed)* |\n"
+            f"| **Reality: No (0)** | **False Positive (FP)** *(Type I Error / False Alarm)* | **True Negative (TN)** *(Correct Rejection)* |\n\n"
+            f"#### 📐 **2. Mathematical Formulas:**\n\n"
+            f"##### A. **Accuracy Formula:**\n"
+            f"Fraction of total predictions that the model got right:\n"
+            f"$$\\mathbf{{\\text{{Accuracy}} = \\frac{{\\text{{TP}} + \\text{{TN}}}}{{\\text{{TP}} + \\text{{TN}} + \\text{{FP}} + \\text{{FN}}}} = \\frac{{\\text{{Total Correct Predictions}}}}{{\\text{{Total Cases}}}}}}$$\n"
+            f"$$\\mathbf{{\\text{{Accuracy (\\%)}} = \\left(\\frac{{\\text{{TP}} + \\text{{TN}}}}{{\\text{{TP}} + \\text{{TN}} + \\text{{FP}} + \\text{{FN}}}}\\right) \\times 100}}$$\n\n"
+            f"##### B. **Precision Formula:**\n"
+            f"Out of all positive predictions, how many were truly positive?\n"
+            f"$$\\mathbf{{\\text{{Precision}} = \\frac{{\\text{{TP}}}}{{\\text{{TP}} + \\text{{FP}}}}}}$$\n"
+            f"- *High-Priority Use Case:* When **False Positives (FP)** are costly (e.g. Email spam filter — an important email must not go to Spam).\n\n"
+            f"##### C. **Recall (Sensitivity) Formula:**\n"
+            f"Out of all actual positive cases in reality, how many did the model capture?\n"
+            f"$$\\mathbf{{\\text{{Recall}} = \\frac{{\\text{{TP}}}}{{\\text{{TP}} + \\text{{FN}}}}}}$$\n"
+            f"- *High-Priority Use Case:* When **False Negatives (FN)** are dangerous (e.g. Medical diagnosis for illness, Fire alarm detection).\n\n"
+            f"##### D. **F1 Score Formula:**\n"
+            f"Harmonic mean of Precision and Recall (ideal for imbalanced datasets):\n"
+            f"$$\\mathbf{{\\text{{F1 Score}} = 2 \\times \\frac{{\\text{{Precision}} \\times \\text{{Recall}}}}{{\\text{{Precision}} + \\text{{Recall}}}}}}$$\n\n"
+            f"#### 🧮 **3. Solved CBSE Board Exam Problem:**\n"
+            f"- **Given Data:** $TP = 40, TN = 45, FP = 5, FN = 10$\n"
+            f"- **Accuracy:** $\\frac{{40 + 45}}{{40 + 45 + 5 + 10}} = \\frac{{85}}{{100}} = \\mathbf{{85\\%}}$\n"
+            f"- **Precision:** $\\frac{{40}}{{40 + 5}} = \\frac{{40}}{{45}} = \\mathbf{{88.89\\%}}$\n"
+            f"- **Recall:** $\\frac{{40}}{{40 + 10}} = \\frac{{40}}{{50}} = \\mathbf{{80.0\\%}}$\n\n"
+            f"Would you like to test your understanding with a quick 3-question evaluation quiz?"
+        )
+
+    # 4.8. AI Project Cycle & Problem Scoping
+    if any(k in q_lower for k in ['ai project cycle', 'problem scoping', '4w canvas', '4ws canvas', 'data acquisition', 'data exploration', 'rule-based', 'learning-based']):
+        return thinking + (
+            f"### 🔄 **The AI Project Cycle & 4Ws Problem Scoping ({grade} - {subject})**\n\n"
+            f"In **Class 10 CBSE AI (Subject Code 417)**, the **AI Project Cycle** defines the 5 sequential stages of creating an AI solution:\n\n"
+            f"#### 🧭 **1. Stage 1: Problem Scoping (The 4Ws Canvas):**\n"
+            f"- **Who Canvas:** Identifies stakeholders who face the problem and will benefit from the solution.\n"
+            f"- **What Canvas:** Analyzes the nature of the problem, evidence, and existing pain points.\n"
+            f"- **Where Canvas:** Examines the context, geographical location, and situational environment.\n"
+            f"- **Why Canvas:** Establishes the core value proposition and expected benefits of solving it.\n\n"
+            f"#### 📥 **2. Stage 2: Data Acquisition:**\n"
+            f"Collecting authentic, reliable datasets for training and testing via APIs, surveys, web scraping, sensors, and open data portals.\n\n"
+            f"#### 🔍 **3. Stage 3: Data Exploration:**\n"
+            f"Cleaning datasets, handling missing values, and visualizing trends/correlations using histograms, scatter plots, and box plots.\n\n"
+            f"#### 🧠 **4. Stage 4: Modelling:**\n"
+            f"- **Rule-Based Approach:** Programmer explicitly writes IF-THEN rules and algorithms.\n"
+            f"- **Learning-Based Approach:** Machine learning model learns patterns and relationships automatically from training data.\n\n"
+            f"#### 🎯 **5. Stage 5: Evaluation:**\n"
+            f"Testing model accuracy, precision, recall, and F1 score on unseen test data using the Confusion Matrix.\n\n"
+            f"Would you like a quick 3-question quiz on the AI Project Cycle?"
+        )
+
+    # 4.9. Computer Vision (CV)
+    if any(k in q_lower for k in ['computer vision', 'pixel', 'pixels', 'rgb', 'opencv', 'image processing', 'cv domain']):
+        return thinking + (
+            f"### 👁️ **Computer Vision (CV) Fundamentals ({grade} - {subject})**\n\n"
+            f"In **Class 10 CBSE AI (Code 417)**, **Computer Vision** is the domain of AI that enables computers to capture, process, and analyze visual data from digital images and video streams.\n\n"
+            f"#### 🖼️ **1. Digital Image Anatomy & Pixels:**\n"
+            f"- **Pixel (Picture Element):** The smallest individual addressable dot in a digital raster image.\n"
+            f"- **Grayscale Image:** Single-channel image with pixel intensity values ranging from **$0$ (Pure Black)** to **$255$ (Pure White)**.\n"
+            f"- **RGB Color Image:** 3 color channels: **Red, Green, Blue** (each $0–255$). Combining $256 \\times 256 \\times 256$ yields $\\approx 16.7\\text{{ million distinct colors}}$.\n\n"
+            f"#### ⚙️ **2. Core Computer Vision Tasks:**\n"
+            f"1. **Image Classification:** Identifying what object is present in an image (e.g., Cat vs Dog).\n"
+            f"2. **Object Detection / Localization:** Identifying the object and drawing bounding box coordinates $(x, y, w, h)$.\n"
+            f"3. **Image Segmentation:** Classifying every single pixel belonging to specific objects.\n"
+            f"4. **Facial Recognition & Optical Character Recognition (OCR):** Biometrics and extracting text from images.\n\n"
+            f"#### 💻 **3. Popular CV Libraries:**\n"
+            f"- **OpenCV (Open Source Computer Vision Library):** Standard Python library for image filtering, edge detection, and facial detection.\n\n"
+            f"Would you like a quick 3-question quiz on Computer Vision?"
+        )
+
+    # 4.10. Natural Language Processing (NLP)
+    if any(k in q_lower for k in ['natural language processing', 'nlp', 'tokenization', 'stopword', 'stopwords', 'stemming', 'lemmatization', 'bag of words', 'bow', 'tf-idf', 'tfidf', 'text normalization']):
+        return thinking + (
+            f"### 💬 **Natural Language Processing (NLP) & Text Normalization ({grade} - {subject})**\n\n"
+            f"In **Class 10 CBSE AI (Code 417)**, **NLP** is the domain that enables computers to understand, interpret, and generate human languages.\n\n"
+            f"#### 📝 **1. Text Normalization Pipeline (5 Steps):**\n"
+            f"1. **Sentence Segmentation:** Splitting an entire paragraph into individual sentences.\n"
+            f"2. **Tokenization:** Breaking sentences into individual words/tokens.\n"
+            f"3. **Removing Stopwords:** Filtering out common filler words carrying no unique semantic meaning (e.g., *'is', 'the', 'and', 'at'*).\n"
+            f"4. **Lowercasing:** Converting all text to lowercase for standard vocabulary matching.\n"
+            f"5. **Stemming vs Lemmatization:**\n"
+            f"   - **Stemming:** Chopping word affixes with heuristic rules (e.g. *studying $\\rightarrow$ study*, *caring $\\rightarrow$ car* — may produce non-dictionary words).\n"
+            f"   - **Lemmatization:** Morphological analysis returning the meaningful base dictionary root called **Lemma** (e.g. *caring $\\rightarrow$ care*, *better $\\rightarrow$ good*).\n\n"
+            f"#### 📊 **2. Bag of Words (BoW) & TF-IDF:**\n"
+            f"- **Bag of Words (BoW):** Creates a unique word vocabulary and records word frequency counts in each document.\n"
+            f"- **TF-IDF:** Evaluates how relevant a word is to a specific document in a large collection.\n\n"
+            f"Would you like a quick 3-question quiz on Natural Language Processing?"
         )
 
     # 5. Smart Dynamic NCERT Concept Explainer for any remaining query

@@ -397,13 +397,13 @@
                 .replace(/\\quad/g, ' ')
                 .replace(/\\rightarrow/g, '→');
 
-            // 4. Headings (from # down to #####)
+            // 4. Headings (from ##### down to # to prevent partial prefix collisions)
             clean = clean
-                .replace(/^# (.*$)/gim, '<div class="font-extrabold text-blue-950 text-xs mt-2 mb-1 pb-0.5 border-b border-slate-200/60">$1</div>')
-                .replace(/^## (.*$)/gim, '<div class="font-extrabold text-blue-950 text-xs mt-2 mb-1 pb-0.5 border-b border-slate-200/60">$1</div>')
-                .replace(/^### (.*$)/gim, '<div class="font-extrabold text-blue-950 text-xs mt-2 mb-1 pb-0.5 border-b border-slate-200/60">$1</div>')
+                .replace(/^##### (.*$)/gim, '<div class="font-semibold text-slate-700 text-xs mt-1 mb-0.5">$1</div>')
                 .replace(/^#### (.*$)/gim, '<div class="font-bold text-slate-800 text-xs mt-1.5 mb-0.5">$1</div>')
-                .replace(/^##### (.*$)/gim, '<div class="font-semibold text-slate-700 text-xs mt-1 mb-0.5">$1</div>');
+                .replace(/^### (.*$)/gim, '<div class="font-extrabold text-blue-950 text-xs mt-2 mb-1 pb-0.5 border-b border-slate-200/60">$1</div>')
+                .replace(/^## (.*$)/gim, '<div class="font-extrabold text-blue-950 text-xs mt-2 mb-1 pb-0.5 border-b border-slate-200/60">$1</div>')
+                .replace(/^# (.*$)/gim, '<div class="font-extrabold text-blue-950 text-sm mt-2 mb-1 pb-0.5 border-b border-slate-200/60">$1</div>');
 
             // 5. Bold & Italics
             clean = clean.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-900">$1</strong>');
