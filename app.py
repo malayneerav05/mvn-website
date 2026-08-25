@@ -2435,11 +2435,11 @@ def detect_subject_from_query(query, default_subject="General Science", history=
             return "Computer Science"
         if any(k in q for k in ['english', 'grammar', 'essay', 'paragraph', 'letter', 'speech', 'leave application', 'composition', 'poem', 'story', 'preposition', 'reported speech', 'active passive', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301']):
             return "English"
-        if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy', 'mirror', 'mirrors', 'lens', 'lenses', 'rear view', 'convex', 'concave', 'refraction', 'reflection', 'focal length', 'myopia', 'hypermetropia', 'presbyopia', 'prism', 'spectrum', 'rainbow', 'twinkle', 'twinkling', 'scattering of light']):
+        if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy', 'mirror', 'mirrors', 'lens', 'lenses', 'rear view', 'convex', 'concave', 'refraction', 'reflection', 'focal length', 'myopia', 'hypermetropia', 'presbyopia', 'prism', 'spectrum', 'rainbow', 'twinkle', 'twinkling', 'scattering of light', 'ray diagram', 'ray diagrams', 'magnification', 'solenoid', 'fleming']):
             return "Physics"
-        if any(k in q for k in ['chemistry', 'chemical reaction', 'atomic structure', 'valency', 'periodic table', 'acid', 'base', 'salt', 'mole concept', 'metals', 'non-metals', 'carbon', 'combustion', 'states of matter']):
+        if any(k in q for k in ['chemistry', 'chemical reaction', 'atomic structure', 'valency', 'periodic table', 'acid', 'base', 'salt', 'mole concept', 'metals', 'non-metals', 'carbon', 'combustion', 'states of matter', 'corrosion', 'rusting', 'galvanization', 'saponification', 'esterification', 'redox', 'decomposition', 'displacement', 'neutralization', 'amphoteric', 'hydrocarbon', 'alkane', 'alkene', 'alkyne', 'micelle', 'plaster of paris', 'baking soda', 'washing soda']):
             return "Chemistry"
-        if any(k in q for k in ['biology', 'photosynthesis', 'mitosis', 'chlorophyll', 'respiration', 'digestive', 'circulatory', 'cell division', 'microorganism', 'microbes', 'cell structure', 'reproduction', 'tissue', 'tissues', 'xylem', 'phloem', 'parenchyma', 'collenchyma', 'sclerenchyma', 'meristematic', 'life processes', 'heredity', 'control and coordination']):
+        if any(k in q for k in ['biology', 'photosynthesis', 'mitosis', 'chlorophyll', 'respiration', 'digestive', 'circulatory', 'cell division', 'microorganism', 'microbes', 'cell structure', 'reproduction', 'tissue', 'tissues', 'xylem', 'phloem', 'parenchyma', 'collenchyma', 'sclerenchyma', 'meristematic', 'life processes', 'heredity', 'control and coordination', 'neuron', 'nephron', 'synapse', 'reflex arc', 'brain', 'hormone', 'hormones', 'mendel', 'monohybrid', 'dihybrid', 'alveoli', 'double circulation', 'heart', 'excretion', 'kidney', 'stomata', 'ecosystem', 'food chain', 'ozone']):
             return "Biology"
         # Detect Mathematics via arithmetic regex patterns or mathematical keywords
         if (re.search(r'\d+\s*[\+\-\*\/\^\%xX÷×]\s*\d+', q) or 
@@ -3921,7 +3921,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
                 f"Would you like a quick 3-question quiz to test this concept?"
             )
 
-    if any(k in q_lower for k in ['algorithm', 'cpu', 'ram', 'database', 'sql', 'hardware', 'software']) or ('computer' in q_lower and not any(k in q_lower for k in ['vision', 'application', 'applications', 'network', 'networks'])):
+    if any(re.search(r'\b' + re.escape(w) + r'\b', q_lower) for w in ['algorithm', 'algorithms', 'cpu', 'ram', 'database', 'sql', 'hardware', 'software']) or ('computer' in q_lower and not any(k in q_lower for k in ['vision', 'application', 'applications', 'network', 'networks'])):
         return thinking + (
             f"### 💻 **Computer Science & Architecture ({grade} - {subject})**\n\n"
             "#### 1. **Core Concept Overview**\n"
@@ -4039,7 +4039,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
                 f"Would you like a quick 3-question quiz to test this concept?"
             )
 
-    if any(k in q_lower for k in ['cell', 'cells', 'cell structure', 'organelle', 'nucleus', 'cytoplasm', 'mitochondria', 'cell wall', 'cell membrane', 'unicellular', 'multicellular', 'prokaryot', 'eukaryot']):
+    if any(re.search(r'\b' + re.escape(w) + r'\b', q_lower) for w in ['cell', 'cells', 'cell structure', 'organelle', 'organelles', 'nucleus', 'cytoplasm', 'mitochondria', 'cell wall', 'cell membrane', 'unicellular', 'multicellular', 'prokaryote', 'eukaryote', 'prokaryotic', 'eukaryotic']) and not any(k in q_lower for k in ['micelle', 'micelles']):
         return thinking + (
             f"### 🔬 **Cell: Structure and Functions ({grade} - {subject})**\n\n"
             f"**The Cell** is the fundamental structural and functional unit of all living organisms. It was first discovered by **Robert Hooke in 1665** in a slice of cork.\n\n"
@@ -4280,6 +4280,54 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             "Would you like a quick 3-question quiz to test this concept?"
         )
         
+    # 2.9. Magnetic Effects of Electric Current
+    if any(k in q_lower for k in ['magnetic effect', 'magnetic field', 'solenoid', 'fleming', 'right hand thumb', 'electromagnet', 'electric motor', 'domestic electric circuit', 'fuse wire', 'overloading', 'short circuit']):
+        return thinking + (
+            f"### 🧲 **Magnetic Effects of Electric Current ({grade} - {subject})**\n\n"
+            f"When an electric current flows through a conductor, it produces a magnetic field around it (discovered by Hans Christian Oersted in 1820).\n\n"
+            f"#### 🧭 **1. Core Rules for Direction:**\n"
+            f"1. **Right-Hand Thumb Rule (Maxwell's Rule):** Imagine holding a straight current-carrying wire with your right hand. If the thumb points along the direction of **Current ($I$)**, then your curled fingers show the direction of **Magnetic Field Lines ($B$)** (concentric circles).\n"
+            f"2. **Fleming's Left-Hand Rule (Electric Motors):** Stretch the thumb, forefinger, and middle finger of the left hand mutually perpendicular to each other:\n"
+            f"   - **Thumb:** Direction of Force / Motion ($F$)\n"
+            f"   - **Forefinger:** Direction of Magnetic Field ($B$)\n"
+            f"   - **Middle finger:** Direction of Current ($I$)\n\n"
+            f"#### 🌀 **2. Magnetic Field of a Solenoid:**\n"
+            f"- **Solenoid:** A coil of many circular turns of insulated copper wire wrapped closely in the shape of a cylinder.\n"
+            f"- **Properties:** Behaves exactly like a **Bar Magnet** with North and South poles. Inside the solenoid, the magnetic field lines are parallel straight lines, indicating a **completely uniform magnetic field**.\n"
+            f"- **Electromagnet:** An iron rod (soft iron core) placed inside a solenoid becomes a strong temporary magnet when current is switched on.\n\n"
+            f"#### ⚡ **3. Domestic Electric Circuits (CBSE Board Standard):**\n"
+            f"- **Live Wire (Red/Brown):** Positive wire carrying alternating potential of **$220\\text{{ V}}$** at $50\\text{{ Hz}}$.\n"
+            f"- **Neutral Wire (Black/Blue):** Return wire at zero potential (**$0\\text{{ V}}$**).\n"
+            f"- **Earth Wire (Green/Yellow):** Safety wire connected to a metal plate deep underground. Provides a low-resistance path to direct leakage currents to the ground, preventing electric shocks from metallic appliances.\n"
+            f"- **Overloading vs Short Circuit:**\n"
+            f"  - *Short Circuit:* Live and neutral wires come in direct contact $\\rightarrow$ resistance drops to zero $\\rightarrow$ massive current flows causing fire.\n"
+            f"  - *Overloading:* Too many high-power appliances switched on simultaneously exceeding the circuit's rated limit.\n\n"
+            f"Would you like a quick 3-question quiz on magnetic effects of current?"
+        )
+
+    # 2.95. Chemical Reactions & Balancing
+    if any(k in q_lower for k in ['chemical reaction', 'chemical reactions', 'balancing equation', 'combination reaction', 'decomposition reaction', 'displacement reaction', 'redox reaction', 'precipitation reaction', 'oxidation and reduction']):
+        return thinking + (
+            f"### 🧪 **Chemical Reactions and Equations ({grade} - {subject})**\n\n"
+            f"A chemical reaction involves breaking old chemical bonds and forming new chemical bonds to produce new substances with entirely different chemical properties.\n\n"
+            f"#### 📊 **1. The 5 Fundamental Reaction Types (NCERT Class 10):**\n\n"
+            f"| Reaction Type | General Format | Classic CBSE Board Example |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **1. Combination** | $A + B \\rightarrow AB$ | $$\\text{{CaO}} + \\text{{H}}_2\\text{{O}} \\rightarrow \\text{{Ca(OH)}}_2 + \\text{{Heat}} \\quad (\\text{{Slaking of lime}})$$\n"
+            f"| **2. Decomposition** | $AB \\rightarrow A + B$ | $$2\\text{{FeSO}}_4 \\xrightarrow{{\\Delta}} \\text{{Fe}}_2\\text{{O}}_3 + \\text{{SO}}_2 \\uparrow + \\text{{SO}}_3 \\uparrow \\quad (\\text{{Thermal}})$$\n"
+            f"| **3. Displacement** | $A + BC \\rightarrow AC + B$ | $$\\text{{Fe}} + \\text{{CuSO}}_4 \\text{{ (Blue)}} \\rightarrow \\text{{FeSO}}_4 \\text{{ (Pale Green)}} + \\text{{Cu}} \\downarrow$$\n"
+            f"| **4. Double Displacement** | $AB + CD \\rightarrow AD + CB$ | $$\\text{{Na}}_2\\text{{SO}}_4 + \\text{{BaCl}}_2 \\rightarrow \\mathbf{{\\text{{BaSO}}_4 \\downarrow \\text{{ (White ppt)}}}} + 2\\text{{NaCl}}$$\n"
+            f"| **5. Redox (Oxidation-Reduction)** | Transfer of electrons / Oxygen | $$\\text{{CuO}} + \\text{{H}}_2 \\xrightarrow{{\\Delta}} \\text{{Cu}} + \\text{{H}}_2\\text{{O}}$$\n\n"
+            f"#### ⚖️ **2. Why Must Chemical Equations Be Balanced?**\n"
+            f"- According to the **Law of Conservation of Mass**, matter can neither be created nor destroyed in a chemical reaction. Therefore, the total number of atoms of each element on the reactant side must equal the product side.\n\n"
+            f"#### 🔍 **3. Redox Breakdown:**\n"
+            f"- **Oxidation:** Gain of Oxygen OR Loss of Hydrogen (e.g. $\\text{{H}}_2 \\rightarrow \\text{{H}}_2\\text{{O}}$).\n"
+            f"- **Reduction:** Loss of Oxygen OR Gain of Hydrogen (e.g. $\\text{{CuO}} \\rightarrow \\text{{Cu}}$).\n"
+            f"- **Oxidizing Agent:** The substance that provides oxygen / gets reduced (here, $\\text{{CuO}}$).\n"
+            f"- **Reducing Agent:** The substance that removes oxygen / gets oxidized (here, $\\text{{H}}_2$).\n\n"
+            f"Would you like to practice balancing a chemical equation step-by-step?"
+        )
+
     if any(k in q_lower for k in ['photosynthesis', 'plant', 'chlorophyll']):
         if is_hinglish(user_query):
             return thinking + (
@@ -4311,6 +4359,44 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
                 f"- Plants store excess glucose as **Starch** for later energy needs.\n\n"
                 f"Would you like a quick 3-question quiz to test this concept?"
             )
+
+    # 3.0. Comprehensive Ray Diagrams Guide for Spherical Mirrors & Lenses
+    if any(k in q_lower for k in ['ray diagram', 'ray diagrams', 'draw ray', 'image formation by concave', 'image formation by convex', 'image formation by mirror', 'image formation by lens', 'practice ray', 'practice ray diagram', 'practice ray diagrams']):
+        return thinking + (
+            f"### 📐 **Complete Guide to Ray Diagrams for Spherical Mirrors & Lenses ({grade} - {subject})**\n\n"
+            f"Ray diagrams illustrate how light rays travel and intersect to form images. Here are the standardized CBSE NCERT rules and cases for board examinations:\n\n"
+            f"#### 🔍 **1. Four Fundamental Ray Tracing Rules (Mirrors):**\n"
+            f"1. **Rule 1 (Parallel Ray):** A ray parallel to the principal axis passes through the **Principal Focus ($F$)** of a concave mirror (or appears to diverge from the focus of a convex mirror) after reflection.\n"
+            f"2. **Rule 2 (Ray through Focus):** A ray passing through (or directed towards) the **Focus ($F$)** emerges **parallel to the principal axis** after reflection.\n"
+            f"3. **Rule 3 (Ray through Center of Curvature $C$):** A ray passing through $C$ reflects back along the **exact same path** (angle of incidence $\\angle i = 0^\\circ$).\n"
+            f"4. **Rule 4 (Ray at Pole $P$):** A ray striking the Pole $P$ obliquely reflects obliquely at an equal angle ($\\angle i = \\angle r$).\n\n"
+            f"#### 📊 **2. The 6 Image Formation Cases for Concave Mirror:**\n"
+            f"| Object Position | Image Position | Nature of Image | Size of Image | Board Exam Application |\n"
+            f"| :--- | :--- | :--- | :--- | :--- |\n"
+            f"| **1. At Infinity** | At Focus $F$ | Real & Inverted | Highly Diminished (Point-sized) | Solar Concentrators / Furnaces |\n"
+            f"| **2. Beyond $C$** | Between $F$ and $C$ | Real & Inverted | Diminished (Smaller) | Optical Imaging |\n"
+            f"| **3. At $C$** | At $C$ | Real & Inverted | **Same Size as Object** | Standard Laboratory Inversion |\n"
+            f"| **4. Between $C$ and $F$** | Beyond $C$ | Real & Inverted | Enlarged / Magnified | Cinema & Slide Projectors |\n"
+            f"| **5. At $F$** | At Infinity | Real & Inverted | Extremely Magnified | Searchlights & Headlights |\n"
+            f"| **6. Between $F$ and Pole $P$** | **Behind the Mirror** | **Virtual & Erect** | **Highly Enlarged** | **Dentist & Shaving Mirrors** |\n\n"
+            f"#### 🚗 **3. The 2 Image Formation Cases for Convex Mirror:**\n"
+            f"| Object Position | Image Position | Nature of Image | Size of Image | Board Exam Application |\n"
+            f"| :--- | :--- | :--- | :--- | :--- |\n"
+            f"| **1. At Infinity** | Behind mirror at $F$ | Virtual & Erect | Highly Diminished | Street Light Reflectors |\n"
+            f"| **2. Between $\\infty$ and $P$** | Behind mirror between $P$ and $F$ | **Virtual & Erect** | **Diminished (Smaller)** | **Vehicle Rear-View Mirrors** |\n\n"
+            f"#### ✏️ **4. Step-by-Step Drawing Steps for Board Exams:**\n"
+            f"1. Draw a horizontal straight line as the **Principal Axis** with a sharp pencil and ruler.\n"
+            f"2. Mark the **Pole ($P$)**, **Focus ($F$)**, and **Center of Curvature ($C$)** ensuring $PF = FC = f$.\n"
+            f"3. Draw the vertical object arrow $AB$ at the given position.\n"
+            f"4. Draw **Ray 1**: Horizontal from top $A$ parallel to axis $\\rightarrow$ reflects down through Focus $F$.\n"
+            f"5. Draw **Ray 2**: From top $A$ through Center of Curvature $C$ $\\rightarrow$ reflects back along same line.\n"
+            f"6. Mark image point $A'$ where both reflected rays intersect, and draw perpendicular $A'B'$.\n\n"
+            f"#### 🧠 **Practice Problem:**\n"
+            f"*An object 4 cm tall is placed 25 cm in front of a concave mirror of focal length 15 cm ($C = 30\\text{{ cm}}$).*\n"
+            f"- **Position:** Between $C$ and $\\infty$ (Beyond $C$).\n"
+            f"- **Image:** Formed between $F$ and $C$ ($15\\text{{ cm}} < v < 30\\text{{ cm}}$), Real, Inverted, and Diminished.\n\n"
+            f"Would you like to solve a numerical using the Mirror Formula ($\\frac{{1}}{{f}} = \\frac{{1}}{{v}} + \\frac{{1}}{{u}}$)?"
+        )
 
     # 3.1. Specific Direct NCERT Optics Questions:
     # A. Rear-View / Side Mirror in Vehicles
@@ -4478,6 +4564,106 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             "- **Mass Number (A):** Total number of protons + neutrons ($A = Z + n$).\n"
             "- **Valency:** The combining capacity of an atom determined by valence electrons (outermost shell).\n\n"
             "Would you like a quick 3-question quiz to test this concept?"
+        )
+
+    # 4.45. Carbon and Its Compounds
+    if any(k in q_lower for k in ['carbon', 'catenation', 'tetravalency', 'homologous series', 'functional group', 'hydrocarbon', 'alkane', 'alkene', 'alkyne', 'saponification', 'esterification', 'micelle', 'cleansing action']):
+        return thinking + (
+            f"### 💎 **Carbon and Its Compounds ({grade} - {subject})**\n\n"
+            f"Carbon forms millions of organic compounds due to its unique covalent bonding properties.\n\n"
+            f"#### 🌟 **1. The Two Unique Properties of Carbon:**\n"
+            f"1. **Catenation:** The unique ability of carbon atoms to form strong covalent bonds with other carbon atoms, creating long straight chains, branched chains, and closed rings.\n"
+            f"2. **Tetravalency:** Having an atomic number of 6 (electronic configuration 2, 4), carbon has **4 valence electrons** and shares 4 electrons to complete its octet (forming 4 covalent bonds).\n\n"
+            f"#### 🔬 **2. Hydrocarbons & Homologous Series:**\n"
+            f"- **Alkanes (Saturated):** Single bonds only ($C_n H_{{2n+2}}$) e.g., Methane ($CH_4$), Ethane ($C_2H_6$).\n"
+            f"- **Alkenes (Unsaturated):** Double bond ($C_n H_{{2n}}$) e.g., Ethene ($C_2H_4$).\n"
+            f"- **Alkynes (Unsaturated):** Triple bond ($C_n H_{{2n-2}}$) e.g., Ethyne ($C_2H_2$).\n"
+            f"- **Homologous Series:** A family of organic compounds sharing the same functional group where successive members differ by a **$-\\text{{CH}}_2-$** unit ($14\\text{{ u}}$ molecular mass difference).\n\n"
+            f"#### 🧼 **3. Soaps, Saponification & Micelle Formation:**\n"
+            f"- **Saponification Reaction:**\n"
+            f"  $$\\text{{Ester}} + \\text{{NaOH}} \\rightarrow \\text{{Soap (Sodium salt of fatty acid)}} + \\text{{Alcohol (Glycerol)}}$$\n"
+            f"- **Structure of a Soap Molecule:**\n"
+            f"  - **Hydrophilic Head (Ionic end):** Water-loving, points outwards towards water.\n"
+            f"  - **Hydrophobic Tail (Hydrocarbon chain):** Water-fearing (oil-loving), points inwards towards oily dirt.\n"
+            f"- **Cleansing Mechanism:** In water, soap molecules cluster into radial spherical structures called **Micelles**. The oily dirt is trapped in the hydrophobic core of the micelle, forming a stable emulsion that rinses away easily.\n\n"
+            f"Would you like a quick 3-question quiz on carbon compounds?"
+        )
+
+    # 4.46. Life Processes: Circulation & Excretion
+    if any(k in q_lower for k in ['double circulation', 'human heart', 'nephron', 'excretion', 'kidney', 'artery', 'arteries', 'vein', 'veins', 'alveoli', 'dialysis']):
+        return thinking + (
+            f"### ❤️ **Life Processes: Circulation & Excretion ({grade} - {subject})**\n\n"
+            f"#### 🫀 **1. Double Circulation in the Human Heart:**\n"
+            f"In humans, blood passes through the four-chambered heart **twice** during one complete cardiac cycle:\n"
+            f"1. **Pulmonary Circulation:** Deoxygenated blood from Right Ventricle $\\rightarrow$ Pulmonary Artery $\\rightarrow$ Lungs (oxygenated) $\\rightarrow$ Pulmonary Veins $\\rightarrow$ Left Atrium.\n"
+            f"2. **Systemic Circulation:** Oxygenated blood from Left Ventricle $\\rightarrow$ Aorta $\\rightarrow$ Body tissues $\\rightarrow$ Vena Cava $\\rightarrow$ Right Atrium.\n"
+            f"- **Advantage:** Complete separation of oxygenated and deoxygenated blood provides highly efficient oxygen delivery required for maintaining constant body temperature in warm-blooded animals.\n\n"
+            f"#### 🩸 **2. Arteries vs Veins:**\n"
+            f"| Feature | Arteries 🔴 | Veins 🔵 |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Direction** | Carry blood **away from heart** to body organs | Carry blood **towards heart** from body organs |\n"
+            f"| **Blood Nature** | Oxygenated (*Exception: Pulmonary Artery*) | Deoxygenated (*Exception: Pulmonary Vein*) |\n"
+            f"| **Walls & Pressure** | Thick, elastic muscular walls (High pressure) | Thin walls (Low pressure) |\n"
+            f"| **Valves** | No valves needed | Possess internal valves to prevent backflow |\n\n"
+            f"#### 🫘 **3. Excretion & Nephron Structure:**\n"
+            f"- **Nephron:** The structural and functional filtration unit of the kidney ($~1\\text{{ million}}$ per kidney).\n"
+            f"- **Step 1: Ultrafiltration:** Blood enters through the afferent arteriole under pressure into the **Glomerulus**; filtrate collects in **Bowman's Capsule**.\n"
+            f"- **Step 2: Selective Reabsorption:** In the tubular part (PCT and Loop of Henle), essential nutrients (**Glucose, Amino acids, Salts, and Major Water**) are reabsorbed back into capillaries.\n"
+            f"- **Step 3: Tubular Secretion & Urine Collection:** Waste (Urea, excess ions) flows into the **Collecting Duct** as urine.\n\n"
+            f"Would you like a quick 3-question quiz on human physiology?"
+        )
+
+    # 4.47. Control, Coordination & Heredity
+    if any(k in q_lower for k in ['neuron', 'synapse', 'reflex arc', 'human brain', 'cerebrum', 'cerebellum', 'phytohormone', 'auxin', 'mendel', 'monohybrid', 'dihybrid', 'sex determination']):
+        return thinking + (
+            f"### 🧠 **Control, Coordination & Heredity ({grade} - {subject})**\n\n"
+            f"#### ⚡ **1. Structure of a Neuron & Nerve Impulse:**\n"
+            f"- **Dendrite:** Receives chemical signals and converts them into electrical impulses.\n"
+            f"- **Cell Body (Cyton) & Axon:** Transmits the electrical impulse along the nerve fiber.\n"
+            f"- **Synapse:** The microscopic gap between the axon terminal of one neuron and dendrite of the next. Electrical impulses trigger the release of neurotransmitter chemicals across the synapse.\n"
+            f"- **Reflex Arc Pathway:**\n"
+            f"  $$\\text{{Stimulus}} \\rightarrow \\text{{Receptor}} \\rightarrow \\text{{Sensory Neuron}} \\rightarrow \\mathbf{{\\text{{Spinal Cord (Relay Neuron)}}}} \\rightarrow \\text{{Motor Neuron}} \\rightarrow \\text{{Effector (Muscle)}}$$\n\n"
+            f"#### 🌿 **2. Plant Phytohormones:**\n"
+            f"- **Auxin:** Promotes cell elongation (causes shoot to bend towards light — phototropism).\n"
+            f"- **Gibberellins:** Promotes stem elongation and seed germination.\n"
+            f"- **Cytokinins:** Promotes rapid cell division (present in high concentration in fruits/seeds).\n"
+            f"- **Abscisic Acid (ABA):** Growth inhibitor / stress hormone (causes wilting of leaves).\n\n"
+            f"#### 🧬 **3. Mendel's Laws of Heredity & Crosses:**\n"
+            f"1. **Monohybrid Cross (Single Trait - Height $TT \\times tt$):**\n"
+            f"   - **F1 Generation:** All Tall ($Tt$).\n"
+            f"   - **F2 Phenotypic Ratio:** **$3 : 1$** (3 Tall : 1 Dwarf).\n"
+            f"   - **F2 Genotypic Ratio:** **$1 : 2 : 1$** ($1\\text{{ }}TT : 2\\text{{ }}Tt : 1\\text{{ }}tt$).\n"
+            f"2. **Dihybrid Cross (Two Traits - Shape & Color $RRYY \\times rryy$):**\n"
+            f"   - **F2 Phenotypic Ratio:** **$9 : 3 : 3 : 1$** (Round-Yellow : Round-Green : Wrinkled-Yellow : Wrinkled-Green).\n"
+            f"3. **Sex Determination in Humans:**\n"
+            f"   - Females have **$XX$** chromosomes (produce all $X$ eggs).\n"
+            f"   - Males have **$XY$** chromosomes (produce 50% $X$ and 50% $Y$ sperms).\n"
+            f"   - Fertilization with $X$-sperm produces a **Girl ($XX$)**; fertilization with $Y$-sperm produces a **Boy ($XY$)**. Thus, the father's sperm determines the baby's biological sex with an exact **$50\\% : 50\\%$ probability**.\n\n"
+            f"Would you like a quick 3-question genetics quiz?"
+        )
+
+    # 4.48. Computer Networks (PAN, LAN, MAN, WAN, Topologies)
+    if any(k in q_lower for k in ['pan, lan', 'lan', 'wan', 'man', 'network topology', 'computer network', 'star topology', 'bus topology', 'transmission media', 'twisted pair', 'coaxial', 'optical fiber', 'mac address', 'ip address', 'http vs https']) or ('network' in q_lower and any(k in q_lower for k in ['topolog', 'type', 'difference', 'lan', 'wan'])):
+        return thinking + (
+            f"### 🌐 **Computer Networks & Topologies ({grade} - {subject})**\n\n"
+            f"A **Computer Network** is an interconnection of autonomous computing devices allowing data, resource, and service sharing.\n\n"
+            f"#### 🗺️ **1. Types of Networks by Geographic Scale:**\n"
+            f"| Network Type | Full Name | Geographic Scope | Speed & Ownership |\n"
+            f"| :--- | :--- | :--- | :--- |\n"
+            f"| **PAN** | Personal Area Network | Within 10 meters (Bluetooth, Hotspot) | Very fast, Single personal device |\n"
+            f"| **LAN** | Local Area Network | Single room, school lab, or building | High data transfer speed, Private ownership |\n"
+            f"| **MAN** | Metropolitan Area Network | Across an entire city (Cable TV, City Wi-Fi) | Moderate speed, Public/Private |\n"
+            f"| **WAN** | Wide Area Network | Across countries/continents (The Internet) | Variable speed, Telecom providers |\n\n"
+            f"#### 🕸️ **2. Network Topologies (Physical Layout):**\n"
+            f"1. **Star Topology:** All nodes connect directly to a central **Hub / Switch**. If one cable breaks, only that node fails; if central hub fails, the entire network goes down.\n"
+            f"2. **Bus Topology:** All nodes connect to a single shared backbone cable with terminators at both ends. Inexpensive, but difficult to troubleshoot cable faults.\n"
+            f"3. **Mesh Topology:** Every node is connected to every other node (dedicated point-to-point links). Highly fault-tolerant and secure, but costly.\n"
+            f"4. **Tree Topology:** Hierarchical combination of Star and Bus layouts.\n\n"
+            f"#### 📡 **3. Transmission Media & Protocols:**\n"
+            f"- **Guided (Wired):** Optical Fiber (light pulses - fastest and immune to electromagnetic interference), Twisted Pair (Ethernet CAT6), Coaxial.\n"
+            f"- **Unguided (Wireless):** Radio waves, Microwaves, Infrared, Satellite.\n"
+            f"- **MAC vs IP Address:** MAC address is a 48-bit permanent hardware address assigned by the manufacturer (NIC); IP address is a 32-bit (IPv4) or 128-bit (IPv6) logical network address assigned dynamically.\n\n"
+            f"Would you like a quick 3-question quiz on computer networks?"
         )
 
     # Primary Math Concepts (Classes 1-5)
