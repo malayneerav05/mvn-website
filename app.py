@@ -1040,15 +1040,26 @@ def generate_dynamic_cbse_quiz(grade, subject, query=""):
             ("Plant Transport - Xylem & Phloem", "The transport of soluble products of photosynthesis in phloem tissue is called:", ["Transpiration", "Translocation", "Evaporation", "Osmosis"], "B")
         ]
 
-    # 9. PHYSICS: LIGHT - REFLECTION & REFRACTION (Class 10 Chapter 9)
-    elif any(k in s_lower for k in ['light', 'reflection', 'refraction', 'mirror formula', 'lens formula', 'concave mirror', 'convex lens', 'refractive index']):
+    # 9. PHYSICS: LIGHT - REFLECTION, REFRACTION & LENS POWER (Class 10 Chapter 9 & 10)
+    elif any(k in s_lower for k in [
+        'light', 'reflection', 'refraction', 'mirror', 'mirrors', 'lens', 'lenses',
+        'power of lens', 'dioptre', 'diopter', 'concave', 'convex', 'focal length',
+        'myopia', 'hypermetropia', 'presbyopia', 'prism', 'spectrum', 'rainbow',
+        'optics', 'refractive index', 'snell', 'magnification', 'ray diagram', 'retina',
+        'twinkling of stars', 'scattering of light', 'tyndall', 'dispersion'
+    ]):
         topic_display = "Physics: Light - Reflection & Refraction"
         pool = [
+            ("Lens Power ($P = 1/f$)", "What is the SI unit of Power of a lens ($P = 1/f$ in meters)?", ["Watt", "Dioptre (D)", "Lumen", "Metre"], "B"),
+            ("Power of Lens Calculation", "A convex lens has a focal length of $+50\\text{ cm}$ ($+0.5\\text{ m}$). What is its optical power ($P$)?", ["$+0.5\\text{ D}$", "$+2.0\\text{ D}$ ($P = +1/0.5$)", "$-2.0\\text{ D}$", "$+5.0\\text{ D}$"], "B"),
+            ("Eye Defects - Myopia", "Myopia (near-sightedness) is corrected using which type of lens?", ["Convex Lens", "Concave Lens (Diverging)", "Cylindrical Lens", "Bifocal Lens"], "B"),
+            ("Eye Defects - Hypermetropia", "Hypermetropia (far-sightedness) is corrected using which type of lens?", ["Concave Lens", "Convex Lens (Converging)", "Plano-concave Lens", "Cylindrical Lens"], "B"),
             ("Spherical Mirrors", "An object is placed at the Center of Curvature ($C$) of a concave mirror. Where is the real inverted image formed?", ["At Focus ($F$)", "At Center of Curvature ($C$)", "Beyond $C$", "Behind mirror"], "B"),
             ("Mirror Formula", "Which of the following is the correct Mirror Formula connecting focal length $f$, image distance $v$, and object distance $u$?", ["$\\frac{1}{f} = \\frac{1}{v} - \\frac{1}{u}$", "$\\frac{1}{f} = \\frac{1}{v} + \\frac{1}{u}$", "$f = v + u$", "$m = -\\frac{u}{v}$"], "B"),
-            ("Lens Power", "What is the SI unit of Power of a lens ($P = 1/f$ in meters)?", ["Watt", "Dioptre (D)", "Lumen", "Metre"], "B"),
+            ("Lens Formula", "Which of the following is the correct Lens Formula connecting focal length $f$, image distance $v$, and object distance $u$?", ["$\\frac{1}{f} = \\frac{1}{v} + \\frac{1}{u}$", "$\\frac{1}{f} = \\frac{1}{v} - \\frac{1}{u}$", "$f = v - u$", "$m = -\\frac{v}{u}$"], "B"),
             ("Refraction & Snell's Law", "When a light ray travels from an optically rarer medium (air) to an optically denser medium (glass), it bends:", ["Away from normal", "Towards the normal", "Without bending", "Reflects back 180°"], "B"),
-            ("Convex Mirror Applications", "Why are convex mirrors preferred as rear-view side mirrors in vehicles?", ["Produce inverted magnified image", "Always give an erect, diminished image with a wider field of view", "Absorb all sunlight", "Have infinite focal length"], "B")
+            ("Convex Mirror Applications", "Why are convex mirrors preferred as rear-view side mirrors in vehicles?", ["Produce inverted magnified image", "Always give an erect, diminished image with a wider field of view", "Absorb all sunlight", "Have infinite focal length"], "B"),
+            ("Atmospheric Refraction", "The twinkling of stars at night is caused by which optical phenomenon?", ["Total Internal Reflection", "Atmospheric Refraction of starlight", "Dispersion of light", "Scattering of light"], "B")
         ]
 
     # 10. PHYSICS: ELECTRICITY & CIRCUITS (Class 10 Chapter 11)
