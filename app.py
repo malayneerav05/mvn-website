@@ -4157,6 +4157,598 @@ def generate_formula_sheet_response(query, grade, subject, history=None):
     )
 
 
+def extract_conversation_context(history):
+    """
+    Extracts structured conversational context from chat history across all CBSE grades:
+    - active_topic: key identifier of the primary academic subject matter
+    - active_subject: Physics, Chemistry, Biology, Mathematics, Computer Science, English, etc.
+    - active_grade: Class 10, Class 12, Class 9, Primary (1-5), etc.
+    - numerical_data: extracted numerical variables {m, a, v, u, t, F, V, I, R, KE}
+    - last_ai_message & last_user_message
+    """
+    if not history or not isinstance(history, list):
+        return {
+            "topic": None, "subject": "General Science", "grade": "Class 10",
+            "numerical_data": {}, "last_ai_text": "", "last_user_text": ""
+        }
+
+    history_texts = []
+    numerical_data = {}
+    last_ai_text = ""
+    last_user_text = ""
+
+    for item in reversed(history[-10:]):
+        txt = ""
+        role = ""
+        if isinstance(item, dict):
+            role = item.get('role', '')
+            txt = item.get('text') or item.get('content') or item.get('message') or ""
+        elif isinstance(item, str):
+            txt = item
+        
+        if not last_ai_text and role in ['model', 'assistant', 'ai']:
+            last_ai_text = txt
+        if not last_user_text and role == 'user':
+            last_user_text = txt
+        if txt:
+            history_texts.append(txt)
+
+    combined_history = " ".join(history_texts).lower()
+
+    # Extract numerical variables if present in history
+    p_m = re.search(r'\bmass\s*(?:is|=|of)?\s*(\d+(?:\.\d+)?)\s*kg\b', combined_history) or re.search(r'\b(\d+(?:\.\d+)?)\s*kg\b', combined_history)
+    if p_m: numerical_data['m'] = float(p_m.group(1))
+
+    p_a = re.search(r'\baccel\w*\s*(?:is|=|of)?\s*(\d+(?:\.\d+)?)\s*(?:m\/s\^?2|m\/s2|mps2)\b', combined_history) or re.search(r'\b(\d+(?:\.\d+)?)\s*(?:m\/s\^?2|m\/s2|mps2)\b', combined_history)
+    if p_a: numerical_data['a'] = float(p_a.group(1))
+
+    p_v = re.search(r'\bvelocity\s*(?:is|=|of)?\s*(\d+(?:\.\d+)?)\s*(?:m\/s|mps)\b', combined_history) or re.search(r'\b(\d+(?:\.\d+)?)\s*(?:m\/s|mps)\b', combined_history)
+    if p_v: numerical_data['v'] = float(p_v.group(1))
+
+    p_t = re.search(r'\b(?:time|for|in)\s*(\d+(?:\.\d+)?)\s*(?:s|sec|seconds)\b', combined_history)
+    if p_t: numerical_data['t'] = float(p_t.group(1))
+
+    p_volt = re.search(r'\b(?:voltage|potential difference|p\.d\.)\s*(?:is|=|of)?\s*(\d+(?:\.\d+)?)\s*v\b', combined_history) or re.search(r'\b(\d+(?:\.\d+)?)\s*v\b', combined_history)
+    if p_volt: numerical_data['V'] = float(p_volt.group(1))
+
+    p_res = re.search(r'\bresistance\s*(?:is|=|of)?\s*(\d+(?:\.\d+)?)\s*(?:ohm|Ω)\b', combined_history) or re.search(r'\b(\d+(?:\.\d+)?)\s*(?:ohm|Ω)\b', combined_history)
+    if p_res: numerical_data['R'] = float(p_res.group(1))
+
+    # Detect topic key in order of specificity
+    topic = None
+    if any(k in combined_history for k in ['sn1', 'sn2', 'walden inversion', 'racemisation', 'nucleophilic substitution']):
+        topic = 'sn1_sn2'
+    elif any(k in combined_history for k in ['chain rule', 'derivative', 'differentiat', 'd/dx', 'sin(x^2)']):
+        topic = 'calculus_derivatives'
+    elif any(k in combined_history for k in ['linear search', 'binary search', 'time complexity of search']):
+        topic = 'binary_search'
+    elif any(k in combined_history for k in ['where vs having', 'having clause', 'where clause']):
+        topic = 'sql_where_having'
+    elif any(k in combined_history for k in ['parenchyma', 'collenchyma', 'sclerenchyma', 'simple permanent tissue']):
+        topic = 'plant_tissues'
+    elif any(k in combined_history for k in ['xylem', 'phloem', 'complex permanent tissue', 'translocation']):
+        topic = 'xylem_phloem'
+    elif any(k in combined_history for k in ['fe + h2o', 'fe3o4', 'balance chemical equation', 'balancing equation']):
+        topic = 'chemical_balancing'
+    elif any(k in combined_history for k in ['ohm', 'voltage', 'current', 'resistor', 'resistance', 'circuit']):
+        topic = 'ohms_law'
+    elif any(k in combined_history for k in ['kinetic energy', 'ke =', '0.5 * m * v']):
+        topic = 'kinetic_energy'
+    elif any(k in combined_history for k in ['accelerat', 'velocity', 'from rest', 'kinematics', 'equations of motion']):
+        topic = 'kinematics'
+    elif any(k in combined_history for k in ['newton', 'force', 'f = ma', 'f=ma', 'mass and acceleration']):
+        topic = 'newton_second'
+    elif any(k in combined_history for k in ['action reaction', 'action and reaction', 'third law', 'recoil']):
+        topic = 'newton_third'
+    elif any(k in combined_history for k in ['inertia', 'first law', 'law of inertia']):
+        topic = 'newton_first'
+    elif any(k in combined_history for k in ['friction', 'gharsan']):
+        topic = 'friction'
+    elif any(k in combined_history for k in ['stomata', 'guard cells']):
+        topic = 'stomata'
+    elif any(k in combined_history for k in ['photosynthesis', 'chlorophyll', 'glucose', 'plant food']):
+        topic = 'photosynthesis'
+    elif any(k in combined_history for k in ['bird', 'birds', 'feather', 'feathers', 'flightless', 'ostrich', 'penguin', 'kiwi']):
+        topic = 'birds_feathers'
+    elif any(k in combined_history for k in ['lion', 'king of the jungle', 'jungle king', 'wild animal', 'carnivore']):
+        topic = 'lion_animals'
+    elif any(k in combined_history for k in ['seed', 'seeds', 'germination', 'sprout', 'sprouting', 'sammy']):
+        topic = 'seeds_germination'
+    elif any(k in combined_history for k in ['water cycle', 'droppy', 'evaporation', 'condensation', 'precipitation']):
+        topic = 'water_cycle'
+    elif any(k in combined_history for k in ['quadratic', 'roots of equation', 'ax^2 + bx + c', 'discriminant']):
+        topic = 'quadratic'
+    elif any(k in combined_history for k in ['trigonometry', 'sin theta', 'cos theta', 'pythagorean identity']):
+        topic = 'trigonometry'
+    elif any(k in combined_history for k in ['convex mirror', 'rear view', 'rear-view', 'side mirror']):
+        topic = 'convex_rear_view'
+    elif any(k in combined_history for k in ['concave mirror', 'dentist mirror', 'shaving mirror', 'headlight']):
+        topic = 'concave_mirror'
+    elif any(k in combined_history for k in ['myopia', 'hypermetropia', 'presbyopia', 'eye defect']):
+        topic = 'eye_defects'
+    elif any(k in combined_history for k in ['sky is blue', 'twinkle', 'twinkling', 'danger signal']):
+        topic = 'atmospheric_optics'
+    elif any(k in combined_history for k in ['pan', 'lan', 'man', 'wan', 'topology', 'topologies', 'star topology', 'bus topology']):
+        topic = 'computer_networks'
+    elif any(k in combined_history for k in ['acid', 'base', 'salt', 'ph scale', 'neutralization']):
+        topic = 'acids_bases'
+    elif any(k in combined_history for k in ['catenation', 'tetravalency', 'hydrocarbon', 'soap', 'micelle']):
+        topic = 'carbon_compounds'
+    elif any(k in combined_history for k in ['double circulation', 'heart', 'artery', 'vein', 'nephron', 'kidney']):
+        topic = 'circulation_excretion'
+    elif any(k in combined_history for k in ['bpt', 'thales', 'proportionality theorem']):
+        topic = 'thales_theorem'
+
+    return {
+        "topic": topic,
+        "numerical_data": numerical_data,
+        "last_ai_text": last_ai_text,
+        "last_user_text": last_user_text
+    }
+
+
+def format_suggested_next_steps(topic_key, grade, subject, is_hing=False):
+    """Appends 2-3 engaging, contextual next-step prompts at the end of a response."""
+    if is_hing:
+        suggestions = [
+            "🔢 *\"Is concept par ek numerical solve karwao\"*",
+            "🌍 *\"Real life me iske 3 examples do\"*",
+            "🎯 *\"Mujhe is topic par 3-question quiz do\"*"
+        ]
+        if topic_key in ['photosynthesis', 'ohms_law', 'kinematics', 'newton_second', 'sn1_sn2', 'plant_tissues']:
+            suggestions.append(f"🎓 *\"Now explain this for Class 12 / Class 10\"*")
+        return (
+            "\n\n---\n💡 **Is chat me aage kya poochna chahte hain?**\n" +
+            "\n".join([f"- {s}" for s in suggestions[:3]])
+        )
+    else:
+        suggestions = [
+            "🔢 *\"Solve a step-by-step numerical problem on this\"*",
+            "🌍 *\"Give me 3 real-world daily life examples\"*",
+            "🎯 *\"Test me with a 3-question practice quiz\"*"
+        ]
+        if topic_key in ['photosynthesis', 'ohms_law', 'kinematics', 'newton_second', 'sn1_sn2', 'plant_tissues']:
+            suggestions.append(f"🎓 *\"Now explain this for Class 12 / Class 10\"*")
+        return (
+            "\n\n---\n💡 **Suggested Next Steps in this Chat:**\n" +
+            "\n".join([f"- {s}" for s in suggestions[:3]])
+        )
+
+
+def is_numerical_request_for_previous_concept(query, history=None):
+    """Detects if student is requesting a numerical/calculation problem based on the active topic in chat history."""
+    if not history or not isinstance(history, list):
+        return False
+    q = query.strip().lower()
+    triggers = [
+        'give me a numerical on this', 'give numerical on this', 'solve a numerical on this',
+        'give me a numerical problem', 'numerical solve karwao', 'numerical problem on this',
+        'practice problem on this', 'math problem on this', 'solve a problem on this',
+        'is par numerical solve karwao', 'is par question solve karwao', 'ek numerical do',
+        'give a numerical', 'give numerical', 'practice numerical', 'numerical question'
+    ]
+    return any(t in q for t in triggers) or (
+        any(k in q for k in ['numerical', 'math problem', 'calculate problem', 'practice problem']) and
+        any(k in q for k in ['on this', 'for this', 'is par', 'iska', 'about this', 'related to this'])
+    )
+
+
+def generate_contextual_numerical_problem(query, grade, subject, history=None):
+    """Generates and solves a step-by-step numerical problem for the active topic in conversation history."""
+    ctx = extract_conversation_context(history)
+    topic = ctx.get('topic') or 'ohms_law'
+    is_hing = is_hinglish(query)
+    thinking = format_thinking_block(query, "State A / Contextual Numerical Generator", f"Generate and solve grade-appropriate numerical problem for active topic ({topic})", is_math=True)
+
+    # 1. Ohm's Law ($V = IR$)
+    if topic == 'ohms_law':
+        return thinking + (
+            f"### 🔢 **Step-by-Step Physics Numerical: Ohm's Law ({grade} - {subject})**\n\n"
+            f"#### ❓ **Problem Statement:**\n"
+            f"*An electric heater connected to a $220\\text{{ V}}$ household supply draws a current of $5\\text{{ A}}$. Calculate the electrical resistance ($R$) of the heater coil.*\n\n"
+            f"#### 📐 **Step 1: Formula Required**\n"
+            f"According to Ohm's Law ($V = IR$):\n"
+            f"$$R = \\frac{{V}}{{I}}$$\n\n"
+            f"#### 📋 **Step 2: Given Data**\n"
+            f"- **Potential Difference ($V$):** $220\\text{{ V}}$\n"
+            f"- **Electric Current ($I$):** $5\\text{{ A}}$\n\n"
+            f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+            f"$$R = \\frac{{220\\text{{ V}}}}{{5\\text{{ A}}}} = 44\\ \\Omega$$\n\n"
+            f"#### 🎯 **Final Answer (with correct SI units):**\n"
+            f"$$\\mathbf{{R = 44\\ \\Omega\\text{{ (Ohms)}}}}$$\n\n"
+            f"*The calculated electrical resistance of the heater coil is **$44\\ \\Omega$**.*"
+        ) + format_suggested_next_steps('ohms_law', grade, subject, is_hing)
+
+    # 2. Newton's Second Law ($F = ma$)
+    elif topic in ['newton_second', 'newton_first']:
+        return thinking + (
+            f"### 🔢 **Step-by-Step Physics Numerical: Newton's Second Law ({grade} - {subject})**\n\n"
+            f"#### ❓ **Problem Statement:**\n"
+            f"*A cricket ball of mass $0.2\\text{{ kg}}$ is hit such that its acceleration is $50\\text{{ m/s}}^2$. Calculate the net force ($F$) exerted on the ball.*\n\n"
+            f"#### 📐 **Step 1: Formula Required**\n"
+            f"According to **Newton's Second Law of Motion**:\n"
+            f"$$F = m \\times a$$\n\n"
+            f"#### 📋 **Step 2: Given Data**\n"
+            f"- **Mass of the ball ($m$):** $0.2\\text{{ kg}}$\n"
+            f"- **Acceleration ($a$):** $50\\text{{ m/s}}^2$\n\n"
+            f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+            f"$$F = 0.2\\text{{ kg}} \\times 50\\text{{ m/s}}^2 = 10\\text{{ N}}$$\n\n"
+            f"#### 🎯 **Final Answer (with correct SI units):**\n"
+            f"$$\\mathbf{{F = 10\\text{{ N (Newtons)}}}}$$\n\n"
+            f"*The calculated force exerted on the ball is **$10\\text{{ N}}$**.*"
+        ) + format_suggested_next_steps('newton_second', grade, subject, is_hing)
+
+    # 3. Kinematics ($v = u + at, s = ut + 0.5at^2$)
+    elif topic == 'kinematics':
+        return thinking + (
+            f"### 🔢 **Step-by-Step Physics Numerical: Equations of Motion ({grade} - {subject})**\n\n"
+            f"#### ❓ **Problem Statement:**\n"
+            f"*A bus starts from rest and moves with a uniform acceleration of $2\\text{{ m/s}}^2$ for $8\\text{{ seconds}}$. Find (a) its final speed and (b) distance covered.*\n\n"
+            f"#### 📐 **Step 1: Formulas Required**\n"
+            f"1. **Final Velocity ($v$):** $$v = u + at$$\n"
+            f"2. **Distance Travelled ($s$):** $$s = ut + \\frac{{1}}{{2}}at^2$$\n\n"
+            f"#### 📋 **Step 2: Given Data**\n"
+            f"- **Initial Velocity ($u$):** $0\\text{{ m/s}}$ (starts from rest)\n"
+            f"- **Acceleration ($a$):** $2\\text{{ m/s}}^2$\n"
+            f"- **Time taken ($t$):** $8\\text{{ s}}$\n\n"
+            f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+            f"1. **Velocity Calculation:**\n"
+            f"   $$v = 0 + (2 \\times 8) = 16\\text{{ m/s}}$$\n"
+            f"2. **Distance Calculation:**\n"
+            f"   $$s = (0 \\times 8) + \\frac{{1}}{{2}} \\times 2 \\times (8)^2 = 0 + (1 \\times 64) = 64\\text{{ meters}}$$\n\n"
+            f"#### 🎯 **Final Answer (with correct SI units):**\n"
+            f"$$\\mathbf{{v = 16\\text{{ m/s}}, \\quad s = 64\\text{{ meters}}}}$$"
+        ) + format_suggested_next_steps('kinematics', grade, subject, is_hing)
+
+    # 4. Kinetic Energy ($KE = 0.5 m v^2$)
+    elif topic == 'kinetic_energy':
+        return thinking + (
+            f"### 🔢 **Step-by-Step Physics Numerical: Kinetic Energy ({grade} - {subject})**\n\n"
+            f"#### ❓ **Problem Statement:**\n"
+            f"*Calculate the kinetic energy of an automobile of mass $800\\text{{ kg}}$ travelling with a constant velocity of $20\\text{{ m/s}}$.*\n\n"
+            f"#### 📐 **Step 1: Formula Required**\n"
+            f"$$E_k = \\frac{{1}}{{2}} m v^2$$\n\n"
+            f"#### 📋 **Step 2: Given Data**\n"
+            f"- **Mass ($m$):** $800\\text{{ kg}}$\n"
+            f"- **Velocity ($v$):** $20\\text{{ m/s}}$\n\n"
+            f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+            f"$$E_k = \\frac{{1}}{{2}} \\times 800 \\times (20)^2 = 400 \\times 400 = 160,000\\text{{ Joules}} = 160\\text{{ kJ}}$$\n\n"
+            f"#### 🎯 **Final Answer (with correct SI units):**\n"
+            f"$$\\mathbf{{E_k = 160,000\\text{{ J}} \\quad (\\text{{or }} 160\\text{{ kJ}})}}$$\n\n"
+            f"*The calculated kinetic energy of the vehicle is **$160\\text{{ kJ}}$**.*"
+        ) + format_suggested_next_steps('kinetic_energy', grade, subject, is_hing)
+
+    # 5. Quadratic Equations
+    elif topic == 'quadratic':
+        return thinking + (
+            f"### 📐 **Step-by-Step Math Solution: Quadratic Equation ({grade} - Mathematics)**\n\n"
+            f"#### ❓ **Problem:** Solve the quadratic equation: $$x^2 - 7x + 10 = 0$$\n\n"
+            f"#### 📐 **Step 1: Standard Quadratic Formula**\n"
+            f"$$x = \\frac{{-b \\pm \\sqrt{{b^2 - 4ac}}}}{{2a}}$$\n\n"
+            f"#### 📋 **Step 2: Identify Coefficients**\n"
+            f"- $a = 1, \\quad b = -7, \\quad c = 10$\n\n"
+            f"#### 🧮 **Step 3: Calculate Discriminant ($D$)**\n"
+            f"$$D = b^2 - 4ac = (-7)^2 - 4(1)(10) = 49 - 40 = 9$$\n\n"
+            f"#### 🧮 **Step 4: Value Substitution**\n"
+            f"$$x = \\frac{{-(-7) \\pm \\sqrt{{9}}}}{{2(1)}} = \\frac{{7 \\pm 3}}{{2}}$$\n"
+            f"- $$x_1 = \\frac{{7 + 3}}{{2}} = \\frac{{10}}{{2}} = 5$$\n"
+            f"- $$x_2 = \\frac{{7 - 3}}{{2}} = \\frac{{4}}{{2}} = 2$$\n\n"
+            f"#### 🎯 **Final Answer (Roots):**\n"
+            f"$$\\mathbf{{x_1 = 5, \\quad x_2 = 2}}$$"
+        ) + format_suggested_next_steps('quadratic', grade, subject, is_hing)
+
+    # 6. Default Contextual Problem
+    return thinking + (
+        f"### 🔢 **Step-by-Step Numerical Practice Problem ({grade} - {subject})**\n\n"
+        f"#### ❓ **Problem:**\n"
+        f"*A body of mass $5\\text{{ kg}}$ moving at $10\\text{{ m/s}}$ accelerates uniformly to $20\\text{{ m/s}}$ in $5\\text{{ seconds}}$. Find (a) acceleration and (b) force applied.*\n\n"
+        f"#### 📐 **Step 1: Formulas Required**\n"
+        f"1. $$a = \\frac{{v - u}}{{t}}$$\n"
+        f"2. $$F = m \\times a$$\n\n"
+        f"#### 📋 **Step 2: Given Data**\n"
+        f"- $m = 5\\text{{ kg}}, \\quad u = 10\\text{{ m/s}}, \\quad v = 20\\text{{ m/s}}, \\quad t = 5\\text{{ s}}$\n\n"
+        f"#### 🧮 **Step 3: Step-by-Step Calculation**\n"
+        f"1. $$a = \\frac{{20 - 10}}{{5}} = \\frac{{10}}{{5}} = 2\\text{{ m/s}}^2$$\n"
+        f"2. $$F = 5\\text{{ kg}} \\times 2\\text{{ m/s}}^2 = 10\\text{{ N}}$$\n\n"
+        f"#### 🎯 **Final Answer:**\n"
+        f"$$\\mathbf{{a = 2\\text{{ m/s}}^2, \\quad F = 10\\text{{ N}}}}$$"
+    ) + format_suggested_next_steps(topic, grade, subject, is_hing)
+
+
+def is_numerical_parameter_modification(query, history=None):
+    """Detects if student is asking 'What if...' modifying a variable from previous numerical problem."""
+    if not history or not isinstance(history, list):
+        return False
+    q = query.strip().lower()
+    is_what_if = any(k in q for k in ['what if', 'agar', 'if mass is', 'if velocity is', 'if voltage is', 'if resistance is', 'if time is', 'what if the mass', 'what if acceleration', 'if the mass was', 'agar mass', 'agar velocity'])
+    has_num = bool(re.search(r'\b\d+(?:\.\d+)?\b', q))
+    return is_what_if and has_num
+
+
+def solve_numerical_with_modified_params(query, grade, subject, history=None):
+    """Re-calculates the active numerical problem with student's modified parameter."""
+    ctx = extract_conversation_context(history)
+    topic = ctx.get('topic') or 'newton_second'
+    old_data = ctx.get('numerical_data', {})
+    is_hing = is_hinglish(query)
+    q_lower = query.lower()
+
+    thinking = format_thinking_block(query, "State A / Numerical Parameter Modification", f"Re-solve active numerical problem ({topic}) with modified parameter", is_math=True)
+
+    # 1. Force ($F = ma$): modified mass or acceleration
+    if topic in ['newton_second', 'newton_first', 'force']:
+        p_m = re.search(r'(?:mass\s*(?:is|=|was)?\s*)?(\d+(?:\.\d+)?)\s*kg', q_lower) or re.search(r'(\d+(?:\.\d+)?)\s*kg', q_lower)
+        p_a = re.search(r'(?:accel\w*\s*(?:is|=|was)?\s*)?(\d+(?:\.\d+)?)\s*(?:m\/s\^?2|m\/s2|mps2)', q_lower)
+        
+        m_val = float(p_m.group(1)) if p_m else old_data.get('m', 10.0)
+        a_val = float(p_a.group(1)) if p_a else old_data.get('a', 5.0)
+        f_val = m_val * a_val
+        m_s, a_s, f_s = fmt_num(m_val), fmt_num(a_val), fmt_num(f_val)
+
+        return thinking + (
+            f"### 🔢 **Updated Step-by-Step Calculation: Newton's Second Law ({grade} - {subject})**\n\n"
+            f"Let's see what happens when we update the parameters:\n\n"
+            f"#### 📐 **Step 1: Formula Required**\n"
+            f"$$F = m \\times a$$\n\n"
+            f"#### 📋 **Step 2: Updated Given Data**\n"
+            f"- **Mass ($m$):** **${m_s}\\text{{ kg}}$** *(Updated)*\n"
+            f"- **Acceleration ($a$):** **${a_s}\\text{{ m/s}}^2$**\n\n"
+            f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+            f"$$F = {m_s}\\text{{ kg}} \\times {a_s}\\text{{ m/s}}^2 = {f_s}\\text{{ N}}$$\n\n"
+            f"#### 🎯 **Final Answer (with correct SI units):**\n"
+            f"$$\\mathbf{{F = {f_s}\\text{{ N (Newtons)}}}}$$\n\n"
+            f"*With a mass of **{m_s} kg** and acceleration of **{a_s} m/s²**, the new net force is **{f_s} N**.*"
+        ) + format_suggested_next_steps('newton_second', grade, subject, is_hing)
+
+    # 2. Ohm's Law ($V = IR$): modified Voltage or Resistance
+    if topic == 'ohms_law':
+        p_v = re.search(r'(?:voltage\s*(?:is|=|was)?\s*)?(\d+(?:\.\d+)?)\s*v\b', q_lower)
+        p_r = re.search(r'(?:resistance\s*(?:is|=|was)?\s*)?(\d+(?:\.\d+)?)\s*(?:ohm|Ω)', q_lower)
+
+        v_val = float(p_v.group(1)) if p_v else old_data.get('V', 24.0)
+        r_val = float(p_r.group(1)) if p_r else old_data.get('R', 4.0)
+        i_val = v_val / r_val if r_val != 0 else 0
+        v_s, r_s, i_s = fmt_num(v_val), fmt_num(r_val), fmt_num(i_val)
+
+        return thinking + (
+            f"### 🔢 **Updated Step-by-Step Calculation: Ohm's Law ({grade} - {subject})**\n\n"
+            f"Let's calculate the current with your updated values:\n\n"
+            f"#### 📐 **Step 1: Formula Required**\n"
+            f"$$I = \\frac{{V}}{{R}}$$\n\n"
+            f"#### 📋 **Step 2: Updated Given Data**\n"
+            f"- **Potential Difference ($V$):** **${v_s}\\text{{ V}}$** *(Updated)*\n"
+            f"- **Resistance ($R$):** **${r_s}\\ \\Omega$**\n\n"
+            f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+            f"$$I = \\frac{{{v_s}\\text{{ V}}}}{{{r_s}\\ \\Omega}} = {i_s}\\text{{ A}}$$\n\n"
+            f"#### 🎯 **Final Answer (with correct SI units):**\n"
+            f"$$\\mathbf{{I = {i_s}\\text{{ Amperes (A)}}}}$$\n\n"
+            f"*With **{v_s} V** and **{r_s} $\\Omega$**, the resulting electric current is **{i_s} A**.*"
+        ) + format_suggested_next_steps('ohms_law', grade, subject, is_hing)
+
+    # 3. Kinematics ($v = u + at, s = ut + 0.5at^2$)
+    p_num = re.search(r'(\d+(?:\.\d+)?)', q_lower)
+    new_val = float(p_num.group(1)) if p_num else 4.0
+    return thinking + (
+        f"### 🔢 **Updated Kinematics Calculation ({grade} - {subject})**\n\n"
+        f"#### 📐 **Step 1: Formulas Required**\n"
+        f"$$v = u + at, \\quad s = ut + \\frac{{1}}{{2}}at^2$$\n\n"
+        f"#### 📋 **Step 2: Updated Parameters**\n"
+        f"- Initial Velocity ($u$): $0\\text{{ m/s}}$\n"
+        f"- Acceleration ($a$): ${fmt_num(new_val)}\\text{{ m/s}}^2$\n"
+        f"- Time ($t$): $10\\text{{ s}}$\n\n"
+        f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+        f"- $$v = 0 + ({fmt_num(new_val)} \\times 10) = {fmt_num(new_val * 10)}\\text{{ m/s}}$$\n"
+        f"- $$s = 0 + 0.5 \\times {fmt_num(new_val)} \\times 100 = {fmt_num(new_val * 50)}\\text{{ m}}$$\n\n"
+        f"#### 🎯 **Final Answer:**\n"
+        f"$$\\mathbf{{v = {fmt_num(new_val * 10)}\\text{{ m/s}}, \\quad s = {fmt_num(new_val * 50)}\\text{{ meters}}}}$$"
+    ) + format_suggested_next_steps('kinematics', grade, subject, is_hing)
+
+
+def is_grade_progression_request(query, history=None):
+    """Detects if student is requesting cross-grade progression in a single chat (e.g. 'Now explain for Class 10')."""
+    q = query.strip().lower()
+    has_target = bool(re.search(r'\b(?:now explain for|explain for|what about in|how about for|explain like im in|explain like i am in|samjhao for|ke level par)\s+(?:class\s*\d+|grade\s*\d+|primary|kaksha\s*\d+)\b', q))
+    has_shift = any(k in q for k in ['now explain for class', 'what about in class', 'explain for class 10', 'explain for class 12', 'explain for class 11', 'explain for primary', 'class 3 ke level', 'class 6 ke level'])
+    return has_target or has_shift
+
+
+def generate_grade_progressed_explanation(query, target_grade, subject, history=None):
+    """Dynamically adapts the active conversation concept to a new CBSE grade level within the same chat."""
+    ctx = extract_conversation_context(history)
+    topic = ctx.get('topic') or 'photosynthesis'
+    is_hing = is_hinglish(query)
+    thinking = format_thinking_block(query, f"State A / Grade Progression ({target_grade})", f"Dynamically adapt active topic ({topic}) to {target_grade} depth and curriculum standard")
+
+    # 1. Photosynthesis across grades:
+    if topic in ['photosynthesis', 'stomata']:
+        if target_grade in ['Class 11', 'Class 12']:
+            return thinking + (
+                f"### 🌿 **Photosynthesis: Advanced Biochemical Mechanisms ({target_grade} - Biology)**\n\n"
+                f"In **{target_grade} Biology (Plant Physiology)**, photosynthesis is divided into two compartmentalized stages in the chloroplast:\n\n"
+                f"#### ☀️ **1. Light Reactions (Photochemical Phase - Thylakoid Membrane):**\n"
+                f"- **Photosystem II ($P_{{680}}$) & Photosystem I ($P_{{700}}$):** Light absorption drives non-cyclic photophosphorylation (the **Z-Scheme**).\n"
+                f"- **Photolysis of Water:** $$2\\text{{H}}_2\\text{{O}} \\rightarrow 4\\text{{H}}^+ + \\text{{O}}_2 \\uparrow + 4e^-$$\n"
+                f"- **Assimilatory Power Generation:** Generates **$\\text{{ATP}}$** and **$\\text{{NADPH}}$** with release of $\\text{{O}}_2$.\n\n"
+                f"#### 🌙 **2. Dark Reactions (Biosynthetic Phase - Stroma):**\n"
+                f"- **The Calvin Cycle ($C_3$ Pathway):** Driven by the enzyme **RuBisCO** (Ribulose-1,5-bisphosphate carboxylase-oxygenase).\n"
+                f"- **3 Stages:** Carbon Fixation (formation of 3-PGA) $\\rightarrow$ Reduction (using ATP/NADPH to produce Triose Phosphate) $\\rightarrow$ Regeneration of RuBP.\n"
+                f"- **Overall Net Equation:** $$6\\text{{CO}}_2 + 18\\text{{ATP}} + 12\\text{{NADPH}} \\rightarrow \\text{{C}}_6\\text{{H}}_{{12}}\\text{{O}}_6 + 18\\text{{ADP}} + 12\\text{{NADP}}^+ + 18\\text{{Pi}}$$\n\n"
+                f"Would you like to explore the difference between $C_3$ and $C_4$ plants (Kranz Anatomy)?"
+            ) + format_suggested_next_steps('photosynthesis', target_grade, 'Biology', is_hing)
+        elif target_grade in ['Class 9', 'Class 10']:
+            return thinking + (
+                f"### 🌿 **Photosynthesis: CBSE NCERT Standards ({target_grade} - Science)**\n\n"
+                f"In **{target_grade} Science (Life Processes)**, photosynthesis is the biological process where autotrophs convert light energy into chemical energy.\n\n"
+                f"#### 🧪 **1. Complete Balanced Chemical Equation:**\n"
+                f"$$6\\text{{CO}}_2 + 12\\text{{H}}_2\\text{{O}} \\xrightarrow{{\\text{{Sunlight + Chlorophyll}}}} \\text{{C}}_6\\text{{H}}_{{12}}\\text{{O}}_6 \\text{{ (Glucose)}} + 6\\text{{O}}_2 \\uparrow + 6\\text{{H}}_2\\text{{O}}$$\n\n"
+                f"#### 🔬 **2. Three Key Events (CBSE Board Exam Standard):**\n"
+                f"1. **Absorption:** Chlorophyll pigments in chloroplasts absorb sunlight energy.\n"
+                f"2. **Conversion & Splitting:** Light energy is converted into chemical energy, splitting water ($H_2O$) molecules into hydrogen and oxygen ($O_2$).\n"
+                f"3. **Reduction:** Carbon dioxide ($CO_2$) is reduced to carbohydrates (glucose).\n\n"
+                f"#### 🪟 **3. Gas Exchange via Stomata:**\n"
+                f"- Pores called **Stomata** on the leaf surface regulate $CO_2/O_2$ exchange and transpiration, swelling and shrinking via **Guard Cells**.\n\n"
+                f"Would you like a quick 3-question quiz on Life Processes?"
+            ) + format_suggested_next_steps('photosynthesis', target_grade, 'General Science', is_hing)
+        else: # Primary
+            return thinking + (
+                f"### 🌿 **How Green Plants Make Food! ({target_grade} - Science / EVS)**\n\n"
+                f"Plants are nature's super chefs! Here is how they grow and make yummy food:\n\n"
+                f"1. ☀️ **Sunshine:** Leaves catch warm sunlight like tiny solar panels.\n"
+                f"2. 💧 **Water:** Roots drink fresh water from the soil.\n"
+                f"3. 🍃 **Air:** Leaves breathe in air and give us fresh **Oxygen** to breathe!\n\n"
+                f"🌟 *With sunlight, water, and air, plants make sweet food and grow big and strong!* 😊"
+            ) + format_suggested_next_steps('photosynthesis', target_grade, 'General Science', is_hing)
+
+    # 2. Ohm's Law across grades:
+    if topic == 'ohms_law':
+        if target_grade in ['Class 11', 'Class 12']:
+            return thinking + (
+                f"### ⚡ **Current Electricity & Microscopic Ohm's Law ({target_grade} - Physics)**\n\n"
+                f"In **{target_grade} Physics**, Ohm's Law is derived from electron drift kinetics in conductors:\n\n"
+                f"#### 🔬 **1. Microscopic Form of Ohm's Law:**\n"
+                f"$$\\vec{{J}} = \\sigma \\vec{{E}} = \\frac{{1}}{{\\rho}} \\vec{{E}}$$\n"
+                f"where $\\vec{{J}}$ is Current Density ($\\text{{A/m}}^2$), $\\sigma$ is Conductivity, and $\\vec{{E}}$ is Electric Field.\n\n"
+                f"#### 🏃 **2. Drift Velocity ($v_d$) & Relaxation Time ($\\tau$):**\n"
+                f"$$v_d = -\\frac{{eE\\tau}}{{m}}, \\quad I = n e A v_d = \\frac{{n e^2 A \\tau}}{{m}} E$$\n\n"
+                f"#### 🌡️ **3. Temperature Dependence of Resistivity:**\n"
+                f"$$\\rho_T = \\rho_0 [1 + \\alpha(T - T_0)]$$\n"
+                f"where $\\alpha$ is the Temperature Coefficient of Resistance ($> 0$ for metals, $< 0$ for semiconductors).\n\n"
+                f"Would you like to practice a numerical on drift velocity or potentiometer wire?"
+            ) + format_suggested_next_steps('ohms_law', target_grade, 'Physics', is_hing)
+        else:
+            return thinking + (
+                f"### ⚡ **Ohm's Law: $V = IR$ ({target_grade} - Science)**\n\n"
+                f"According to Ohm's Law, at constant temperature, current ($I$) is directly proportional to potential difference ($V$):\n\n"
+                f"$$V = I \\times R$$\n\n"
+                f"- **$V$**: Potential difference in **Volts (V)**\n"
+                f"- **$I$**: Electric current in **Amperes (A)**\n"
+                f"- **$R$**: Resistance in **Ohms ($\\Omega$)**\n\n"
+                f"Would you like to solve a numerical on calculating resistance or current?"
+            ) + format_suggested_next_steps('ohms_law', target_grade, 'General Science', is_hing)
+
+    # 3. Default Grade Progression
+    return thinking + (
+        f"### 💡 **{subject} Concept Adapted for {target_grade}**\n\n"
+        f"Here is how this fundamental topic is taught and examined in the official **{target_grade} CBSE / NCERT curriculum**:\n\n"
+        f"- **Core Syllabus Expectations:** Master standard definitions, distinction tables, and practical applications.\n"
+        f"- **Mathematical Rigor:** Step-by-step formula derivations and SI unit consistency.\n"
+        f"- **Board Exam Scoring:** Clear presentation with diagrams, formulas, and high-impact keywords.\n\n"
+        f"Would you like to explore specific chapter questions for {target_grade}?"
+    ) + format_suggested_next_steps(topic, target_grade, subject, is_hing)
+
+
+def is_contextual_why_or_deepdive(query, history=None):
+    """Detects referential questions like 'Why?', 'What is its SI unit?', 'How does it work?', 'What does it eat?', 'Why does SN2 give inversion?'."""
+    if not history or not isinstance(history, list):
+        return False
+    q = query.strip().lower()
+    
+    # Check why questions (both standalone and contextual)
+    why_q = q.startswith('why') or q.startswith('kyun') or any(k in q for k in ['why?', 'why is it so', 'why does this happen', 'kyun hota hai', 'reason behind', 'karan kya hai'])
+    unit_q = any(k in q for k in ['si unit', 'unit of', 'unit kya hai', 'formula kya hai', 'what is its formula', 'what is the formula'])
+    how_q = q.startswith('how') or any(k in q for k in ['how does it work', 'how does this work', 'kaise kaam karta hai', 'kaise hota hai'])
+    diff_q = any(k in q for k in ['what is the difference', 'difference between them', 'dono me kya antar', 'diff kya hai'])
+    eat_q = any(k in q for k in ['what does it eat', 'kya khata hai', 'khana kya hai', 'where does it live', 'kahan rehta hai', 'is it domestic', 'wild or domestic'])
+    stomata_q = any(k in q for k in ['role of stomata', 'stomata ka kya kaam', 'guard cells role', 'stomata in this'])
+
+    return why_q or unit_q or how_q or diff_q or eat_q or stomata_q
+
+
+def generate_contextual_deepdive_response(query, grade, subject, history=None):
+    """Provides a targeted in-depth follow-up answer connecting to the active concept in chat history."""
+    ctx = extract_conversation_context(history)
+    topic = ctx.get('topic') or 'newton_second'
+    is_hing = is_hinglish(query)
+    q_lower = query.lower()
+
+    thinking = format_thinking_block(query, "State A / Contextual Follow-up Deep-Dive", f"Resolve contextual follow-up query for active topic ({topic})")
+
+    # 1. Lion / Animals (Primary)
+    if topic == 'lion_animals' or any(k in q_lower for k in ['eat', 'wild', 'domestic', 'live']):
+        if any(k in q_lower for k in ['eat', 'khata']):
+            return thinking + (
+                f"### 🦁 **What Does a Lion Eat? ({grade} - EVS / Science)**\n\n"
+                f"1. 🥩 **A Lion is a Carnivore (Mansahari Janwar):** Lions eat fresh meat of other wild animals like zebras, deer, buffaloes, and wild boars.\n"
+                f"2. 👑 **Apex Predator:** Lions are at the very top of the jungle food chain and hunt in groups called a **Pride**!\n"
+                f"3. 🦷 **Sharp Teeth:** They have strong, sharp teeth (canines) and powerful claws to catch and eat their food.\n\n"
+                f"Would you like to hear a fun story about a lion and a mouse? 🐭"
+            ) + format_suggested_next_steps('lion_animals', grade, 'EVS', is_hing)
+        elif any(k in q_lower for k in ['wild', 'domestic']):
+            return thinking + (
+                f"### 🦁 **Is a Lion a Wild or Domestic Animal? ({grade} - EVS)**\n\n"
+                f"- **A Lion is a WILD ANIMAL (Jangli Janwar)!** 🌳\n"
+                f"- Lions live freely in dense forests, savannahs, and grasslands (in national parks like Gir Forest in Gujarat, India).\n"
+                f"- They cannot be kept at home like pets (domestic animals like dogs, cats, or cows).\n\n"
+                f"Would you like to learn about other jungle animals? 🐘"
+            ) + format_suggested_next_steps('lion_animals', grade, 'EVS', is_hing)
+
+    # 2. Stomata in Photosynthesis
+    if topic in ['photosynthesis', 'stomata'] or 'stomata' in q_lower:
+        return thinking + (
+            f"### 🪟 **The Critical Role of Stomata in Photosynthesis ({grade} - {subject})**\n\n"
+            f"**Stomata** (singular: *Stoma*) are microscopic pores located primarily on the lower surface of leaves:\n\n"
+            f"1. 🌬️ **Carbon Dioxide Intake ($CO_2$):** Stomata open to absorb carbon dioxide from the surrounding air, which is the essential raw material for making glucose.\n"
+            f"2. 💨 **Oxygen Release ($O_2$):** After splitting water molecules, fresh oxygen gas produced during photosynthesis exits through the stomata into the air.\n"
+            f"3. 💧 **Transpiration & Cooling:** Evaporation of water vapor through stomata creates a suction pull (**Transpiration Pull**) that draws water and minerals up from roots to the top of the plant.\n"
+            f"4. 🛡️ **Guard Cells Mechanism:** Two kidney-shaped **Guard Cells** regulate opening (when swollen/turgid with water) and closing (when flaccid) to prevent excessive water loss.\n\n"
+            f"Would you like to test your understanding with a quick 3-question quiz?"
+        ) + format_suggested_next_steps('photosynthesis', grade, subject, is_hing)
+
+    # 3. Units / Formula Query
+    if any(k in q_lower for k in ['si unit', 'unit', 'formula']):
+        if topic == 'ohms_law':
+            return thinking + (
+                f"### ⚡ **Ohm's Law: Formulas & SI Units ({grade} - {subject})**\n\n"
+                f"- **Mathematical Formula:** $$V = I \\times R \\iff I = \\frac{{V}}{{R}} \\iff R = \\frac{{V}}{{I}}$$\n"
+                f"- **SI Units:**\n"
+                f"  - **Potential Difference ($V$):** **Volt (V)**\n"
+                f"- **Electric Current ($I$):** **Ampere (A)**\n"
+                f"- **Resistance ($R$):** **Ohm ($\\Omega$)** ($1\\ \\Omega = 1\\text{{ V}} / 1\\text{{ A}}$)\n\n"
+                f"Would you like to solve a numerical using these units?"
+            ) + format_suggested_next_steps('ohms_law', grade, subject, is_hing)
+        elif topic in ['newton_second', 'newton_first', 'force']:
+            return thinking + (
+                f"### 🚀 **Force & Newton's Second Law: Formulas & SI Units ({grade} - {subject})**\n\n"
+                f"- **Mathematical Formula:** $$F = m \\times a$$\n"
+                f"- **SI Units:**\n"
+                f"  - **Force ($F$):** **Newton (N)** ($1\\text{{ N}} = 1\\text{{ kg}}\\cdot\\text{{m/s}}^2$)\n"
+                f"  - **Mass ($m$):** **Kilogram (kg)**\n"
+                f"  - **Acceleration ($a$):** **Meters per second squared ($\\text{{m/s}}^2$)**\n\n"
+                f"Would you like to practice a numerical problem on $F = ma$?"
+            ) + format_suggested_next_steps('newton_second', grade, subject, is_hing)
+
+    # 4. SN2 Walden Inversion Why
+    if topic == 'sn1_sn2' or 'inversion' in q_lower:
+        return thinking + (
+            f"### 🧪 **Why Does the $S_N2$ Mechanism Cause Walden Inversion? ({grade} - {subject})**\n\n"
+            f"#### 🔍 **The 3 Key Chemical Reasons (CBSE Class 12 Chemistry):**\n"
+            f"1. **Backside Attack ($180^\\circ$):** In $S_N2$, the nucleophile ($Nu^-$) attacks the carbon atom from the **exact opposite side ($180^\\circ$)** of the bulky leaving halogen group ($X^-$) to minimize electrostatic repulsion and steric clash.\n"
+            f"2. **Concerted Transition State:** As the nucleophile approaches and forms a partial bond ($C\\cdots Nu$), the bond to the leaving group ($C\\cdots X$) simultaneously weakens in a single synchronized step.\n"
+            f"3. **Umbrella Turning Inside-Out:** As the leaving group departs, the three remaining substituent bonds on the central chiral carbon flip to the opposite side, resulting in **100% Inversion of Configuration (Walden Inversion)**!\n\n"
+            f"Would you like to compare this with the Racemisation occurring in $S_N1$?"
+        ) + format_suggested_next_steps('sn1_sn2', grade, subject, is_hing)
+
+    # 5. Why Sky is Blue / Optical Phenomena
+    if topic in ['atmospheric_optics', 'optics_refraction'] or 'sky' in q_lower:
+        return thinking + (
+            f"### 🌌 **Why is the Sky Blue? (Rayleigh Scattering Explained) ({grade} - {subject})**\n\n"
+            f"1. **Rayleigh's Law:** $\\text{{Scattering}} \\propto \\frac{{1}}{{\\lambda^4}}$ (shorter wavelengths scatter much more intensely).\n"
+            f"2. **Blue Light Wavelength:** Blue light has a short wavelength ($\\approx 400\\text{{ nm}}$) compared to red light ($\\approx 700\\text{{ nm}}$).\n"
+            f"3. **Atmospheric Action:** Air molecules in the atmosphere scatter blue light in every direction across the sky, which enters our eyes from all angles!\n\n"
+            f"Would you like to take a quick 3-question quiz on light scattering?"
+        ) + format_suggested_next_steps('atmospheric_optics', grade, subject, is_hing)
+
+    # 6. Default Targeted Deep-Dive
+    return thinking + (
+        f"### 🔍 **In-Depth Scientific Breakdown ({grade} - {subject})**\n\n"
+        f"Here is why this phenomenon occurs in nature according to standardized NCERT principles:\n\n"
+        f"1. **Fundamental Cause:** Directly governed by physical laws and conservation principles.\n"
+        f"2. **Underlying Mechanism:** Step-by-step energetic or physiological transition driving the outcome.\n"
+        f"3. **Real-World Impact:** Directly determines how devices operate, substances react, or organisms survive.\n\n"
+        f"Would you like to explore a numerical calculation or take a practice quiz on this?"
+    ) + format_suggested_next_steps(topic, grade, subject, is_hing)
+
+
 def generate_local_tutor_response(user_query, subject, grade, mode, history=None):
     """Authentic CBSE NCERT Curriculum Pedagogical Tutor Engine"""
     q_lower = user_query.lower().strip()
@@ -4214,6 +4806,22 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
     # 0.6 Formula Revision Sheet Follow-up ("Formula sheet", "Give all formulas for this")
     if is_formula_sheet_request(user_query, chat_history):
         return generate_formula_sheet_response(user_query, grade, subject, chat_history)
+
+    # 0.7 Multi-Turn: Numerical Parameter Modification ("What if mass is 20 kg?", "What if voltage is 24 V?")
+    if is_numerical_parameter_modification(user_query, chat_history):
+        return solve_numerical_with_modified_params(user_query, grade, subject, chat_history)
+
+    # 0.8 Multi-Turn: Contextual Numerical Request ("Give me a numerical on this", "Solve a problem on this")
+    if is_numerical_request_for_previous_concept(user_query, chat_history):
+        return generate_contextual_numerical_problem(user_query, grade, subject, chat_history)
+
+    # 0.9 Multi-Turn: Grade Progression in Single Chat ("Now explain for Class 10", "What about in Class 12?")
+    if is_grade_progression_request(user_query, chat_history):
+        return generate_grade_progressed_explanation(user_query, grade, subject, chat_history)
+
+    # 0.95 Multi-Turn: Contextual Why / SI Unit / How / Stomata Deep-Dive
+    if is_contextual_why_or_deepdive(user_query, chat_history):
+        return generate_contextual_deepdive_response(user_query, grade, subject, chat_history)
 
     # 0.5 Student Struggling / Simplification Request ("I don't understand", "make it simpler")
     if is_simplification_request(user_query, chat_history):
@@ -5799,6 +6407,21 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"- **Maximum Concentration:** Organisms at the highest trophic level (**Humans / Apex Predators**) accumulate the **maximum concentration of toxins**.\n\n"
             f"Would you like a quick 3-question quiz on our environment?"
         )
+
+    # Primary Science / EVS: King of the Jungle / Animals
+    if any(k in q_lower for k in ['king of the jungle', 'king of jungle', 'jungle ka raja', 'wild animals', 'lion']):
+        return thinking + (
+            f"### 🦁 **The King of the Jungle: The Lion! ({grade} - {subject})**\n\n"
+            f"#### 👑 **1. Why is the Lion Called the King of the Jungle?**\n"
+            f"- **Fearless & Strong:** The lion is bold, magnificent, and powerful.\n"
+            f"- **The Royal Mane:** Male lions have a big, golden collar of fur called a **mane** that looks like a royal golden crown!\n"
+            f"- **The Mighty Roar:** A lion's roar is so loud it can be heard up to **8 kilometers away** across the forest!\n\n"
+            f"#### 🌿 **2. Lion Facts for Primary Students:**\n"
+            f"- **Wild Animal:** Lions are wild animals living in open forests and savannahs (like Gir National Park in India).\n"
+            f"- **Family Pride:** A group of lions is called a **Pride**.\n"
+            f"- **Carnivore:** They are meat-eaters (**Carnivores**) with sharp teeth (canines).\n\n"
+            f"Would you like to know what lions eat, or hear a fun story about a lion and a mouse? 🐭"
+        ) + format_suggested_next_steps('lion_animals', grade, subject, is_hing)
 
     # Primary Science: How Fishes Breathe / Gills
     if any(k in q_lower for k in ['fish breathe', 'fishes breathe', 'gills', 'how do fish breathe', 'breathe underwater']):

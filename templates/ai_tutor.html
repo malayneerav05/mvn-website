@@ -926,6 +926,33 @@
                 conversationHistory.push({ role: 'user', text: query });
                 conversationHistory.push({ role: 'model', text: data.response });
 
+                // Sync UI Selectors if server adapted grade or subject dynamically
+                if (data.meta) {
+                    if (data.meta.grade) {
+                        const grSel = document.getElementById('gradeSelect');
+                        if (grSel && grSel.value !== data.meta.grade) {
+                            for (let opt of grSel.options) {
+                                if (opt.value === data.meta.grade || opt.text.includes(data.meta.grade)) {
+                                    grSel.value = opt.value;
+                                    if (typeof updateSubjects === 'function') updateSubjects();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (data.meta.subject) {
+                        const subSel = document.getElementById('subjectSelect');
+                        if (subSel) {
+                            for (let opt of subSel.options) {
+                                if (opt.value.toLowerCase().includes(data.meta.subject.toLowerCase()) || data.meta.subject.toLowerCase().includes(opt.value.toLowerCase())) {
+                                    subSel.value = opt.value;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
                 const aiBubble = document.createElement('div');
                 aiBubble.className = 'flex items-start gap-4 max-w-3xl';
                 const formattedHtml = renderMarkdown(data.response);
