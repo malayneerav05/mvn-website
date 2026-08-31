@@ -2333,28 +2333,50 @@ def solve_physics_math_numerical(query, grade="Class 10", subject="General Scien
             f"*The calculated weight on Earth is **{w_s} N** (Newtons).*"
         )
 
-    # 6. Ohm's Law: V = IR
-    p_ohm = re.search(r"(?:voltage of|voltage =|potential difference of)\s*(\d+(?:\.\d+)?)\s*V.*?(?:resistance of|resistance =)\s*(\d+(?:\.\d+)?)\s*(?:ohm|Ω)", q, re.IGNORECASE) or \
-            re.search(r"(?:resistance of|resistance =)\s*(\d+(?:\.\d+)?)\s*(?:ohm|Ω).*?(?:voltage of|voltage =|potential difference of)\s*(\d+(?:\.\d+)?)\s*V", q, re.IGNORECASE)
+    # 6. Ohm's Law & Electric Power: V = IR, P = VI
+    p_ohm = re.search(r"(?:voltage|potential difference|v\b|v\s*=)?\s*(\d+(?:\.\d+)?)\s*(?:v|volts?)\b.*?(?:resistance|r\b|r\s*=)?\s*(\d+(?:\.\d+)?)\s*(?:ohm|ohms|Ω)\b", q, re.IGNORECASE) or \
+            re.search(r"(?:resistance|r\b|r\s*=)?\s*(\d+(?:\.\d+)?)\s*(?:ohm|ohms|Ω)\b.*?(?:voltage|potential difference|v\b|v\s*=)?\s*(\d+(?:\.\d+)?)\s*(?:v|volts?)\b", q, re.IGNORECASE)
     if p_ohm:
         g1, g2 = float(p_ohm.group(1)), float(p_ohm.group(2))
-        v_val = g1 if "volt" in q.lower()[:p_ohm.start(2)] or "potential" in q.lower()[:p_ohm.start(2)] else g2
+        v_val = g1 if "v" in q.lower()[:p_ohm.start(2)] or "volt" in q.lower()[:p_ohm.start(2)] or "potential" in q.lower()[:p_ohm.start(2)] else g2
         r_val = g2 if v_val == g1 else g1
         i_val = v_val / r_val if r_val != 0 else 0
-        v_s, r_s, i_s = fmt_num(v_val), fmt_num(r_val), fmt_num(i_val)
-        return (
-            f"### 🔢 **Step-by-Step Physics Numerical Solution ({grade} - {subject})**\n\n"
-            f"#### 📐 **Step 1: Formula Required**\n"
-            f"According to Ohm's Law ($V = IR$):\n"
-            f"$$I = \\frac{{V}}{{R}}$$\n\n"
-            f"#### 📋 **Step 2: Given Data**\n"
-            f"- **Potential Difference ($V$):** ${v_s}\\text{{ V}}$\n"
-            f"- **Resistance ($R$):** ${r_s}\\ \\Omega$\n\n"
-            f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
-            f"$$I = \\frac{{{v_s}}}{{{r_s}}} = {i_s}\\text{{ A}}$$\n\n"
-            f"#### 🎯 **Final Answer (with correct SI units):**\n"
-            f"$$\\mathbf{{I = {i_s}\\text{{ Ampere (A)}}}}$$"
-        )
+        p_val = v_val * i_val
+        v_s, r_s, i_s, p_s = fmt_num(v_val), fmt_num(r_val), fmt_num(i_val), fmt_num(p_val)
+        
+        has_power_req = any(k in q.lower() for k in ['power', 'watt', 'joule', 'heat', 'energy'])
+        
+        if has_power_req:
+            return (
+                f"### 🔢 **Step-by-Step Physics Numerical Solution ({grade} - {subject})**\n\n"
+                f"#### 📐 **Step 1: Formulas Required**\n"
+                f"1. **Electric Current (Ohm's Law):** $$I = \\frac{{V}}{{R}}$$\n"
+                f"2. **Electric Power:** $$P = V \\times I = \\frac{{V^2}}{{R}}$$\n\n"
+                f"#### 📋 **Step 2: Given Data**\n"
+                f"- **Potential Difference ($V$):** ${v_s}\\text{{ V}}$\n"
+                f"- **Resistance ($R$):** ${r_s}\\ \\Omega$\n\n"
+                f"#### 🧮 **Step 3: Step-by-Step Calculations**\n"
+                f"1. **Calculating Current ($I$):**\n"
+                f"   $$I = \\frac{{{v_s}}}{{{r_s}}} = {i_s}\\text{{ A}}$$\n"
+                f"2. **Calculating Power ($P$):**\n"
+                f"   $$P = {v_s}\\text{{ V}} \\times {i_s}\\text{{ A}} = {p_s}\\text{{ W}}$$\n\n"
+                f"#### 🎯 **Final Answer (with correct SI units):**\n"
+                f"$$\\mathbf{{I = {i_s}\\text{{ A}}, \\quad P = {p_s}\\text{{ Watts (W)}}}}$$"
+            )
+        else:
+            return (
+                f"### 🔢 **Step-by-Step Physics Numerical Solution ({grade} - {subject})**\n\n"
+                f"#### 📐 **Step 1: Formula Required**\n"
+                f"According to Ohm's Law ($V = IR$):\n"
+                f"$$I = \\frac{{V}}{{R}}$$\n\n"
+                f"#### 📋 **Step 2: Given Data**\n"
+                f"- **Potential Difference ($V$):** ${v_s}\\text{{ V}}$\n"
+                f"- **Resistance ($R$):** ${r_s}\\ \\Omega$\n\n"
+                f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+                f"$$I = \\frac{{{v_s}}}{{{r_s}}} = {i_s}\\text{{ A}}$$\n\n"
+                f"#### 🎯 **Final Answer (with correct SI units):**\n"
+                f"$$\\mathbf{{I = {i_s}\\text{{ Ampere (A)}}}}$$"
+            )
 
     # 7. Kinetic Energy: KE = 0.5 * m * v^2
     p_ke = re.search(r"mass\s*(?:is|=|of)?\s*(\d+(?:\.\d+)?)\s*kg.*?velocity\s*(?:is|=|of)?\s*(\d+(?:\.\d+)?)\s*(?:m\/s|mps)", q, re.IGNORECASE) or \
@@ -3873,6 +3895,268 @@ def generate_language_switch_response(query, grade, subject, history=None):
     )
 
 
+def extract_quiz_question_from_history(history, q_num):
+    """Extracts a specific question text from quiz in conversation history."""
+    if not history or not isinstance(history, list):
+        return ""
+    for item in reversed(history):
+        txt = ""
+        if isinstance(item, dict):
+            txt = item.get('text') or item.get('content') or ""
+        elif isinstance(item, str):
+            txt = item
+        if f'Question {q_num}' in txt or f'**Question {q_num}' in txt:
+            pattern = rf'(\*\*Question {q_num}[^\n]*\*\*[\s\S]*?)(?=\*\*Question \d|\Z|💡|###)'
+            match = re.search(pattern, txt)
+            if match:
+                return match.group(1).strip()
+    return ""
+
+
+def is_quiz_question_followup(query, history=None):
+    """Detects if student is asking for an in-depth explanation of a specific quiz question previously given."""
+    if not history or not isinstance(history, list):
+        return False
+    q = query.strip().lower()
+    patterns = [
+        r'\b(?:explain|why|tell me about|detail|samjhao|batao|solve|kya hai)\s+(?:question|q|sawal|prashn)\s*(\d+)\b',
+        r'\b(?:question|q|sawal|prashn)\s*(\d+)\s+(?:explain|why|detail|samjhao|batao|solve|kya hai|karo|samjha)\b',
+        r'\b(?:why is|why was)\s+(?:option\s*[a-d]|question\s*\d+|q\d+)\b',
+        r'\b(?:1st|2nd|3rd|4th|5th|first|second|third|fourth|fifth|last|pehla|dusra|teesra|chautha)\s+(?:question|sawal|prashn|mcq)\b',
+        r'\b(?:question|q)\s*(\d+)\b'
+    ]
+    has_quiz = any(any(k in (h.get('text', '') or '') for k in ['Question 1', 'Question 2', '### 📝 **Quiz', '### 🎯 **CBSE']) for h in history if isinstance(h, dict))
+    return has_quiz and any(bool(re.search(p, q, re.IGNORECASE)) for p in patterns)
+
+
+def generate_quiz_question_followup_response(query, grade, subject, history=None):
+    """Generates an in-depth breakdown of a specific quiz question asked in chat history."""
+    q_lower = query.lower()
+    is_hing = is_hinglish(query)
+    
+    # Extract requested question number
+    q_num = 1
+    num_match = re.search(r'\b(?:question|q|sawal|prashn)\s*(\d+)\b', q_lower) or re.search(r'\b(\d+)\s*(?:st|nd|rd|th)?\s*(?:question|sawal|prashn)\b', q_lower)
+    if num_match:
+        q_num = int(num_match.group(1))
+    elif any(k in q_lower for k in ['2nd', 'second', 'dusra']):
+        q_num = 2
+    elif any(k in q_lower for k in ['3rd', 'third', 'teesra']):
+        q_num = 3
+    elif any(k in q_lower for k in ['4th', 'fourth', 'chautha']):
+        q_num = 4
+    elif any(k in q_lower for k in ['5th', 'fifth', 'panchwa']):
+        q_num = 5
+
+    extracted_q = extract_quiz_question_from_history(history or [], q_num)
+    thinking = format_thinking_block(query, f"State A (Quiz Question {q_num} Follow-up)", f"Provide comprehensive step-by-step conceptual breakdown of Quiz Question {q_num}")
+
+    if extracted_q:
+        q_display = f"\n> {extracted_q}\n\n"
+    else:
+        q_display = f"\n*Regarding Question {q_num} from your recent CBSE practice quiz:*\n\n"
+
+    if is_hing:
+        return thinking + (
+            f"### 🔍 **Question {q_num} ka Step-by-Step Deep Breakdown ({grade} - {subject})**\n"
+            f"{q_display}"
+            f"#### 🎯 **1. Correct Concept & Fundamental Principle:**\n"
+            f"- Yeh question **{grade} {subject}** ke NCERT syllabus ke core conceptual pillar par based hai.\n"
+            f"- **Kyun Sahi Hai:** NCERT guidelines ke mutabiq, sahi option fundamental definition aur physical law se 100% align karta hai.\n\n"
+            f"#### ❌ **2. Baaki Options Kyun Incorrect Hain (Exam Traps):**\n"
+            f"- Baaki options common distractors hain jo aksar board exams me confusing language ke saath diye jaate hain.\n"
+            f"- Unme ya toh units galat hoti hain ya fir inverse cause-and-effect relationship dikhaya gaya hota hai.\n\n"
+            f"#### 💡 **3. CBSE Board Exam Pro Tip:**\n"
+            f"- Exam me is topic se related numerical ya theory question aane par hamesha pehle formula ya standard definition state karein, fir step-by-step explanation likhein!\n\n"
+            f"Kya aap is concept par ek aur fresh question practice karna chahenge? 😊"
+        )
+    else:
+        return thinking + (
+            f"### 🔍 **In-Depth Breakdown: Question {q_num} ({grade} - {subject})**\n"
+            f"{q_display}"
+            f"#### 🎯 **1. Core Scientific / Mathematical Principle:**\n"
+            f"- This question tests a foundational concept from the official **{grade} {subject}** NCERT curriculum.\n"
+            f"- **Why the Correct Option Holds:** It adheres strictly to the standardized physical law and verified scientific definition.\n\n"
+            f"#### ❌ **2. Analysis of Incorrect Distractors:**\n"
+            f"- The alternative options are designed as standard exam traps (e.g. inverted proportionality, incorrect SI units, or mixing up scalar and vector properties).\n\n"
+            f"#### 💡 **3. CBSE Board Examination Takeaway:**\n"
+            f"- When answering 2-mark or 3-mark questions on this topic in CBSE board exams, always write the primary law first, followed by its mathematical form and SI units to secure full marks.\n\n"
+            f"Would you like to try another practice question on this specific concept? 😊"
+        )
+
+
+def is_more_examples_request(query, history=None):
+    """Detects if student is asking for more real-world examples of the active concept."""
+    q = query.strip().lower()
+    return any(k in q for k in [
+        'another example', 'more examples', 'one more example', 'give example', 'give an example',
+        'real life example', 'real world example', 'daily life example', 'practical example',
+        'aur example', 'ek aur example', 'dusra example', 'kuch aur example', 'aur udharan',
+        'real life me kahan', 'daily life application', 'application in real life',
+        'where is this used', 'how is this used in real life'
+    ])
+
+
+def generate_more_examples_response(query, grade, subject, history=None):
+    """Generates 3 rich, grade-appropriate real-world examples for the active conversation topic."""
+    q_lower = query.lower()
+    is_hing = is_hinglish(query)
+    
+    # Check history to find the active concept discussed
+    history_text = " ".join([
+        (h.get('text', '') or h.get('content', '') or (h.get('parts', [''])[0] if isinstance(h.get('parts'), list) else ''))
+        for h in (history or [])
+    ]).lower()
+    full_context = q_lower + " " + history_text
+    
+    thinking = format_thinking_block(query, "State A (Real-World Examples)", "Provide 3 vivid, relatable real-world applications tailored to student grade")
+
+    # 1. Newton's Third Law (Action-Reaction)
+    if any(k in full_context for k in ['third law', 'action reaction', 'action and reaction', 'recoil', 'rocket']):
+        if is_hing:
+            return thinking + (
+                f"### 🚀 **Newton's Third Law: 3 Asli Zindagi ke Real-Life Examples! ({grade})**\n\n"
+                f"Newton ka Third Law kehta hai: **'Har Action ka barabar aur opposite Reaction hota hai.'** Yeh rahe 3 daily-life examples:\n\n"
+                f"1. 🏊 **Swimming (Tairna):**\n"
+                f"   - **Action:** Swimmer apne hathon se pani ko **peeche (backward)** dhakelta hai.\n"
+                f"   - **Reaction:** Pani swimmer ke shareer ko **aage (forward)** dhakelta hai!\n\n"
+                f"2. 🚶 **Zameen par Chalna (Walking):**\n"
+                f"   - **Action:** Jab aap chalte hain, aapke jootey zameen ko **peeche ki taraf** press karte hain.\n"
+                f"   - **Reaction:** Zameen aapke pair ko **aage ki taraf** equal force se dhakelti hai.\n\n"
+                f"3. 🔫 **Gun Recoil (Bandook ka jhatka):**\n"
+                f"   - **Action:** Gun bullet par aage ki taraf bohot tez force lagati hai.\n"
+                f"   - **Reaction:** Bullet gun par peeche ki taraf utna hi force lagati hai, jisse shooter ke kandhe par jhatka lagta hai.\n\n"
+                f"💡 *In teeno examples me forces hamesha 2 alag-alag objects par lagti hain!* Clear hua? 😊"
+            )
+        else:
+            return thinking + (
+                f"### 🚀 **Newton's Third Law: 3 Relatable Real-World Applications ({grade})**\n\n"
+                f"Newton's Third Law states: **'For every action, there is an equal and opposite reaction.'** Here are 3 clear everyday examples:\n\n"
+                f"1. 🏊 **Swimming:**\n"
+                f"   - **Action Force:** The swimmer pushes the water backward with their arms.\n"
+                f"   - **Reaction Force:** The water pushes the swimmer forward with equal force.\n\n"
+                f"2. 🚶 **Walking on the Ground:**\n"
+                f"   - **Action Force:** Your feet push backward against the ground.\n"
+                f"   - **Reaction Force:** The ground exerts an equal and opposite force pushing you forward.\n\n"
+                f"3. 🚀 **Rocket Launch in Space:**\n"
+                f"   - **Action Force:** The rocket engines blast high-velocity exhaust gases downward.\n"
+                f"   - **Reaction Force:** The escaping gases push the rocket upward into space!\n\n"
+                f"💡 *Remember for CBSE Exams: Action and reaction forces act simultaneously on TWO DIFFERENT bodies, which is why they never cancel each other out!* 😊"
+            )
+
+    # 2. Friction
+    if any(k in full_context for k in ['friction', 'gharsan', 'rough surface', 'lubricant']):
+        return thinking + (
+            f"### 🛹 **Friction in Real Life: 3 Everyday Examples ({grade})**\n\n"
+            f"1. ✍️ **Writing with a Pen/Pencil on Paper:** Friction between the pen tip and paper pulls ink onto the page. On smooth glass, there is very little friction, so writing is difficult!\n"
+            f"2. 🚗 **Car & Bicycle Brakes:** When you press brakes, rubber pads clamp against the wheel, creating friction that brings the vehicle to a safe stop.\n"
+            f"3. 👟 **Shoe Grips & Matchstick Lighting:** Grooves under sports shoes grip the ground to prevent slipping, while friction generates enough heat to light a matchstick!\n\n"
+            f"Would you like to explore methods to increase or reduce friction?"
+        )
+
+    # 3. Refraction of Light
+    if any(k in full_context for k in ['refraction', 'light', 'lens', 'prism', 'rainbow', 'mirror']):
+        return thinking + (
+            f"### 🌈 **Refraction of Light: 3 Relatable Everyday Examples ({grade})**\n\n"
+            f"1. 🥤 **The Bent Straw in Water:** A straw placed in a transparent glass of water appears bent or broken at the surface because light changes speed when moving from water to air.\n"
+            f"2. 🏊 **Apparent Depth of a Swimming Pool:** The floor of a swimming pool or a coin at the bottom of a bucket always appears shallower than it actually is.\n"
+            f"3. ✨ **Twinkling of Stars:** Light from distant stars passes through atmospheric layers of varying temperatures and densities, bending continuously (atmospheric refraction)!\n\n"
+            f"Would you like to test these optics concepts with a quick quiz?"
+        )
+
+    # 4. Default Universal Real-World Generator
+    clean_sub = subject
+    return thinking + (
+        f"### 🌍 **Real-World Applications & Examples ({grade} - {clean_sub})**\n\n"
+        f"Here are 3 vivid, practical daily-life observations connecting this concept to the real world:\n\n"
+        f"1. 🏠 **Everyday Household Scenario:** Observed in daily routines (cooking, home appliances, or nature cycles) demonstrating the fundamental principle in action.\n"
+        f"2. 🛠️ **Modern Technology & Engineering:** Utilized by engineers and scientists to build vehicles, computers, medical devices, and smart infrastructure.\n"
+        f"3. 🌿 **Environmental & Natural Phenomena:** Seen in weather patterns, animal adaptations, or physical transformations on Earth.\n\n"
+        f"Which of these real-life applications would you like to explore in greater detail? 😊"
+    )
+
+
+def is_formula_sheet_request(query, history=None):
+    """Detects requests for formula sheets, equation summaries, or revision lists."""
+    q = query.strip().lower()
+    return any(k in q for k in [
+        'formula sheet', 'all formulas', 'formula list', 'list of formulas', 'give all formulas',
+        'give me the formulas', 'formulas for this', 'saare formula', 'sare formula', 'saare sutra',
+        'all equations', 'equation list', 'summary of formulas', 'important formulas', 'formula bank'
+    ])
+
+
+def generate_formula_sheet_response(query, grade, subject, history=None):
+    """Generates a structured, high-yield CBSE formula revision sheet based on the active topic."""
+    q_lower = query.lower()
+    
+    # Check history to find the active chapter/topic
+    history_text = " ".join([
+        (h.get('text', '') or h.get('content', '') or (h.get('parts', [''])[0] if isinstance(h.get('parts'), list) else ''))
+        for h in (history or [])
+    ]).lower()
+    full_context = q_lower + " " + history_text
+    
+    thinking = format_thinking_block(query, "State A (Formula Revision Sheet)", "Generate comprehensive CBSE formula sheet with variables and SI units")
+
+    # 1. Motion & Kinematics
+    if any(k in full_context for k in ['motion', 'kinematics', 'velocity', 'acceleration', 'speed']):
+        return thinking + (
+            "### 📐 **CBSE NCERT Formula Sheet: Motion (" + grade + " - Physics)**\n\n"
+            "| Equation / Quantity | Formula | SI Unit & Meaning of Variables |\n"
+            "| :--- | :--- | :--- |\n"
+            "| **First Equation of Motion** | $$v = u + at$$ | $v$: Final Velocity (m/s), $u$: Initial Velocity (m/s), $a$: Accel. (m/s$^2$), $t$: Time (s) |\n"
+            "| **Second Equation of Motion** | $$s = ut + \\frac{1}{2}at^2$$ | $s$: Distance / Displacement (meters - m) |\n"
+            "| **Third Equation of Motion** | $$v^2 - u^2 = 2as$$ | Connects velocity, acceleration, and distance without time $t$ |\n"
+            "| **Average Velocity** | $$v_{avg} = \\frac{u + v}{2}$$ | For uniformly accelerated motion |\n"
+            "| **Circular Speed** | $$v = \\frac{2\\pi r}{t}$$ | $r$: Radius of circular track (m) |\n\n"
+            "💡 **Exam Trap:** When an object starts from rest, $u = 0$. When an object comes to a stop, $v = 0$."
+        )
+
+    # 2. Electricity
+    if any(k in full_context for k in ['electricity', 'current', 'voltage', 'resistance', 'power', 'ohm']):
+        return thinking + (
+            "### ⚡ **CBSE NCERT Formula Sheet: Electricity (" + grade + " - Physics)**\n\n"
+            "| Quantity / Law | Standard Formula | SI Unit & Symbols |\n"
+            "| :--- | :--- | :--- |\n"
+            "| **Electric Current** | $$I = \\frac{Q}{t}$$ | Ampere (A), $Q$: Charge (Coulombs - C) |\n"
+            "| **Potential Difference** | $$V = \\frac{W}{Q}$$ | Volt (V), $W$: Work Done (Joules - J) |\n"
+            "| **Ohm's Law** | $$V = IR$$ | $R$: Resistance (Ohms - $\\Omega$) |\n"
+            "| **Resistivity Relation** | $$R = \\rho \\frac{l}{A}$$ | $\\rho$: Resistivity ($\\Omega\\cdot\\text{m}$), $l$: Length, $A$: Area |\n"
+            "| **Series Resistors** | $$R_s = R_1 + R_2 + R_3$$ | Current remains constant across all resistors |\n"
+            "| **Parallel Resistors** | $$\\frac{1}{R_p} = \\frac{1}{R_1} + \\frac{1}{R_2}$$ | Voltage remains constant across all branches |\n"
+            "| **Joule's Heating Law** | $$H = I^2 R t = V I t$$ | Heat Energy (Joules - J) |\n"
+            "| **Electric Power** | $$P = VI = I^2 R = \\frac{V^2}{R}$$ | Watt (W), $1\\text{ kW} = 1000\\text{ W}$ |\n"
+            "| **Commercial Energy Unit** | $$1\\text{ kWh} = 3.6 \\times 10^6\\text{ J}$$ | 1 Unit on electricity bill |\n\n"
+            "💡 **Exam Pro Tip:** Always convert time to seconds ($s$) before calculating energy in Joules!"
+        )
+
+    # 3. Light: Reflection & Refraction
+    if any(k in full_context for k in ['light', 'mirror', 'lens', 'reflection', 'refraction', 'optics']):
+        return thinking + (
+            "### 🔦 **CBSE NCERT Formula Sheet: Light (" + grade + " - Physics)**\n\n"
+            "| Concept | Formula | Sign Convention & Rules |\n"
+            "| :--- | :--- | :--- |\n"
+            "| **Mirror Formula** | $$\\frac{1}{f} = \\frac{1}{v} + \\frac{1}{u}$$ | $f$: Focal length, $u$: Object distance (always $-$), $v$: Image distance |\n"
+            "| **Mirror Magnification** | $$m = -\\frac{v}{u} = \\frac{h_i}{h_o}$$ | Negative $m$ = Real & Inverted; Positive $m$ = Virtual & Erect |\n"
+            "| **Lens Formula** | $$\\frac{1}{f} = \\frac{1}{v} - \\frac{1}{u}$$ | Notice the minus sign ($-$) in the lens equation |\n"
+            "| **Lens Magnification** | $$m = \\frac{v}{u} = \\frac{h_i}{h_o}$$ | Positive $v/u$ for lenses |\n"
+            "| **Snell's Law** | $$n = \\frac{\\sin i}{\\sin r} = \\frac{c}{v}$$ | $n$: Refractive Index (dimensionless) |\n"
+            "| **Power of Lens** | $$P = \\frac{1}{f\\text{ (in meters)}}$$ | Diopter (D), Convex = $+$, Concave = $-$ |\n\n"
+            "💡 **Exam Tip:** Remember to convert focal length from cm to meters when finding Power in Diopters ($P = 100 / f\\text{ in cm}$)!"
+        )
+
+    # 4. Universal Default Formula Sheet
+    return thinking + (
+        f"### 📐 **High-Yield CBSE Formula Reference Sheet ({grade} - {subject})**\n\n"
+        "| Key Concept | Formula | Variables & Meaning |\n"
+        "| :--- | :--- | :--- |\n"
+        "| **Standard Relation** | Defined by NCERT Principles | SI Units and Standard Dimensions |\n"
+        "| **Step-by-Step Substitution** | Identify $Given$, $Find$, $Formula$ | Always verify unit consistency |\n\n"
+        "Which specific chapter or topic would you like a detailed formula table for?"
+    )
+
+
 def generate_local_tutor_response(user_query, subject, grade, mode, history=None):
     """Authentic CBSE NCERT Curriculum Pedagogical Tutor Engine"""
     q_lower = user_query.lower().strip()
@@ -3886,6 +4170,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
     if detected_gr != grade:
         grade = detected_gr
     s_lower = subject.lower().strip()
+    is_hing = is_hinglish(user_query)
     
     # 0. Language Switch / Hindi Request ("kya mujhe ise hindi me samjha sakte ho", "explain in hindi")
     if is_language_switch_request(user_query):
@@ -3918,6 +4203,18 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             )
         return thinking + greeting_msg
 
+    # 0.3 Quiz Question Breakdown Follow-up ("Explain question 2 in detail", "Why was option B correct?")
+    if is_quiz_question_followup(user_query, chat_history):
+        return generate_quiz_question_followup_response(user_query, grade, subject, chat_history)
+
+    # 0.4 More Real-Life Examples Follow-up ("Give 2 more examples", "Where is this used in daily life?")
+    if is_more_examples_request(user_query, chat_history):
+        return generate_more_examples_response(user_query, grade, subject, chat_history)
+
+    # 0.6 Formula Revision Sheet Follow-up ("Formula sheet", "Give all formulas for this")
+    if is_formula_sheet_request(user_query, chat_history):
+        return generate_formula_sheet_response(user_query, grade, subject, chat_history)
+
     # 0.5 Student Struggling / Simplification Request ("I don't understand", "make it simpler")
     if is_simplification_request(user_query, chat_history):
         thinking = format_thinking_block(user_query, "State A / Pedagogical Simplification", "Strip all technical jargon and explain using intuitive real-world metaphors")
@@ -3938,6 +4235,24 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
                 f"What topic, concept, or numerical problem in **{grade} {subject}** would you like to explore or solve next?"
             )
         return thinking + decline_msg
+
+    # 0.25 Standalone Affirmation without Quiz Offer Context ("yes", "haan", "ok")
+    if is_affirmative_reply(user_query):
+        is_hing = is_hinglish(user_query)
+        thinking = format_thinking_block(user_query, "Affirmation Check-in", "Politely acknowledge and ask which topic/problem student wants to explore")
+        if is_hing:
+            ack_msg = (
+                f"### 😊 **Ji zaroor! Main aapki help karne ke liye ready hoon.**\n\n"
+                f"Aap **{grade} {subject}** me kaun sa concept, numerical problem ya question samajhna chahte hain?\n"
+                f"Agar aap kisi specific chapter par **Practice Quiz** dena chahte hain, toh bas topic ka naam bataiye! 🚀"
+            )
+        else:
+            ack_msg = (
+                f"### 😊 **Great! I'm here and ready to help.**\n\n"
+                f"What concept, numerical problem, or question in **{grade} {subject}** would you like to explore next?\n"
+                f"If you'd like a **Practice Quiz** on any chapter, just let me know the topic! 🚀"
+            )
+        return thinking + ack_msg
 
     # 1. School Information Queries
     if any(k in q_lower for k in ['maya vidya', 'mvn', 'school', 'admission', 'fee', 'address', 'contact', 'principal', 'affiliation', 'hostel']):
@@ -4785,9 +5100,9 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
     # Senior Chemistry: SN1 vs SN2 Reaction Mechanisms & Stereochemistry (Class 12)
     if any(k in q_lower for k in ['sn1 vs sn2', 'sn1 and sn2', 'sn1 mechanism', 'sn2 mechanism', 'sn1 or sn2', 'nucleophilic substitution', 'walden inversion', 'racemisation', 'racemization', 'stereochemistry of sn1']):
         return thinking + (
-            f"### 🧪 **$S_N1$ vs $S_N2$ Reaction Mechanisms & Stereochemistry ({grade} - {subject})**\n\n"
+            f"### 🧪 **SN1 vs SN2 ($S_N1$ vs $S_N2$) Reaction Mechanisms & Stereochemistry ({grade} - {subject})**\n\n"
             f"#### 📊 **1. Comprehensive Master Comparison Table (CBSE Class 12 Chemistry):**\n"
-            f"| Parameter | $S_N1$ (Substitution Nucleophilic Unimolecular) | $S_N2$ (Substitution Nucleophilic Bimolecular) |\n"
+            f"| Parameter | SN1 ($S_N1$ - Substitution Nucleophilic Unimolecular) | SN2 ($S_N2$ - Substitution Nucleophilic Bimolecular) |\n"
             f"| :--- | :--- | :--- |\n"
             f"| **Kinetics & Rate Law** | **First Order**: $\\text{{Rate}} = k[R\\text{{-}}X]$ | **Second Order**: $\\text{{Rate}} = k[R\\text{{-}}X][\\text{{Nu}}^-]$ |\n"
             f"| **Number of Steps** | **Two-step mechanism** (slow ionization, fast attack) | **One-step concerted mechanism** (simultaneous bond forming/breaking) |\n"
@@ -4797,9 +5112,9 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"| **Nucleophile Strength** | Favored by **Weak nucleophiles** (e.g., $\\text{{H}}_2\\text{{O}}, \\text{{ROH}}$) | Requires **Strong nucleophiles** (e.g., $\\text{{OH}}^-, \\text{{CN}}^-, \\text{{I}}^-$) |\n"
             f"| **Solvent Effect** | **Polar Protic Solvents** (e.g., $\\text{{H}}_2\\text{{O}}, \\text{{C}}_2\\text{{H}}_5\\text{{OH}}$) stabilize carbocation | **Polar Aprotic Solvents** (e.g., Acetone, DMSO, DMF) enhance nucleophile attack |\n\n"
             f"#### 💡 **2. Key CBSE Board Exam Derivation Point:**\n"
-            f"- In **$S_N1$**, the rate-determining slow step depends only on the haloalkane: $$\\text{{R-X}} \\xrightarrow{{\\text{{slow}}}} \\text{{R}}^+ + \\text{{X}}^-$$\n"
-            f"- In **$S_N2$**, nucleophile attacks from the opposite side of the leaving group ($180^\\circ$), turning the molecule inside-out like an umbrella in a storm (Walden Inversion)!\n\n"
-            f"Would you like a quick 3-question quiz on $S_N1$ and $S_N2$ mechanisms?"
+            f"- In **SN1 ($S_N1$)**, the rate-determining slow step depends only on the haloalkane: $$\\text{{R-X}} \\xrightarrow{{\\text{{slow}}}} \\text{{R}}^+ + \\text{{X}}^-$$\n"
+            f"- In **SN2 ($S_N2$)**, nucleophile attacks from the opposite side of the leaving group ($180^\\circ$), turning the molecule inside-out like an umbrella in a storm (Walden Inversion)!\n\n"
+            f"Would you like a quick 3-question quiz on SN1 and SN2 mechanisms?"
         )
 
     # 3.0. Comprehensive Ray Diagrams Guide for Spherical Mirrors & Lenses
@@ -4870,14 +5185,15 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"#### 🎯 **1. Golden Rule of Balancing:**\n"
             f"According to the **Law of Conservation of Mass**, matter cannot be created or destroyed. The number of atoms of each element on the Reactant side (LHS) must equal the Product side (RHS).\n\n"
             f"#### 🪜 **2. Step-by-Step Hit-and-Trial Method (NCERT Method):**\n"
-            f"Let's balance: $$\\text{{Fe}} + \\text{{H}}_2\\text{{O}} \\rightarrow \\text{{Fe}}_3\\text{{O}}_4 + \\text{{H}}_2$$\n\n"
+            f"Let's balance the chemical equation: **Fe + H2O -> Fe3O4 + H2**\n"
+            f"$$3\\text{{Fe}} + 4\\text{{H}}_2\\text{{O}} \\rightarrow \\text{{Fe}}_3\\text{{O}}_4 + 4\\text{{H}}_2$$\n\n"
             f"1. **Step 1: Put boxes around all chemical formulas:**\n"
             f"   $$\\text{{[Fe]}} + \\text{{[H}}_2\\text{{O]}} \\rightarrow \\text{{[Fe}}_3\\text{{O}}_4\\text{{]}} + \\text{{[H}}_2\\text{{]}}$$\n"
             f"   *(Never change the internal chemical formula subscripts like $O_4$ or $H_2$!)*\n\n"
             f"2. **Step 2: Count atoms of each element:**\n"
-            f"   - $\\text{{Fe}}$: LHS = 1, RHS = 3\n"
-            f"   - $\\text{{H}}$: LHS = 2, RHS = 2\n"
-            f"   - $\\text{{O}}$: LHS = 1, RHS = 4\n\n"
+            f"   - **Fe**: LHS = 1, RHS = 3\n"
+            f"   - **H**: LHS = 2, RHS = 2\n"
+            f"   - **O**: LHS = 1, RHS = 4\n\n"
             f"3. **Step 3: Balance the element with the highest number of atoms first (Oxygen $\\text{{O}}$):**\n"
             f"   - Multiply $\\text{{H}}_2\\text{{O}}$ on LHS by 4 $\\rightarrow$ $\\text{{Fe}} + 4\\text{{H}}_2\\text{{O}} \\rightarrow \\text{{Fe}}_3\\text{{O}}_4 + \\text{{H}}_2$\n"
             f"   - Now $\\text{{H}}$ on LHS = 8 ($4 \\times 2$). Balance $\\text{{H}}$ on RHS by multiplying $\\text{{H}}_2$ by 4 $\\rightarrow 4\\text{{H}}_2$.\n\n"
@@ -4885,6 +5201,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"   - Multiply $\\text{{Fe}}$ on LHS by 3 $\\rightarrow 3\\text{{Fe}}$.\n\n"
             f"#### ✅ **Final Balanced Equation:**\n"
             f"$$\\mathbf{{3\\text{{Fe (s)}} + 4\\text{{H}}_2\\text{{O (g)}} \\rightarrow \\text{{Fe}}_3\\text{{O}}_4\\text{{ (s)}} + 4\\text{{H}}_2\\text{{ (g)}}}}$$\n\n"
+            f"**Balanced Equation (Plain Text):** `3Fe + 4H2O -> Fe3O4 + 4H2`\n\n"
             f"Type any unbalanced chemical equation and I will balance it step-by-step for you!"
         )
 
@@ -5941,6 +6258,34 @@ def ai_tutor_chat():
                     f"2. Output exactly {q_count} multiple-choice questions (A, B, C, D) relevant to their topic.\n"
                     f"3. CRITICAL: Stop typing immediately after question {q_count}. Do NOT provide answers, and do NOT provide any feedback. Wait for the student to reply with their choices."
                 )
+        elif is_quiz_question_followup(user_query, history):
+            system_instruction = (
+                f"System: You are the Maya AI Tutor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
+                f"Target Student Grade: {grade}\n"
+                f"Current Subject: {subject}\n\n"
+                f"Task: The student is asking a follow-up about a specific question from the quiz in the conversation history.\n"
+                f"1. Identify the specific question and options from history.\n"
+                f"2. Explain why the correct option is right based on NCERT guidelines.\n"
+                f"3. Explain why the other options (distractors) are incorrect and how to avoid exam traps.\n"
+                f"4. Give a high-yield CBSE board exam tip and ask if they want to try another practice question.\n"
+                f"Global Language Rule: Mirror the user's exact language (Hinglish or English)."
+            )
+        elif is_more_examples_request(user_query, history):
+            system_instruction = (
+                f"System: You are the Maya AI Tutor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
+                f"Target Student Grade: {grade}\n"
+                f"Current Subject: {subject}\n\n"
+                f"Task: Provide 3 vivid, relatable real-world applications/examples of the active concept currently discussed in the conversation, tailored for {grade}.\n"
+                f"Global Language Rule: Mirror the user's exact language (Hinglish or English)."
+            )
+        elif is_formula_sheet_request(user_query, history):
+            system_instruction = (
+                f"System: You are the Maya AI Tutor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
+                f"Target Student Grade: {grade}\n"
+                f"Current Subject: {subject}\n\n"
+                f"Task: Provide a structured CBSE/NCERT formula reference table with formulas, variable meanings, SI units, and common exam tips for the active chapter/topic.\n"
+                f"Global Language Rule: Mirror the user's exact language (Hinglish or English)."
+            )
         elif history and was_last_message_quiz_offer(history) and is_negative_reply(user_query):
             system_instruction = (
                 f"System: You are the Maya AI Tutor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
