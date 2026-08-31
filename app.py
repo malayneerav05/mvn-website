@@ -746,9 +746,10 @@ def ai_tutor():
 def call_gemini_api(prompt, system_instruction, api_key, history=None, image_data=None):
     """Calls Google Gemini REST API with multi-turn conversation and multimodal image support"""
     models = [
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
-        "gemini-1.5-flash"
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3.7-flash",
+        "gemini-flash-latest"
     ]
     urls_to_try = [
         f"https://generativelanguage.googleapis.com/v1beta/models/{m}:generateContent?key={api_key}"
