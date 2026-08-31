@@ -2514,24 +2514,30 @@ def detect_subject_from_query(query, default_subject="General Science", history=
 
     def _find_subject_in_text(text):
         q = text.lower()
-        if any(k in q for k in ['artificial intelligence', 'ai 417', 'subject code 417', 'code 417', 'ai project cycle', 'computer vision', 'natural language processing', 'ai ethics', 'ai syllabus', 'neural network', '417']):
+        # 1. Physics (check first to prevent 'physics syllabus' colliding with 'cs syllabus')
+        if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy', 'mirror', 'mirrors', 'lens', 'lenses', 'rear view', 'convex', 'concave', 'refraction', 'reflection', 'focal length', 'myopia', 'hypermetropia', 'presbyopia', 'prism', 'spectrum', 'rainbow', 'twinkle', 'twinkling', 'scattering of light', 'ray diagram', 'ray diagrams', 'magnification', 'solenoid', 'fleming', 'electrostatics', 'coulomb', 'ydse', 'young\'s double slit', 'photoelectric', 'semiconductor']):
+            return "Physics"
+        # 2. Chemistry
+        if any(k in q for k in ['chemistry', 'chemical reaction', 'atomic structure', 'valency', 'periodic table', 'acid', 'base', 'salt', 'mole concept', 'metals', 'non-metals', 'carbon', 'combustion', 'states of matter', 'corrosion', 'rusting', 'galvanization', 'saponification', 'esterification', 'redox', 'decomposition', 'displacement', 'neutralization', 'amphoteric', 'hydrocarbon', 'alkane', 'alkene', 'alkyne', 'micelle', 'plaster of paris', 'baking soda', 'washing soda', 'calcination', 'roasting', 'metallurgy', 'ore', 'ores', 'bauxite', 'sn1', 'sn2', 'stereochemistry', 'isomerism', 'markovnikov', 'nernst', 'rate law', 'chemical kinetics']):
+            return "Chemistry"
+        # 3. Biology
+        if any(k in q for k in ['biology', 'photosynthesis', 'mitosis', 'chlorophyll', 'respiration', 'digestive', 'circulatory', 'cell division', 'microorganism', 'microbes', 'cell structure', 'reproduction', 'tissue', 'tissues', 'xylem', 'phloem', 'parenchyma', 'collenchyma', 'sclerenchyma', 'meristematic', 'life processes', 'heredity', 'control and coordination', 'neuron', 'nephron', 'synapse', 'reflex arc', 'brain', 'hormone', 'hormones', 'mendel', 'monohybrid', 'dihybrid', 'alveoli', 'double circulation', 'heart', 'excretion', 'kidney', 'stomata', 'ecosystem', 'food chain', 'ozone', 'biological magnification', 'biomagnification', '10% law', 'lindeman', 'trophic', 'dna', 'rna', 'watson', 'bird', 'birds', 'feather', 'feathers', 'flightless', 'seed', 'germination', 'embryo', 'sense organ']):
+            return "Biology"
+        # 4. Computer Science & AI / IT / IP with word boundaries
+        if re.search(r'\b(?:artificial intelligence|ai 417|subject code 417|code 417|ai project cycle|computer vision|natural language processing|ai ethics|neural network)\b', q) or re.search(r'\bai\s+syllabus\b', q):
             return "Artificial Intelligence (Subject Code 417)"
-        if any(k in q for k in ['information technology', 'it 402', 'code 402', 'it-ites', 'it syllabus', '402']):
+        if re.search(r'\b(?:information technology|it 402|code 402|it-ites|it syllabus)\b', q):
             return "Information Technology (Subject Code 402)"
-        if any(k in q for k in ['computer application', 'computer applications', 'code 165', '165 syllabus', '165']):
+        if re.search(r'\b(?:computer applications?|code 165|165 syllabus)\b', q):
             return "Computer Applications (Subject Code 165)"
-        if any(k in q for k in ['informatics practices', 'ip 065', 'code 065', 'ip syllabus', '065']):
+        if re.search(r'\b(?:informatics practices|ip 065|code 065|ip syllabus|pandas)\b', q):
             return "Informatics Practices (IP - Code 065)"
-        if any(k in q for k in ['c++', 'cpp', 'int main', 'cout', 'cin', '#include', 'java', 'python', 'coding', 'computer science', 'programming', 'loop', 'loops', 'algorithm', 'sql', 'variable', 'variables', 'syntax error', 'html', 'css', 'javascript', 'code 083', 'cs syllabus', '083']):
+        if (re.search(r'\b(?:computer science|cs syllabus|c\+\+|cpp|int main|cout|cin|#include|java|python|coding|programming|algorithm|sql|syntax error|html|css|javascript|code 083)\b', q) or
+            (any(k in q for k in ['loop', 'loops', 'variable', 'variables']) and not any(k in q for k in ['force', 'mass', 'acceleration', 'velocity', 'physics', 'math']))):
             return "Computer Science"
+        # 5. English
         if any(k in q for k in ['english', 'grammar', 'essay', 'paragraph', 'letter', 'speech', 'leave application', 'composition', 'poem', 'preposition', 'reported speech', 'active passive', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301', 'english story', 'english chapter']):
             return "English"
-        if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy', 'mirror', 'mirrors', 'lens', 'lenses', 'rear view', 'convex', 'concave', 'refraction', 'reflection', 'focal length', 'myopia', 'hypermetropia', 'presbyopia', 'prism', 'spectrum', 'rainbow', 'twinkle', 'twinkling', 'scattering of light', 'ray diagram', 'ray diagrams', 'magnification', 'solenoid', 'fleming']):
-            return "Physics"
-        if any(k in q for k in ['chemistry', 'chemical reaction', 'atomic structure', 'valency', 'periodic table', 'acid', 'base', 'salt', 'mole concept', 'metals', 'non-metals', 'carbon', 'combustion', 'states of matter', 'corrosion', 'rusting', 'galvanization', 'saponification', 'esterification', 'redox', 'decomposition', 'displacement', 'neutralization', 'amphoteric', 'hydrocarbon', 'alkane', 'alkene', 'alkyne', 'micelle', 'plaster of paris', 'baking soda', 'washing soda', 'calcination', 'roasting', 'metallurgy', 'ore', 'ores', 'bauxite']):
-            return "Chemistry"
-        if any(k in q for k in ['biology', 'photosynthesis', 'mitosis', 'chlorophyll', 'respiration', 'digestive', 'circulatory', 'cell division', 'microorganism', 'microbes', 'cell structure', 'reproduction', 'tissue', 'tissues', 'xylem', 'phloem', 'parenchyma', 'collenchyma', 'sclerenchyma', 'meristematic', 'life processes', 'heredity', 'control and coordination', 'neuron', 'nephron', 'synapse', 'reflex arc', 'brain', 'hormone', 'hormones', 'mendel', 'monohybrid', 'dihybrid', 'alveoli', 'double circulation', 'heart', 'excretion', 'kidney', 'stomata', 'ecosystem', 'food chain', 'ozone', 'biological magnification', 'biomagnification', '10% law', 'lindeman', 'trophic', 'dna', 'rna', 'watson']):
-            return "Biology"
         # Detect Mathematics via arithmetic regex patterns or mathematical keywords
         if (re.search(r'\d+\s*[\+\-\*\/\^\%xX÷×]\s*\d+', q) or 
             re.search(r'\d+\s*=\s*\?', q) or 
@@ -3199,26 +3205,26 @@ def generate_ncert_syllabus_overview(query, grade, subject):
             break
             
     target_subject = subject
-    if any(k in q_lower for k in ['artificial intelligence', 'ai 417', 'subject code 417', 'code 417', 'ai syllabus', 'ai curriculum', '417']) or ' ai ' in q_lower or q_lower.startswith('ai '):
-        target_subject = "Artificial Intelligence (Subject Code 417)"
-    elif any(k in q_lower for k in ['information technology', 'it 402', 'code 402', 'it-ites', 'it syllabus', '402']):
-        target_subject = "Information Technology (Subject Code 402)"
-    elif any(k in q_lower for k in ['computer application', 'computer applications', 'code 165', '165 syllabus', '165']):
-        target_subject = "Computer Applications (Subject Code 165)"
-    elif any(k in q_lower for k in ['informatics practices', 'ip 065', 'code 065', 'ip syllabus', 'pandas']):
-        target_subject = "Informatics Practices (IP - Code 065)"
-    elif any(k in q_lower for k in ['computer science', 'c++', 'cpp', 'python', 'coding', 'programming', 'code 083', 'cs syllabus']):
-        target_subject = "Computer Science (Python - Code 083)" if target_grade in ['Class 11', 'Class 12'] else "Computer Applications (Subject Code 165)"
-    elif any(k in q_lower for k in ['english', 'literature', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301']):
-        target_subject = "English Language & Literature (Code 184)"
-    elif any(k in q_lower for k in ['math', 'mathematics', 'algebra', 'geometry', 'trigonometry', 'calculus']):
-        target_subject = "Mathematics"
-    elif any(k in q_lower for k in ['physics']):
+    if any(k in q_lower for k in ['physics']):
         target_subject = "Physics"
     elif any(k in q_lower for k in ['chemistry']):
         target_subject = "Chemistry"
     elif any(k in q_lower for k in ['biology', 'botany', 'zoology']):
         target_subject = "Biology"
+    elif any(k in q_lower for k in ['math', 'mathematics', 'algebra', 'geometry', 'trigonometry', 'calculus']):
+        target_subject = "Mathematics"
+    elif re.search(r'\b(?:artificial intelligence|ai 417|subject code 417|code 417|ai syllabus|ai curriculum)\b', q_lower):
+        target_subject = "Artificial Intelligence (Subject Code 417)"
+    elif re.search(r'\b(?:information technology|it 402|code 402|it-ites|it syllabus)\b', q_lower):
+        target_subject = "Information Technology (Subject Code 402)"
+    elif re.search(r'\b(?:computer applications?|code 165|165 syllabus)\b', q_lower):
+        target_subject = "Computer Applications (Subject Code 165)"
+    elif re.search(r'\b(?:informatics practices|ip 065|code 065|ip syllabus|pandas)\b', q_lower):
+        target_subject = "Informatics Practices (IP - Code 065)"
+    elif re.search(r'\b(?:computer science|cs syllabus|c\+\+|cpp|python|coding|programming|code 083)\b', q_lower):
+        target_subject = "Computer Science (Python - Code 083)" if target_grade in ['Class 11', 'Class 12'] else "Computer Applications (Subject Code 165)"
+    elif any(k in q_lower for k in ['english', 'literature', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301']):
+        target_subject = "English Language & Literature (Code 184)"
     elif any(k in q_lower for k in ['social', 'history', 'civics', 'geography', 'economics', 'sst']):
         target_subject = "Social Science"
     elif any(k in q_lower for k in ['science']) and 'social' not in q_lower:
