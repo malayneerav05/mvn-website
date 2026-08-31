@@ -4845,7 +4845,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
         return thinking + decline_msg
 
     # 0.25 Standalone Affirmation without Quiz Offer Context ("yes", "haan", "ok")
-    if is_affirmative_reply(user_query):
+    if is_affirmative_reply(user_query) and not was_last_message_quiz_offer(chat_history):
         is_hing = is_hinglish(user_query)
         thinking = format_thinking_block(user_query, "Affirmation Check-in", "Politely acknowledge and ask which topic/problem student wants to explore")
         if is_hing:
