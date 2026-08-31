@@ -6274,7 +6274,25 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             f"Would you like a quick 3-question quiz on light scattering?"
         )
 
-    if any(k in q_lower for k in ['light', 'reflection', 'refraction', 'mirror', 'lens', 'optics', 'prism']):
+    # E4. Rainbow Formation & Dispersion of Light (Class 10 CBSE Chapter 11)
+    if any(k in q_lower for k in ['rainbow', 'dispersion', 'prism', 'spectrum', 'vibgyor', 'splitting of white light', 'recombination']):
+        return thinking + (
+            f"### 🌈 **Rainbow Formation & Dispersion of Light ({grade} - {subject})**\n\n"
+            f"#### 🌈 **1. What is Dispersion of Light?**\n"
+            f"**Dispersion** is the phenomenon of splitting of white light into its seven constituent colors (**VIBGYOR**: Violet, Indigo, Blue, Green, Yellow, Orange, Red) when passing through a transparent prism or raindrop (first demonstrated by Sir Isaac Newton).\n"
+            f"- **Scientific Cause:** Different colors of light travel at different speeds in glass/water. **Red light** bends the least (longest wavelength $\\lambda \\approx 700\\text{{ nm}}$, highest speed), while **Violet light** bends the most (shortest wavelength $\\lambda \\approx 400\\text{{ nm}}$, lowest speed).\n\n"
+            f"#### 🌧️ **2. Step-by-Step Rainbow Formation in the Sky:**\n"
+            f"A rainbow is a natural spectrum caused by dispersion of sunlight by tiny spherical raindrops acting as microscopic prisms.\n"
+            f"1. **Refraction & Dispersion:** Sunlight enters a spherical water droplet and is refracted, splitting into VIBGYOR colors.\n"
+            f"2. **Total Internal Reflection:** The dispersed light strikes the inner back surface of the water droplet and undergoes internal reflection.\n"
+            f"3. **Refraction on Exit:** The light is refracted again as it exits the droplet into the air, reaching the observer's eye.\n\n"
+            f"#### ☀️ **3. Essential Conditions to Observe a Rainbow:**\n"
+            f"- The **Sun must be behind the observer**.\n"
+            f"- There must be suspended raindrops in the atmosphere facing the observer after rain.\n\n"
+            f"Would you like a quick 3-question quiz on rainbow formation and optics?"
+        )
+
+    if any(k in q_lower for k in ['light', 'reflection', 'refraction', 'mirror', 'lens', 'optics']):
         return thinking + (
             f"### 💡 **Light: Reflection & Refraction ({grade} - {subject})**\n\n"
             "#### 1. **What is Light?**\n"
@@ -7079,7 +7097,7 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
         )
 
     # 4.10. Natural Language Processing (NLP)
-    if any(k in q_lower for k in ['natural language processing', 'nlp', 'tokenization', 'stopword', 'stopwords', 'stemming', 'lemmatization', 'bag of words', 'bow', 'tf-idf', 'tfidf', 'text normalization']):
+    if any(re.search(r'\b' + re.escape(k) + r'\b', q_lower) for k in ['natural language processing', 'nlp', 'tokenization', 'stopword', 'stopwords', 'stemming', 'lemmatization', 'bag of words', 'bow', 'tf-idf', 'tfidf', 'text normalization']):
         return thinking + (
             f"### 💬 **Natural Language Processing (NLP) & Text Normalization ({grade} - {subject})**\n\n"
             f"In **Class 10 CBSE AI (Code 417)**, **NLP** is the domain that enables computers to understand, interpret, and generate human languages.\n\n"
