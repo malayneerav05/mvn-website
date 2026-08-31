@@ -946,8 +946,6 @@ def generate_dynamic_cbse_quiz(grade, subject, query=""):
     # 1. BIOLOGY: TISSUES (Class 9 Chapter 6)
     if any(k in s_lower for k in ['tissue', 'tissues', 'sclerenchyma', 'parenchyma', 'collenchyma', 'xylem', 'phloem', 'epithelial', 'ligament', 'tendon', 'meristematic', 'meristem']):
         topic_display = "Biology: Tissues"
-        if grade == "Class 10":
-            grade = "Class 9"
         pool = [
             ("Plant Tissues - Meristematic", "Which type of meristematic tissue is located at the growing tips of stems and roots, increasing their length?", ["Apical Meristem", "Lateral Meristem (Cambium)", "Intercalary Meristem", "Permanent Tissue"], "A"),
             ("Plant Tissues - Sclerenchyma", "The husk of a coconut is made of which plant tissue whose cell walls are thickened with lignin?", ["Parenchyma", "Collenchyma", "Sclerenchyma", "Aerenchyma"], "C"),
@@ -966,8 +964,6 @@ def generate_dynamic_cbse_quiz(grade, subject, query=""):
     # 2. BIOLOGY: CELL / FUNDAMENTAL UNIT OF LIFE (Class 9 Chapter 5)
     elif any(k in s_lower for k in ['fundamental unit of life', 'cell membrane', 'mitochondria', 'lysosome', 'plastid', 'endoplasmic reticulum', 'golgi apparatus', 'osmosis']):
         topic_display = "Biology: Fundamental Unit of Life (Cell)"
-        if grade == "Class 10":
-            grade = "Class 9"
         pool = [
             ("Cell Organelles - Mitochondria", "Which cell organelle generates ATP and is called the **Powerhouse of the Cell**?", ["Ribosome", "Mitochondria", "Golgi Apparatus", "Lysosome"], "B"),
             ("Cell Organelles - Lysosomes", "Which organelle contains powerful digestive enzymes and is known as the **Suicide Bag of the Cell**?", ["Lysosome", "Vacuole", "Ribosome", "Plastid"], "A"),
@@ -981,8 +977,6 @@ def generate_dynamic_cbse_quiz(grade, subject, query=""):
     # 3. PHYSICS: MOTION (Class 9 Chapter 7)
     elif any(k in s_lower for k in ['motion', 'velocity', 'acceleration', 'equations of motion', 'displacement', 'uniform motion', 'speed']):
         topic_display = "Physics: Motion"
-        if grade == "Class 10":
-            grade = "Class 9"
         pool = [
             ("Kinematics - Displacement", "What is the shortest straight-line distance measured from the initial to the final position of an object called?", ["Distance", "Displacement", "Velocity", "Path Length"], "B"),
             ("Equations of Motion", "Which of the following is the correct Second Equation of uniformly accelerated motion?", ["$v = u + at$", "$s = ut + \\frac{1}{2}at^2$", "$v^2 - u^2 = 2as$", "$s = (u+v)t$"], "B"),
@@ -994,8 +988,6 @@ def generate_dynamic_cbse_quiz(grade, subject, query=""):
     # 4. PHYSICS: FORCE & LAWS OF MOTION (Class 9 Chapter 8)
     elif any(k in s_lower for k in ['laws of motion', 'newton', 'inertia', 'momentum', 'conservation of momentum', 'f=ma']):
         topic_display = "Physics: Force and Laws of Motion"
-        if grade == "Class 10":
-            grade = "Class 9"
         pool = [
             ("Newton's 1st Law & Inertia", "The natural tendency of an object to resist a change in its state of rest or uniform motion is called:", ["Momentum", "Inertia", "Force", "Impulse"], "B"),
             ("Newton's 2nd Law", "According to Newton's Second Law of Motion, the rate of change of momentum is directly proportional to:", ["Applied unbalanced Force", "Displacement", "Velocity", "Work"], "A"),
@@ -1007,8 +999,6 @@ def generate_dynamic_cbse_quiz(grade, subject, query=""):
     # 5. PHYSICS: GRAVITATION (Class 9 Chapter 9)
     elif any(k in s_lower for k in ['gravitation', 'gravity', 'free fall', 'mass vs weight', 'archimedes', 'buoyancy', 'universal gravitation']):
         topic_display = "Physics: Gravitation"
-        if grade == "Class 10":
-            grade = "Class 9"
         pool = [
             ("Universal Gravitation", "If the distance between two spherical masses is doubled, the gravitational force between them becomes:", ["2 times stronger", "One-fourth (1/4th)", "Half (1/2)", "4 times stronger"], "B"),
             ("Acceleration due to Gravity", "What is the standard value of acceleration due to gravity ($g$) near the Earth's surface?", ["$9.8\\text{ m/s}^2$", "$9.8\\text{ m/s}$", "$6.67 \\times 10^{-11}\\text{ N}$", "$1.6\\text{ m/s}^2$"], "A"),
@@ -1348,15 +1338,109 @@ def evaluate_student_code_submission(query, grade, subject="Computer Science"):
     )
 
 
-def is_quiz_request(query, mode="explain"):
+def is_affirmative_reply(query):
+    """Detects affirmative confirmations (yes, sure, ok, haan, etc.)."""
+    q = query.strip().lower().rstrip('.!?,')
+    affirmative_exact = {
+        'yes', 'yeah', 'yep', 'yup', 'sure', 'ok', 'okay', 'yes please', 'yeah please',
+        'haan', 'ha', 'haa', 'han', 'start', 'start quiz', 'take quiz', 'go ahead',
+        'lets do it', "let's do it", 'lets start', "let's start", 'why not', 'definitely',
+        'certainly', 'y', 'proceed', 'ask me', 'test me', 'ready', "i'm ready", 'i am ready',
+        'chalo', 'karo', 'shuru karo', 'pucho', 'give me quiz', 'bring it on', 'of course',
+        'sure why not', 'yes i want', 'yes do it'
+    }
+    if q in affirmative_exact:
+        return True
+    return bool(re.match(r'^(?:yes|sure|ok|okay|haan|yeah|yep|yup|definitely|certainly)\b', q))
+
+
+def is_negative_reply(query):
+    """Detects decline or negative responses (no, not now, later, nahi, etc.)."""
+    q = query.strip().lower().rstrip('.!?,')
+    negative_exact = {
+        'no', 'nope', 'nah', 'no thanks', 'not now', 'nahi', 'nahi chahiye', 'baad me',
+        'later', 'skip', 'not ready', 'mat pucho', 'no quiz', 'dont want', "don't want",
+        'no need', 'n'
+    }
+    if q in negative_exact:
+        return True
+    return bool(re.match(r'^(?:no|nope|nah|nahi)\b', q))
+
+
+def was_last_message_quiz_offer(history):
+    """Checks if the assistant's last message in the chat history ended by offering a quiz."""
+    if not history or not isinstance(history, list):
+        return False
+    last_assistant_msg = ""
+    for item in reversed(history):
+        if isinstance(item, dict):
+            role = item.get('role', '')
+            if role in ['model', 'assistant', 'ai']:
+                last_assistant_msg = item.get('text') or item.get('content') or item.get('message') or ""
+                break
+        elif isinstance(item, str):
+            last_assistant_msg = item
+            break
+    if not last_assistant_msg:
+        return False
+    
+    last_low = last_assistant_msg.lower()
+    quiz_offer_signals = [
+        'would you like a quick',
+        'would you like a',
+        'quick 3-question quiz',
+        'practice quiz',
+        'test this concept',
+        'test your concept',
+        'test your understanding',
+        'ready for a quiz',
+        'shall we do a quick quiz',
+        'shall we take a quiz',
+        'interactive cbse practice quiz',
+        'kya aap ek quick quiz dena chahenge',
+        'quiz to test this concept',
+        'want a quiz'
+    ]
+    return any(sig in last_low for sig in quiz_offer_signals) or ('quiz' in last_low and '?' in last_assistant_msg[-120:])
+
+
+def extract_topic_from_history(history, default_topic=""):
+    """Extracts topic keywords from previous conversation history for contextual quiz generation."""
+    if not history or not isinstance(history, list):
+        return default_topic
+    
+    for item in reversed(history):
+        txt = ""
+        if isinstance(item, dict):
+            # Prioritize previous user message if it has substantive text
+            if item.get('role') == 'user':
+                txt = item.get('text') or item.get('content') or item.get('message') or ""
+            elif not default_topic and item.get('role') in ['model', 'assistant', 'ai']:
+                txt = item.get('text') or item.get('content') or item.get('message') or ""
+        elif isinstance(item, str):
+            txt = item
+            
+        txt_clean = txt.strip().lower()
+        # Skip trivial messages like 'yes', 'hi', etc.
+        if txt_clean and len(txt_clean.split()) > 2 and not is_affirmative_reply(txt_clean) and not is_negative_reply(txt_clean):
+            return txt
+            
+    return default_topic
+
+
+def is_quiz_request(query, mode="explain", history=None):
     """
     Robustly detects if student is asking for a quiz, test, MCQs, practice questions,
-    NCERT Exemplar questions, or previous year questions (PYQs).
+    NCERT Exemplar questions, or previous year questions (PYQs), or accepting a quiz offer.
     """
     if mode == 'quiz':
         return True
     q = query.strip().lower()
     
+    # Check if student is accepting a quiz offer from the assistant's previous message
+    if history and was_last_message_quiz_offer(history) and is_affirmative_reply(q):
+        return True
+        
     # Exclude syllabus, general school queries
     if any(k in q for k in ['fee structure', 'admission', 'who are you', 'how are you', 'syllabus of', 'curriculum of', 'table of contents']):
         return False
@@ -1412,7 +1496,7 @@ def determine_quiz_state(user_message, chat_history):
     Routing function to deterministically separate Quiz Generator from Quiz Grader.
     Checks if the AI's last message was a quiz and whether the user's current reply is an answer submission.
     """
-    if is_quiz_request(user_message) and not is_quiz_submission(user_message):
+    if is_quiz_request(user_message, history=chat_history) and not is_quiz_submission(user_message):
         return "generator"
         
     if is_quiz_submission(user_message):
@@ -1431,7 +1515,7 @@ def determine_quiz_state(user_message, chat_history):
     if last_message:
         last_content = last_message.get('text', '') or last_message.get('content', '')
 
-    was_last_message_quiz = bool(last_message and any(k in last_content for k in ['A)', '(A)', '- A)', 'Question 1', 'Question 2']))
+    was_last_message_quiz = bool(last_message and any(k in last_content for k in ['A)', '(A)', '- A)', 'Question 1', 'Question 2', '### 📝 **Practice Quiz']))
     
     if was_last_message_quiz and re.search(r'\b[A-Da-d]\b', user_message):
         return "grader"
@@ -1511,8 +1595,8 @@ def is_short_answer_or_tf(query):
     ]):
         return False
         
-    # 1. Direct True/False or single option
-    if q in ['true', 'false', 't', 'f', 'true.', 'false.', 'yes', 'no']:
+    # 1. Direct True/False statements only (NOT conversational yes/no)
+    if q in ['true', 'false', 't', 'f', 'true.', 'false.', 'sahi', 'galat', 'right', 'wrong']:
         return True
         
     # 2. Short statement questions explicitly asking for verification
@@ -2424,6 +2508,10 @@ def detect_subject_from_query(query, default_subject="General Science", history=
     Intelligently infers subject from student prompt keywords or history to prevent
     dropdown mismatch (e.g. English homework while dropdown is on General Science).
     """
+    # Conversational replies, affirmations, or simplification requests preserve current subject
+    if is_affirmative_reply(query) or is_negative_reply(query) or is_simplification_request(query, history):
+        return default_subject
+
     def _find_subject_in_text(text):
         q = text.lower()
         if any(k in q for k in ['artificial intelligence', 'ai 417', 'subject code 417', 'code 417', 'ai project cycle', 'computer vision', 'natural language processing', 'ai ethics', 'ai syllabus', 'neural network', '417']):
@@ -2436,7 +2524,7 @@ def detect_subject_from_query(query, default_subject="General Science", history=
             return "Informatics Practices (IP - Code 065)"
         if any(k in q for k in ['c++', 'cpp', 'int main', 'cout', 'cin', '#include', 'java', 'python', 'coding', 'computer science', 'programming', 'loop', 'loops', 'algorithm', 'sql', 'variable', 'variables', 'syntax error', 'html', 'css', 'javascript', 'code 083', 'cs syllabus', '083']):
             return "Computer Science"
-        if any(k in q for k in ['english', 'grammar', 'essay', 'paragraph', 'letter', 'speech', 'leave application', 'composition', 'poem', 'story', 'preposition', 'reported speech', 'active passive', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301']):
+        if any(k in q for k in ['english', 'grammar', 'essay', 'paragraph', 'letter', 'speech', 'leave application', 'composition', 'poem', 'preposition', 'reported speech', 'active passive', 'first flight', 'footprints', 'beehive', 'moments', 'code 184', 'code 301', '184', '301', 'english story', 'english chapter']):
             return "English"
         if any(k in q for k in ['physics', 'motion', 'kinematics', 'acceleration', "ohm's law", "newton's", 'velocity', 'momentum', 'gravitation', 'optics', 'force', 'mass', 'electricity', 'electric current', 'resistor', 'resistance', 'circuit', 'magnetic', 'friction', 'sound', 'light', 'work and energy', 'mirror', 'mirrors', 'lens', 'lenses', 'rear view', 'convex', 'concave', 'refraction', 'reflection', 'focal length', 'myopia', 'hypermetropia', 'presbyopia', 'prism', 'spectrum', 'rainbow', 'twinkle', 'twinkling', 'scattering of light', 'ray diagram', 'ray diagrams', 'magnification', 'solenoid', 'fleming']):
             return "Physics"
@@ -2472,11 +2560,13 @@ def detect_subject_from_query(query, default_subject="General Science", history=
     if found:
         return found
         
-    # 2. Check conversation history
+    # 2. Check conversation history (prioritizing user messages)
     if history and isinstance(history, list):
         for item in reversed(history[-6:]):
             txt = ""
             if isinstance(item, dict):
+                if item.get('role') in ['model', 'assistant', 'ai']:
+                    continue
                 txt = item.get('text') or item.get('content') or item.get('message') or ""
             elif isinstance(item, str):
                 txt = item
@@ -2492,7 +2582,7 @@ def detect_grade_from_query(query, default_grade="Class 10", history=None):
     """
     Infers grade from student query across English digits, number words, ordinals, and Hindi/Hinglish.
     e.g. 'class one', 'class 1', 'kaksha 1', 'kaksha ek', 'grade one', '1st standard', 'primary'.
-    If not specified in current query, checks conversation history and NCERT chapter affinity.
+    If not specified in current query, checks user messages in conversation history.
     """
     def _find_grade_in_text(text):
         q = text.lower()
@@ -2545,11 +2635,13 @@ def detect_grade_from_query(query, default_grade="Class 10", history=None):
     if found:
         return found
         
-    # 2. Check conversation history
+    # 2. Check conversation history (user messages only)
     if history and isinstance(history, list):
         for item in reversed(history[-6:]):
             txt = ""
             if isinstance(item, dict):
+                if item.get('role') in ['model', 'assistant', 'ai']:
+                    continue
                 txt = item.get('text') or item.get('content') or item.get('message') or ""
             elif isinstance(item, str):
                 txt = item
@@ -2557,13 +2649,6 @@ def detect_grade_from_query(query, default_grade="Class 10", history=None):
                 hist_grade = _find_grade_in_text(txt)
                 if hist_grade:
                     return hist_grade
-
-    # 3. Chapter / Topic Affinity for unambiguous CBSE NCERT chapters
-    q_low = query.lower()
-    if any(k in q_low for k in ['tissue', 'tissues', 'fundamental unit of life', 'matter in our surroundings', 'is matter around us pure', "heron's formula", 'heron formula', 'motion', 'force and laws of motion', 'gravitation', 'work and energy', 'sound']):
-        return "Class 9"
-    if any(k in q_low for k in ['chemical reactions and equations', 'life processes', 'control and coordination', 'how do organisms reproduce', 'human eye and colourful world', 'magnetic effects of electric current']):
-        return "Class 10"
 
     return default_grade
 
@@ -3392,12 +3477,10 @@ def is_greeting(query):
 
 
 def is_simplification_request(query, history=None):
-    """Detects if student is struggling, confused, or asking for a simpler explanation of a prior message."""
-    if not history or len(history) == 0:
-        return False
+    """Detects if student is struggling, confused, or asking for a simpler explanation, fun story, or metaphor of a prior concept."""
     q = query.lower().strip()
     # Exclude direct queries that ask for specific rules/formulas/theorems
-    if any(k in q for k in ['fleming', 'rule', 'formula', 'theorem', 'difference between', 'what is', 'explain', 'derive']):
+    if any(k in q for k in ['fleming', 'rule', 'formula', 'theorem', 'difference between', 'what is', 'explain what', 'derive']):
         return False
     return any(k in q for k in [
         "don't understand", "dont understand", "didn't understand", "didnt understand",
@@ -3405,23 +3488,101 @@ def is_simplification_request(query, history=None):
         "make it simpler", "explain simply", "explain more simply", "simple words", "simple language",
         "easy words", "easy way", "explain like a kid", "explain like im 5", "eli5", "mushkil lag raha",
         "unable to understand", "hard to understand", "not understanding", "samjha do simply",
-        "i am confused", "im confused"
+        "i am confused", "im confused", "fun story", "as a story", "with a story", "story format",
+        "explain with a story", "simple story", "easy story", "like a story", "short story",
+        "tell a story", "aur simple", "aur asan", "kahani jaisa", "kahani ke roop me"
     ])
 
 
 def generate_feynman_simplification(query, grade, subject, history=None):
     """
     Pedagogical Feynman Simplification Technique:
-    Translates complex concepts into intuitive, real-world metaphors with zero jargon.
+    Translates complex concepts into intuitive, real-world metaphors and stories with zero jargon.
     """
     q_lower = query.lower()
     is_hing = is_hinglish(query)
     
     # Check history to find the previous topic discussed
-    history_text = " ".join([h.get('text', '') or h.get('parts', [''])[0] for h in (history or [])]).lower()
+    history_text = " ".join([
+        (h.get('text', '') or h.get('content', '') or (h.get('parts', [''])[0] if isinstance(h.get('parts'), list) else ''))
+        for h in (history or [])
+    ]).lower()
     full_context = q_lower + " " + history_text
     
-    # 1. Python Variables & Loops
+    # 1. Water Cycle & Rain Story (Primary & Middle School)
+    if any(k in full_context for k in ['water cycle', 'rain', 'evaporation', 'condensation', 'precipitation', 'clouds', 'water droplet']):
+        if is_hing:
+            return (
+                f"### 🌧️ **Droppy the Water Drop: Baarish ki Kahani! ({grade})**\n\n"
+                f"Chaliye **Water Cycle** ko ek choti si fun kahani ke through samajhte hain! 💧\n\n"
+                f"Meet **Droppy** — ek chota sa pani ka boond jo nadi me khel raha tha:\n\n"
+                f"1. ☀️ **Step 1: Dhoop me Pankh Lagna (Evaporation):**\n"
+                f"   Suraj dada ne tej dhoop chamkai. Droppy ko garmi lagi aur wo invisible bhaap (steam) bankar hawa me udne laga!\n\n"
+                f"2. ☁️ **Step 2: Aasman me Party (Condensation):**\n"
+                f"   Upar thandak me Droppy apne hazaron doston se mila aur sabne milkar ek mota, safed **Baadal (Cloud)** bana liya.\n\n"
+                f"3. 🌧️ **Step 3: Rollercoaster Ride (Precipitation / Rain):**\n"
+                f"   Jab baadal bohot bhari ho gaya, toh Droppy aur uske saare dost 'Whoosh!' karke baarish bankar wapas dharti par gir gaye!\n\n"
+                f"💡 *Droppy phir se nadi me gaya, aur yeh circle hamesha chalta rehta hai!* Kya Droppy ki story se Water Cycle clear hua? 😊"
+            )
+        else:
+            return (
+                f"### 🌧️ **The Story of 'Droppy' the Water Droplet ({grade})**\n\n"
+                f"Let's understand the **Water Cycle** with a fun adventure story! 💧\n\n"
+                f"Meet **Droppy**, a happy little water droplet floating in a blue lake:\n\n"
+                f"1. ☀️ **Stage 1: Growing Steam Wings (Evaporation):**\n"
+                f"   The warm Sun shines down on the lake. Droppy gets warm and turns into invisible steam (water vapor), flying high up into the blue sky!\n\n"
+                f"2. ☁️ **Stage 2: The Cloud Hug (Condensation):**\n"
+                f"   High up in the cool sky, Droppy meets millions of droplet friends. They hug tightly and form a big, fluffy **Cloud**!\n\n"
+                f"3. 🌧️ **Stage 3: The Rain Waterslide (Precipitation):**\n"
+                f"   When the cloud gets too heavy to hold everyone, Droppy slides all the way down to Earth as a fresh rain drop: *Splish, Splash!*\n\n"
+                f"💡 *Droppy flows right back into the lake, ready for the next adventure!* Does this story make the water cycle clear and fun? 😊"
+            )
+
+    # 2. Photosynthesis: The Plant Kitchen Story
+    if any(k in full_context for k in ['photosynthesis', 'chlorophyll', 'stomata', 'plant food', 'glucose']):
+        if is_hing:
+            return (
+                f"### 🌿 **Chef Leaf: Podhon ka Masterchef Restaurant! ({grade})**\n\n"
+                f"Socho har ped ki patti ek **Masterchef Kitchen** hai jisme **Chef Chlorophyll** khana banata hai:\n\n"
+                f"- ☀️ **Chulha (Solar Energy):** Suraj ki dhoop se cooking heat aati hai.\n"
+                f"- 🥤 **Juice Straw (Roots):** Jaden zameen se pani kheench kar kitchen tak bhejti hain.\n"
+                f"- 🪟 **Kitchen Windows (Stomata):** Patti ke chote-chote chhed hawa se Carbon Dioxide andar lete hain.\n"
+                f"- 🍰 **Sweet Dish (Glucose):** Chef Chlorophyll sab mila kar meetha glucose khana banata hai aur hamare liye taazi **Oxygen gas** bahar nikalta hai!\n\n"
+                f"🌟 *Plants hume oxygen dete hain aur apna khana khud banate hain!* Clear laga? 😊"
+            )
+        else:
+            return (
+                f"### 🌿 **The Masterchef Leaf Kitchen Story ({grade})**\n\n"
+                f"Think of every green leaf as a tiny **Masterchef Restaurant** operated by **Chef Chlorophyll**:\n\n"
+                f"- ☀️ **The Stove (Sunlight):** Chef Chlorophyll catches sunlight for pure solar cooking power.\n"
+                f"- 🥤 **The Straw (Roots):** Roots suck fresh water from the soil up into the leaf kitchen.\n"
+                f"- 🪟 **The Windows (Stomata):** Microscopic leaf windows breathe in carbon dioxide from the air.\n"
+                f"- 🍰 **The Delicious Cake (Glucose & Oxygen):** The leaf bakes sweet glucose energy for the plant and puffs out fresh **Oxygen** for us to breathe!\n\n"
+                f"🌟 *Plants feed themselves and give us fresh air every single day!* Clear and easy? 😊"
+            )
+
+    # 3. Electricity & Ohm's Law (The Water Slide Analogy)
+    if any(k in full_context for k in ['ohm', 'electricity', 'voltage', 'current', 'resistance', 'circuit']):
+        if is_hing:
+            return (
+                f"### ⚡ **Water Slide Park se Samajhte Hain Electricity! ({grade})**\n\n"
+                f"Electricity ko ek **Water Theme Park** ki tarah socho:\n\n"
+                f"- 🎢 **Voltage ($V$) = Slide ki Oonchai (Push):** Slide jitni oonchi hogi, utna tej dhakka milega!\n"
+                f"- 🚧 **Resistance ($R$) = Slide ke Bumps (Speed breaker):** Agar slide khurduri hai, toh aap dheere fisloge.\n"
+                f"- 🌊 **Current ($I$) = Flow hone ki Speed:** Kitne bache har second slide se nikal rahe hain ($I = V / R$)!\n\n"
+                f"💡 Agar Voltage badhaoge toh Current badhega; Resistance badhaoge toh Current rukega! Simple na? 😊"
+            )
+        else:
+            return (
+                f"### ⚡ **The Water Park Slide Analogy for Electricity ({grade})**\n\n"
+                f"Think of an electric circuit as a fun **Water Slide Park**:\n\n"
+                f"- 🎢 **Voltage ($V$) = Height of the Slide (Push):** The higher the tower, the stronger the push downwards!\n"
+                f"- 🚧 **Resistance ($R$) = Friction on the Slide:** Bumps and roughness that slow down the sliding.\n"
+                f"- 🌊 **Current ($I$) = Flow Rate:** How many swimmers rush through per second ($I = V / R$)!\n\n"
+                f"💡 Higher Voltage creates faster flow, while higher Resistance slows everything down! Easy? 😊"
+            )
+
+    # 4. Python Variables & Loops
     if any(k in full_context for k in ['python', 'variable', 'loop', 'coding', 'programming']):
         if is_hing:
             return (
@@ -3451,7 +3612,7 @@ def generate_feynman_simplification(query, grade, subject, history=None):
                 f"🌟 **Does this picture make it feel easier?** Tell me what you'd like to put inside your labeled box!"
             )
             
-    # 2. Mass vs Weight
+    # 5. Mass vs Weight
     if any(k in full_context for k in ['mass', 'weight', 'gravity']):
         if is_hing:
             return (
@@ -3468,7 +3629,7 @@ def generate_feynman_simplification(query, grade, subject, history=None):
                 f"💡 *Quick Picture:* On the Moon, you could jump super high because your weight is less, but your mass is unchanged!"
             )
 
-    # 3. Default Universal Feynman Simplification
+    # 6. Default Universal Feynman Simplification
     if is_hing:
         return (
             f"### 💡 **Aasan Bhasha me Samajhte Hain ({grade} - {subject})**\n\n"
@@ -3642,9 +3803,25 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
         return thinking + greeting_msg
 
     # 0.5 Student Struggling / Simplification Request ("I don't understand", "make it simpler")
-    if is_simplification_request(user_query):
+    if is_simplification_request(user_query, chat_history):
         thinking = format_thinking_block(user_query, "State A / Pedagogical Simplification", "Strip all technical jargon and explain using intuitive real-world metaphors")
         return thinking + generate_feynman_simplification(user_query, grade, subject, chat_history)
+
+    # 0.2 Declining a Quiz Offer ("no", "not now", "later")
+    if chat_history and was_last_message_quiz_offer(chat_history) and is_negative_reply(user_query):
+        is_hing = is_hinglish(user_query)
+        thinking = format_thinking_block(user_query, "Quiz Offer Declined", "Politely acknowledge student declining quiz and offer to explain another topic or solve problems")
+        if is_hing:
+            decline_msg = (
+                "Koi baat nahi! 😊 Jab bhi aap ready hon tab hum practice quiz le sakte hain.\n\n"
+                f"Abhi aap **{grade} {subject}** me kaun sa topic, concept ya numerical problem samajhna chahenge?"
+            )
+        else:
+            decline_msg = (
+                "No problem at all! 😊 Whenever you are ready, we can take a quick quiz.\n\n"
+                f"What topic, concept, or numerical problem in **{grade} {subject}** would you like to explore or solve next?"
+            )
+        return thinking + decline_msg
 
     # 1. School Information Queries
     if any(k in q_lower for k in ['maya vidya', 'mvn', 'school', 'admission', 'fee', 'address', 'contact', 'principal', 'affiliation', 'hostel']):
@@ -3747,15 +3924,18 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
         return thinking + generate_ncert_syllabus_overview(user_query, grade, subject)
 
     # 4. Quiz Mode with Hard Separation (Generator vs Grader based on Chat History)
-    if is_quiz_request(user_query, mode) or is_quiz_submission(user_query):
+    if is_quiz_request(user_query, mode, history=chat_history) or is_quiz_submission(user_query):
         quiz_state = determine_quiz_state(user_query, chat_history)
         if quiz_state == 'grader':
             thinking = format_thinking_block(user_query, "State C (Quiz Submission)", "Calculate score and output assessment template with 1-sentence explanations per answer")
             return thinking + grade_quiz_submission(user_query, grade, subject)
         else:
             q_count = extract_requested_question_count(user_query, default=3)
+            quiz_topic_query = user_query
+            if is_affirmative_reply(user_query) and chat_history:
+                quiz_topic_query = extract_topic_from_history(chat_history, default_topic=user_query)
             thinking = format_thinking_block(user_query, "State B (Quiz Request)", f"Output exactly {q_count} MCQs without answers or grades. Stop and wait for student reply")
-            return thinking + generate_dynamic_cbse_quiz(grade, subject, query=user_query)
+            return thinking + generate_dynamic_cbse_quiz(grade, subject, query=quiz_topic_query)
 
     # 5. Short Answers & True/False Rule
     if is_short_answer_or_tf(user_query):
@@ -5546,7 +5726,7 @@ def ai_tutor_chat():
                 f"CRITICAL ANTI-CHEAT RULE:\n"
                 f"Do NOT type out a fully corrected, perfect version of their essay. You must only provide feedback and ask them to rewrite the problematic sentences themselves."
             )
-        elif is_quiz_request(user_query, mode) or is_quiz_submission(user_query):
+        elif is_quiz_request(user_query, mode, history=history) or is_quiz_submission(user_query):
             quiz_state = determine_quiz_state(user_query, history)
             if quiz_state == 'grader':
                 system_instruction = (
@@ -5562,7 +5742,7 @@ def ai_tutor_chat():
             else:
                 q_count = extract_requested_question_count(user_query, default=3)
                 system_instruction = (
-                    f"System: You are the Maya AI Tutor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus). The student wants to take a practice quiz.\n"
+                    f"System: You are the Maya AI Tutor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus). The student wants to take a practice quiz on the concept discussed in the conversation.\n"
                     f"Target Student Grade: {grade}\n"
                     f"Current Subject: {subject}\n\n"
                     f"Global Language Rule: You MUST mirror the user's exact language. If they type in Hinglish, reply in conversational Hinglish.\n\n"
@@ -5571,6 +5751,13 @@ def ai_tutor_chat():
                     f"2. Output exactly {q_count} multiple-choice questions (A, B, C, D) relevant to their topic.\n"
                     f"3. CRITICAL: Stop typing immediately after question {q_count}. Do NOT provide answers, and do NOT provide any feedback. Wait for the student to reply with their choices."
                 )
+        elif history and was_last_message_quiz_offer(history) and is_negative_reply(user_query):
+            system_instruction = (
+                f"System: You are the Maya AI Tutor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
+                f"Target Student Grade: {grade}\n"
+                f"Current Subject: {subject}\n\n"
+                f"Task: The student politely declined the quiz offer. Acknowledge warmly in their language (Hinglish or English), and ask what concept, numerical problem, or chapter in {grade} {subject} they would like to explore or solve next."
+            )
         elif is_cbse_exam_info_query(user_query):
             system_instruction = (
                 f"System: You are the Maya AI Academic Advisor for Maya Vidya Niketan (Classes 1–12, CBSE/NCERT syllabus).\n"
