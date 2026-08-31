@@ -2142,6 +2142,66 @@ def solve_physics_math_numerical(query, grade="Class 10", subject="General Scien
                 f"*The calculated result is **{res_s}**.*"
             )
 
+    # 0.1 Kinematics: Accelerating from rest (u = 0, a, t -> v = at, s = 0.5 * a * t^2)
+    # e.g., "A car accelerates from rest at 2 m/s^2 for 10 seconds. Calculate velocity", "starts from rest with 3 m/s^2 for 5 s"
+    p_from_rest = re.search(r"(?:from rest|starts from rest).*?(?:at|with)?\s*(\d+(?:\.\d+)?)\s*(?:m\/s\^?2|m\/s2|m\/sec\^?2|mps2).*?(?:for|in)\s*(\d+(?:\.\d+)?)\s*(?:s|sec|seconds)", q, re.IGNORECASE) or \
+                  re.search(r"(?:accelerat\w+)\s+(?:at\s+)?(\d+(?:\.\d+)?)\s*(?:m\/s\^?2|m\/s2|m\/sec\^?2|mps2).*?(?:from rest|starts from rest).*?(?:for|in)\s*(\d+(?:\.\d+)?)\s*(?:s|sec|seconds)", q, re.IGNORECASE) or \
+                  re.search(r"(?:accelerat\w+).*?(?:from rest|starts from rest).*?(\d+(?:\.\d+)?)\s*(?:m\/s\^?2|m\/s2|m\/sec\^?2|mps2).*?(\d+(?:\.\d+)?)\s*(?:s|sec|seconds)", q, re.IGNORECASE)
+    if p_from_rest:
+        a_val = float(p_from_rest.group(1))
+        t_val = float(p_from_rest.group(2))
+        u_val = 0.0
+        v_val = u_val + (a_val * t_val)
+        s_val = (u_val * t_val) + (0.5 * a_val * (t_val ** 2))
+        a_s, t_s, v_s, s_s = fmt_num(a_val), fmt_num(t_val), fmt_num(v_val), fmt_num(s_val)
+        return (
+            f"### 🔢 **Step-by-Step Physics Numerical Solution ({grade} - {subject})**\n\n"
+            f"#### 📐 **Step 1: Formula Required**\n"
+            f"According to the First and Second Equations of Motion:\n"
+            f"- **Final Velocity ($v$):** $$v = u + at$$\n"
+            f"- **Distance Travelled ($s$):** $$s = ut + \\frac{{1}}{{2}}at^2$$\n"
+            f"where:\n"
+            f"- $u$ = Initial velocity ($0\\text{{ m/s}}$ since the vehicle starts from rest)\n"
+            f"- $a$ = Uniform acceleration in $\\text{{m/s}}^2$\n"
+            f"- $t$ = Time elapsed in $\\text{{seconds}}$\n\n"
+            f"#### 📋 **Step 2: Given Data**\n"
+            f"- **Initial Velocity ($u$):** $0\\text{{ m/s}}$ (starts from rest)\n"
+            f"- **Acceleration ($a$):** ${a_s}\\text{{ m/s}}^2$\n"
+            f"- **Time taken ($t$):** ${t_s}\\text{{ s}}$\n\n"
+            f"#### 🧮 **Step 3: Step-by-Step Value Substitution**\n"
+            f"1. **Calculating Final Velocity ($v$):**\n"
+            f"   $$v = 0 + ({a_s} \\times {t_s}) = {v_s}\\text{{ m/s}}$$\n"
+            f"2. **Calculating Distance Travelled ($s$):**\n"
+            f"   $$s = (0 \\times {t_s}) + \\frac{{1}}{{2}} \\times {a_s} \\times ({t_s})^2 = 0.5 \\times {a_s} \\times {fmt_num(t_val**2)} = {s_s}\\text{{ m}}$$\n\n"
+            f"#### 🎯 **Final Answer (with correct SI units):**\n"
+            f"$$\\mathbf{{v = {v_s}\\text{{ m/s}}, \\quad s = {s_s}\\text{{ meters}}}}$$\n\n"
+            f"*The calculated final velocity is **{v_s} m/s** and the distance covered is **{s_s} m**.*"
+        )
+
+    # --- MATH 8: Calculus - Derivative & Chain Rule (Class 11/12) ---
+    if any(k in q.lower() for k in ['chain rule', 'derivative of', 'differentiat', 'd/dx', 'dy/dx', 'find the derivative']):
+        if any(k in q.lower() for k in ['sin(x^2)', 'sin(x2)', 'sin x^2', 'sin(x)^2', 'sin^2(x)']):
+            return (
+                f"### 📐 **Step-by-Step Calculus Solution: Chain Rule Differentiation ({grade} - {math_sub})**\n\n"
+                f"#### 📐 **Step 1: Formula Required (The Chain Rule)**\n"
+                f"For a composite function $y = f(g(x))$, the derivative is given by:\n"
+                f"$$\\frac{{dy}}{{dx}} = \\frac{{df}}{{dg}} \\cdot \\frac{{dg}}{{dx}} = f'(g(x)) \\cdot g'(x)$$\n\n"
+                f"#### 📋 **Step 2: Identify Outer and Inner Functions**\n"
+                f"- **Given Function:** $$y = f(x) = \\sin(x^2)$$\n"
+                f"- **Inner function ($u = g(x)$):** $$u = x^2$$\n"
+                f"- **Outer function ($y = f(u)$):** $$y = \\sin(u)$$\n\n"
+                f"#### 🧮 **Step 3: Step-by-Step Differentiation**\n"
+                f"1. Differentiate the outer function with respect to $u$:\n"
+                f"   $$\\frac{{dy}}{{du}} = \\frac{{d}}{{du}}(\\sin u) = \\cos u = \\cos(x^2)$$\n"
+                f"2. Differentiate the inner function with respect to $x$:\n"
+                f"   $$\\frac{{du}}{{dx}} = \\frac{{d}}{{dx}}(x^2) = 2x$$\n"
+                f"3. Multiply the derivatives using Chain Rule:\n"
+                f"   $$\\frac{{dy}}{{dx}} = \\frac{{dy}}{{du}} \\cdot \\frac{{du}}{{dx}} = \\cos(x^2) \\cdot (2x) = 2x\\cos(x^2)$$\n\n"
+                f"#### 🎯 **Final Answer:**\n"
+                f"$$\\mathbf{{f'(x) = \\frac{{d}}{{dx}}[\\sin(x^2)] = 2x\\cos(x^2)}}$$\n\n"
+                f"*The derivative of $\\sin(x^2)$ with respect to $x$ is **$2x\\cos(x^2)$**.*"
+            )
+
     # 1. Kinematics Acceleration: from X km/h to Y km/h in Z s
     p_kmh = re.search(r"(\d+(?:\.\d+)?)\s*(?:km\/h|kmph|km\/hr)\s+(?:to\s+)?(\d+(?:\.\d+)?)\s*(?:km\/h|kmph|km\/hr)\s+(?:in\s+)?(\d+(?:\.\d+)?)\s*(?:s|sec|seconds)", q, re.IGNORECASE)
     if p_kmh:
@@ -2331,20 +2391,39 @@ def generate_essay_or_writing_response(query, grade="Class 10", subject="English
     """
     q = query.lower()
 
-    # Extract topic from student prompt
+    # Clean topic from student prompt
     topic_match = re.search(r"essay on ['\"]?([^'\"]+)['\"]?", query, re.IGNORECASE) or \
                   re.search(r"write (?:a |an |short |250-word )?essay (?:on|about) ([^\.]+)", query, re.IGNORECASE) or \
                   re.search(r"write a paragraph on ([^\.]+)", query, re.IGNORECASE) or \
                   re.search(r"homework (?:on|about) ([^\.]+)", query, re.IGNORECASE) or \
                   re.search(r"lines on ([^\.]+)", query, re.IGNORECASE)
     
-    topic = topic_match.group(1).strip() if topic_match else "The Importance of Renewable Energy in India"
-    topic_title = topic.strip("\'\".?").title()
+    raw_topic = topic_match.group(1).strip() if topic_match else "The Importance of Renewable Energy in India"
+    cleaned_topic = re.sub(r'\b(?:for me|for my homework|for my exam|please|in \d+\s*words?|\d+[\s-]*words?|10[\s-]*lines?|5[\s-]*lines?)\b', '', raw_topic, flags=re.IGNORECASE).strip()
+    cleaned_topic = cleaned_topic.strip("\'\".,?!").strip()
+    topic = cleaned_topic if cleaned_topic else "The Importance of Renewable Energy in India"
+    topic_title = topic.title()
 
     is_primary = grade in ['Primary (1-5)', 'Class 1', 'Class 2', 'Class 3', 'Class 4', 'Class 5']
     if is_primary:
+        # 0. My Best Friend
+        if any(k in q for k in ['best friend', 'friend', 'dost', 'mitra']):
+            return (
+                f"### 🤝 **Simple 5-Line Essay on \"My Best Friend\" ({grade} - English / EVS)**\n\n"
+                f"Here are 5 simple, easy-to-learn lines for {grade}:\n\n"
+                f"1. 🌟 **A true friend is a wonderful gift in our life.**\n"
+                f"2. 🏫 **My best friend and I sit together in the classroom and share our lunchbox.**\n"
+                f"3. 📚 **We help each other with our school studies, drawing, and homework.**\n"
+                f"4. ⚽ **We love playing games together on the school playground during recess.**\n"
+                f"5. 💖 **My best friend is kind, helpful, and makes me smile every day!**\n\n"
+                f"---\n\n"
+                f"🌟 **Word Helper for Kids:**\n"
+                f"- **Recess:** Fun lunch and playtime at school!\n"
+                f"- **Share:** Giving a part of your snack or crayons to your friend.\n\n"
+                f"Would you like to practice reading these lines together? 🎮"
+            )
         # 1. The Cow
-        if any(k in q for k in ['cow', 'gai', 'gaay']):
+        elif any(k in q for k in ['cow', 'gai', 'gaay']):
             return (
                 f"### 🐄 **Simple 5-Line Essay on \"The Cow\" ({grade} - English / EVS)**\n\n"
                 f"Here are 5 simple, easy-to-learn lines for Class 1:\n\n"
@@ -3485,16 +3564,18 @@ def is_greeting(query):
 def is_simplification_request(query, history=None):
     """Detects if student is struggling, confused, or asking for a simpler explanation, fun story, or metaphor of a prior concept."""
     q = query.lower().strip()
-    # Exclude direct queries that ask for specific rules/formulas/theorems
-    if any(k in q for k in ['fleming', 'rule', 'formula', 'theorem', 'difference between', 'what is', 'explain what', 'derive']):
+    # If the user explicitly asks for a story or says they don't understand, it's always simplification
+    if any(k in q for k in ["don't understand", "dont understand", "didn't understand", "didnt understand", "with a story", "as a story", "simple words", "simple language", "eli5", "explain like im 5", "easy way"]):
+        return True
+    # Exclude direct queries that ask for specific formulas/theorems
+    if any(k in q for k in ['fleming', 'difference between', 'derive equation']):
         return False
     return any(k in q for k in [
-        "don't understand", "dont understand", "didn't understand", "didnt understand",
         "samajh nahi aaya", "samajh nhi aya", "kuch samajh nahi", "too hard", "too complex",
-        "make it simpler", "explain simply", "explain more simply", "simple words", "simple language",
-        "easy words", "easy way", "explain like a kid", "explain like im 5", "eli5", "mushkil lag raha",
+        "make it simpler", "explain simply", "explain more simply",
+        "easy words", "explain like a kid", "mushkil lag raha",
         "unable to understand", "hard to understand", "not understanding", "samjha do simply",
-        "i am confused", "im confused", "fun story", "as a story", "with a story", "story format",
+        "i am confused", "im confused", "fun story", "story format",
         "explain with a story", "simple story", "easy story", "like a story", "short story",
         "tell a story", "aur simple", "aur asan", "kahani jaisa", "kahani ke roop me"
     ])
@@ -3515,6 +3596,35 @@ def generate_feynman_simplification(query, grade, subject, history=None):
     ]).lower()
     full_context = q_lower + " " + history_text
     
+    # 0.1 Sammy the Seed & Plant Growth Story (Primary & Middle School)
+    if any(k in full_context for k in ['seed', 'seeds', 'beej', 'germination', 'sprout', 'sprouting', 'plant grow', 'how plants grow', 'baby plant']):
+        if is_hing:
+            return (
+                f"### 🌱 **Sammy the Seed: Ek Nanhe Beej ki Kahani! ({grade})**\n\n"
+                f"Chaliye **Seed (Beej)** aur uske podha banne ki process ko ek pyari si kahani se samajhte hain! 🌻\n\n"
+                f"Meet **Sammy** — ek nanha sa beej jo mitti ke andar meethi neend so raha tha:\n\n"
+                f"1. 🧥 **Step 1: Sammy ka Raincoat (Seed Coat):**\n"
+                f"   Sammy ke bahar ek strong chhilka (seed coat) hota hai jo andar soye **Baby Plant** ko chot lagne se bachata hai.\n\n"
+                f"2. 💧 **Step 2: Thanda Pani aur Jagna (Germination):**\n"
+                f"   Jaise hi humne mitti me pani dala aur dhoop aayi, Sammy ne pet bhar ke pani piya aur uska raincoat khul gaya!\n\n"
+                f"3. 🌿 **Step 3: Zameen se bahar aana (Sprouting):**\n"
+                f"   Sammy ke pair (Root/Jad) mitti me neeche gaye aur uska nanha sar (Green Sprout) dhoop ki taraf upar nikal aaya!\n\n"
+                f"🌟 *Dheere-dheere Sammy bada hokar phoolon aur meethhe phalon wala ped ban jata hai!* Kya Sammy ki kahani aasan lagi? 😊"
+            )
+        else:
+            return (
+                f"### 🌱 **The Story of 'Sammy the Seed' ({grade})**\n\n"
+                f"Let's understand what a **Seed** is and how it grows with a fun story! 🌻\n\n"
+                f"Meet **Sammy**, a tiny little seed sleeping peacefully under the soft brown soil:\n\n"
+                f"1. 🧥 **Stage 1: Sammy's Warm Coat (Seed Coat):**\n"
+                f"   Sammy wears a tough outer shell called the seed coat that protects the tiny **Baby Plant (Embryo)** sleeping inside.\n\n"
+                f"2. 💧 **Stage 2: Waking Up with Water (Germination):**\n"
+                f"   When you water the soil and the warm sunshine touches the ground, Sammy drinks the water and wakes up full of energy!\n\n"
+                f"3. 🌿 **Stage 3: The Green Sprout (Growing):**\n"
+                f"   Sammy stretches tiny white feet (Roots) deep down into the soil for water, and pushes a bright green head (Sprout) up into the air toward the warm Sun!\n\n"
+                f"🌟 *With sunshine and water, Sammy grows into a big, beautiful plant with sweet fruits!* Does this story make seeds easy to understand? 😊"
+            )
+
     # 1. Water Cycle & Rain Story (Primary & Middle School)
     if any(k in full_context for k in ['water cycle', 'rain', 'evaporation', 'condensation', 'precipitation', 'clouds', 'water droplet']):
         if is_hing:
@@ -4619,6 +4729,79 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
                 f"Would you like a quick 3-question quiz to test this concept?"
             )
 
+    # Primary / EVS / Science: Birds, Feathers, and Flight
+    if any(k in q_lower for k in ['bird', 'birds', 'feather', 'feathers', 'flightless', 'ostrich', 'penguin', 'kiwi', 'emu', 'pakshi', 'chidiya']):
+        if is_hing:
+            return thinking + (
+                f"### 🪶 **Chidiya, Unke Pankh aur Udna: Aasan Padhai ({grade} - {subject})**\n\n"
+                f"#### 1. 🌟 **Chidiya ke paas Pankh (Feathers) kyun hote hain?**\n"
+                f"Birds ke feathers ke 3 bohot zaroori kaam hote hain:\n"
+                f"- ✈️ **Udne me madad (Flight):** Wings ke lambe feathers hawa me lift banate hain taaki chidiya aasman me ud sake.\n"
+                f"- 🧥 **Body ko garm rakhna (Warmth / Insulation):** Shareer ke paas wale soft down feathers unhe thandi aur garmi se bachate hain.\n"
+                f"- 🌧️ **Waterproofing aur Rang (Protection):** Feathers baarish ke pani ko andar skin tak nahi pahunchne dete aur colorful patterns unhe predators se chupate hain.\n\n"
+                f"#### 2. 🐧 **Kya saari Chidiya ud sakti hain? (Flightless Birds)**\n"
+                f"**Nahi!** Kuch birds hoti hain jinki body bhari hoti hai aur wings chote hote hain. Inhe **Flightless Birds (Na udne wali chidiya)** kehte hain:\n"
+                f"- 🏃 **Ostrich (Shuturmurg):** Duniya ka sabse bada bird! Yeh ud nahi sakta par bohot tej ($70\\text{{ km/h}}$) daudta hai.\n"
+                f"- ❄️ **Penguin:** Barf me rehta hai aur udne ke bajay pani me expert swimmer ki tarah tairta hai.\n"
+                f"- 🥝 **Kiwi & Emu:** Inke wings bohot chote hote hain, isliye yeh zameen par hi chalte hain.\n\n"
+                f"Kya aapko birds aur unke nests par ek mazedaar 3-question quiz khelna hai? 🎮"
+            )
+        else:
+            return thinking + (
+                f"### 🪶 **Why Do Birds Have Feathers & Can All Birds Fly? ({grade} - {subject})**\n\n"
+                f"#### 1. 🌟 **Why Do Birds Have Feathers?**\n"
+                f"Feathers are unique to birds and perform 3 essential life functions:\n"
+                f"- ✈️ **Flight:** Large, strong flight feathers on wings and tails push against air to lift birds into the sky and steer them.\n"
+                f"- 🧥 **Body Warmth (Insulation):** Soft, fluffy down feathers trap warm air close to the bird's skin, keeping them cozy in winter.\n"
+                f"- 🌧️ **Waterproofing & Camouflage:** Natural oils keep feathers waterproof in rain, and bright or blending colors help them hide from predators.\n\n"
+                f"#### 2. 🐧 **Can All Birds Fly? (Flightless Birds)**\n"
+                f"**No, not all birds can fly!** Some birds have evolved with heavier bodies and smaller, flatter wings:\n"
+                f"- 🏃 **Ostrich:** The largest living bird on Earth. It cannot fly, but it runs as fast as $70\\text{{ km/h}}$!\n"
+                f"- ❄️ **Penguin:** Lives in cold polar regions and uses its paddle-like wings (flippers) to swim gracefully underwater.\n"
+                f"- 🥝 **Kiwi and Emu:** Ground-dwelling birds with tiny wings adapted for walking and foraging on land.\n\n"
+                f"Would you like to try a fun 3-question quiz on birds and animals? 🎮"
+            )
+
+    # Class 9 Biology: Simple Permanent Plant Tissues (Parenchyma, Collenchyma, Sclerenchyma)
+    if any(k in q_lower for k in ['parenchyma', 'collenchyma', 'sclerenchyma', 'simple permanent tissue', 'plant tissue', 'plant tissues']) or ('tissue' in q_lower and any(k in q_lower for k in ['difference', 'types', 'plant'])):
+        return thinking + (
+            f"### 🌿 **Parenchyma, Collenchyma & Sclerenchyma ({grade} - {subject})**\n\n"
+            f"In plants, **Simple Permanent Tissues** are composed of a single type of cell performing structural and physiological functions.\n\n"
+            f"#### 📊 **1. Comprehensive Comparison Table (CBSE NCERT Class 9 Biology):**\n"
+            f"| Feature | Parenchyma 🍃 | Collenchyma 🎋 | Sclerenchyma 🥥 |\n"
+            f"| :--- | :--- | :--- | :--- |\n"
+            f"| **Living / Dead** | **Living cells** | **Living cells** | **Dead cells** (at maturity) |\n"
+            f"| **Cell Wall Thickness** | Thin cellulose cell walls | Irregularly thickened at corners with **pectin** & cellulose | Uniformly thick, hard walls lignified with **lignin** (natural cement) |\n"
+            f"| **Intercellular Spaces** | **Large intercellular spaces** present | Very little / No intercellular spaces | **No intercellular spaces** (compact) |\n"
+            f"| **Primary Functions** | **Food storage**, packaging tissue, photosynthesis (Chlorenchyma), buoyancy in aquatic plants (Aerenchyma) | Provides **mechanical support, tensile strength, and flexibility** (allows bending of stems and tendrils without breaking) | Provides **rigidity, hardness, and mechanical protection** (makes plant stiff and strong) |\n"
+            f"| **Location Examples** | Pith and cortex of stems and roots, soft flesh of fruits | Leaf stalks (petiole), young green stems beneath epidermis | Husk of coconut, gritty flesh of pears, hard shells of nuts, jute/flax fibres |\n\n"
+            f"#### 💡 **2. Key CBSE Board Exam Derivations & Specialties:**\n"
+            f"- **Chlorenchyma:** Parenchyma cells containing chlorophyll that perform active photosynthesis.\n"
+            f"- **Aerenchyma:** Parenchyma containing large air cavities helping aquatic plants float on water.\n"
+            f"- **Lignin:** Chemical substance that acts as waterproof cement, giving immense hardness to sclerenchyma.\n\n"
+            f"Would you like a quick 3-question quiz on plant tissues?"
+        )
+
+    # Senior Chemistry: SN1 vs SN2 Reaction Mechanisms & Stereochemistry (Class 12)
+    if any(k in q_lower for k in ['sn1 vs sn2', 'sn1 and sn2', 'sn1 mechanism', 'sn2 mechanism', 'sn1 or sn2', 'nucleophilic substitution', 'walden inversion', 'racemisation', 'racemization', 'stereochemistry of sn1']):
+        return thinking + (
+            f"### 🧪 **$S_N1$ vs $S_N2$ Reaction Mechanisms & Stereochemistry ({grade} - {subject})**\n\n"
+            f"#### 📊 **1. Comprehensive Master Comparison Table (CBSE Class 12 Chemistry):**\n"
+            f"| Parameter | $S_N1$ (Substitution Nucleophilic Unimolecular) | $S_N2$ (Substitution Nucleophilic Bimolecular) |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Kinetics & Rate Law** | **First Order**: $\\text{{Rate}} = k[R\\text{{-}}X]$ | **Second Order**: $\\text{{Rate}} = k[R\\text{{-}}X][\\text{{Nu}}^-]$ |\n"
+            f"| **Number of Steps** | **Two-step mechanism** (slow ionization, fast attack) | **One-step concerted mechanism** (simultaneous bond forming/breaking) |\n"
+            f"| **Intermediate / State** | Forms a planar **Carbocation intermediate** ($sp^2$) | Passes through a 5-coordinate **Transition State** ($sp^2$) |\n"
+            f"| **Substrate Reactivity Order** | $$3^\\circ > 2^\\circ > 1^\\circ > \\text{{CH}}_3\\text{{X}}$$ *(due to carbocation stability)* | $$\\text{{CH}}_3\\text{{X}} > 1^\\circ > 2^\\circ > 3^\\circ$$ *(due to low steric hindrance)* |\n"
+            f"| **Stereochemistry** | **Racemisation** (Retention + Inversion) due to planar carbocation front/back attack | Complete **Walden Inversion** (100% Inversion) due to backside nucleophilic attack |\n"
+            f"| **Nucleophile Strength** | Favored by **Weak nucleophiles** (e.g., $\\text{{H}}_2\\text{{O}}, \\text{{ROH}}$) | Requires **Strong nucleophiles** (e.g., $\\text{{OH}}^-, \\text{{CN}}^-, \\text{{I}}^-$) |\n"
+            f"| **Solvent Effect** | **Polar Protic Solvents** (e.g., $\\text{{H}}_2\\text{{O}}, \\text{{C}}_2\\text{{H}}_5\\text{{OH}}$) stabilize carbocation | **Polar Aprotic Solvents** (e.g., Acetone, DMSO, DMF) enhance nucleophile attack |\n\n"
+            f"#### 💡 **2. Key CBSE Board Exam Derivation Point:**\n"
+            f"- In **$S_N1$**, the rate-determining slow step depends only on the haloalkane: $$\\text{{R-X}} \\xrightarrow{{\\text{{slow}}}} \\text{{R}}^+ + \\text{{X}}^-$$\n"
+            f"- In **$S_N2$**, nucleophile attacks from the opposite side of the leaving group ($180^\\circ$), turning the molecule inside-out like an umbrella in a storm (Walden Inversion)!\n\n"
+            f"Would you like a quick 3-question quiz on $S_N1$ and $S_N2$ mechanisms?"
+        )
+
     # 3.0. Comprehensive Ray Diagrams Guide for Spherical Mirrors & Lenses
     if any(k in q_lower for k in ['ray diagram', 'ray diagrams', 'draw ray', 'image formation by concave', 'image formation by convex', 'image formation by mirror', 'image formation by lens', 'practice ray', 'practice ray diagram', 'practice ray diagrams']):
         return thinking + (
@@ -4680,7 +4863,8 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
         )
 
     # Balancing Chemical Equations Step-by-Step Method & Trick
-    if any(k in q_lower for k in ['balance chemical equation', 'balancing chemical equation', 'balancing equation', 'balance equation', 'equation balance karne']):
+    if (any(k in q_lower for k in ['balance', 'balancing']) and any(k in q_lower for k in ['equation', 'chemical equation', 'fe + h2o', 'fe3o4', 'ch4 + o2', 'h2 + o2', 'zn + hcl', 'reactions'])) or \
+       any(k in q_lower for k in ['balance chemical equation', 'balancing chemical equation', 'balancing equation', 'balance equation', 'equation balance karne', 'fe + h2o', 'fe3o4', 'balance the chemical']):
         return thinking + (
             f"### ⚖️ **How to Balance Chemical Equations: 4-Step Master Method ({grade} - {subject})**\n\n"
             f"#### 🎯 **1. Golden Rule of Balancing:**\n"
