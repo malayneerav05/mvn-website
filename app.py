@@ -5777,9 +5777,77 @@ def generate_local_tutor_response(user_query, subject, grade, mode, history=None
             "Would you like a quick 3-question quiz to test this concept?"
         )
 
-    if any(k in q_lower for k in ['motion', 'force', 'newton', 'gravity', 'acceleration']):
+    # 2.8. Gravitation & Universal Law of Gravitation (Class 9-12)
+    if any(k in q_lower for k in ['gravitation', 'gravitational', 'universal law of gravitation', 'free fall', 'weightlessness', 'kepler', 'gravity']):
         return thinking + (
-            f"### 🚀 **Newton's Laws of Motion & Gravitation ({grade} - {subject})**\n\n"
+            f"### 🪐 **Gravitation & Universal Law of Gravitation ({grade} - {subject})**\n\n"
+            f"#### 🌌 **1. Universal Law of Gravitation (Newton):**\n"
+            f"Every particle in the universe attracts every other particle with a force directly proportional to the product of their masses and inversely proportional to the square of the distance between their centers:\n"
+            f"$$F = G \\frac{{M \\cdot m}}{{r^2}}$$\n"
+            f"- **Universal Gravitational Constant ($G$):** $$G = 6.673 \\times 10^{-11}\\text{{ N}}\\cdot\\text{{m}}^2/\\text{{kg}}^2$$\n\n"
+            f"#### 🌍 **2. Acceleration due to Gravity ($g$):**\n"
+            f"The acceleration experienced by an object during free fall towards the Earth under gravitational pull alone:\n"
+            f"$$g = \\frac{{G M_{{\\text{{Earth}}}}}}{{R_{{\\text{{Earth}}}}^2}} \\approx \\mathbf{{9.8\\text{{ m/s}}^2}} \\quad (\\text{{at sea level}})$$\n"
+            f"- **Variation of $g$:** $g$ is maximum at the **Poles** (flatter radius $R_p < R_e$) and minimum at the **Equator**.\n\n"
+            f"#### ⚖️ **3. Difference Between Mass ($m$) & Weight ($W$):**\n"
+            f"| Feature | Mass ($m$) | Weight ($W$) |\n"
+            f"| :--- | :--- | :--- |\n"
+            f"| **Definition** | Inherent quantity of matter | Gravitational force acting on body ($W = mg$) |\n"
+            f"| **SI Unit & Nature** | Kilogram ($\\text{{kg}}$) — Scalar | Newton ($\\text{{N}}$) — Vector (downwards) |\n"
+            f"| **Constancy** | Constant everywhere | Varies (On the Moon, $g_{{\\text{{moon}}}} = \\frac{{g}}{{6}} \\implies W_{{\\text{{moon}}}} = \\frac{{W}}{{6}}$) |\n\n"
+            f"#### 🪂 **4. Free Fall & Equations of Motion Under Gravity:**\n"
+            f"For an object dropped from rest ($u = 0$) taking downward direction as positive ($a = +g$):\n"
+            f"1. $$v = gt$$\n"
+            f"2. $$h = \\frac{{1}}{{2}}gt^2$$\n"
+            f"3. $$v^2 = 2gh$$\n\n"
+            f"Would you like a quick 3-question quiz to test this concept?"
+        )
+
+    # 2.85. Work, Energy and Power (Class 9-12)
+    if any(k in q_lower for k in ['work and energy', 'work energy', 'kinetic energy', 'potential energy', 'work done', 'conservation of energy', 'kilowatt hour', 'kwh']):
+        return thinking + (
+            f"### ⚡ **Work, Energy & Power ({grade} - {subject})**\n\n"
+            f"#### 🛠️ **1. Work Done ($W$):**\n"
+            f"Work is said to be done when a force ($F$) applied on an object produces a displacement ($s$) in the direction of the force:\n"
+            f"$$W = F \\times s \\times \\cos\\theta$$\n"
+            f"- **SI Unit:** Joule ($\\text{{J}}$), where $1\\text{{ Joule}} = 1\\text{{ Newton}} \\times 1\\text{{ meter}}$.\n"
+            f"- **Special Cases:** $W > 0$ when force and displacement are in the same direction ($\\theta = 0^\\circ$); $W = 0$ when force is perpendicular to displacement ($\\theta = 90^\\circ$, e.g., coolie carrying luggage horizontally on his head).\n\n"
+            f"#### 🏃 **2. Kinetic Energy ($E_k$) & Potential Energy ($E_p$):**\n"
+            f"1. **Kinetic Energy:** Energy possessed by an object due to its motion: $$E_k = \\frac{{1}}{{2}} m v^2$$\n"
+            f"2. **Gravitational Potential Energy:** Energy possessed by an object due to its position or height ($h$) above ground: $$E_p = m \\cdot g \\cdot h$$\n\n"
+            f"#### 🔄 **3. Law of Conservation of Energy:**\n"
+            f"Energy can neither be created nor destroyed; it can only be transformed from one form to another. The total mechanical energy ($E_k + E_p$) of an isolated system remains constant.\n\n"
+            f"#### 💡 **4. Power & Commercial Unit of Energy:**\n"
+            f"- **Power ($P$):** Rate of doing work: $$P = \\frac{{W}}{{t}} \\quad (\\text{{SI Unit: Watt, W}})$$\n"
+            f"- **Commercial Unit:** $$1\\text{{ kWh}} = 1000\\text{{ W}} \\times 3600\\text{{ s}} = \\mathbf{{3.6 \\times 10^6\\text{{ Joules}}}}$$\n\n"
+            f"Would you like a quick 3-question quiz to test this concept?"
+        )
+
+    # 2.87. Sound & Wave Mechanics (Class 9-12)
+    if any(k in q_lower for k in ['sound', 'frequency', 'wavelength', 'amplitude', 'echo', 'reverberation', 'ultrasound', 'sonar', 'audible range']):
+        return thinking + (
+            f"### 🔊 **Sound & Wave Mechanics ({grade} - {subject})**\n\n"
+            f"#### 🌊 **1. Nature of Sound Waves:**\n"
+            f"- Sound is a **mechanical longitudinal wave** produced by vibrating objects requiring a material medium (solid, liquid, or gas) to propagate (cannot travel in vacuum).\n"
+            f"- Propagates through alternate regions of high pressure (**Compressions, $C$**) and low pressure (**Rarefactions, $R$**).\n\n"
+            f"#### 📊 **2. Fundamental Wave Characteristics:**\n"
+            f"- **Wave Velocity Formula:** $$v = \\nu \\times \\lambda \\quad (\\text{{Speed}} = \\text{{Frequency}} \\times \\text{{Wavelength}})$$\n"
+            f"- **Wavelength ($\\lambda$):** Distance between two consecutive compressions (SI Unit: meter, $\\text{{m}}$).\n"
+            f"- **Frequency ($\\nu$ or $f$):** Number of complete oscillations per second (SI Unit: Hertz, $\\text{{Hz}}$).\n"
+            f"- **Time Period ($T$):** Time taken for one complete oscillation ($T = 1/\\nu$).\n\n"
+            f"#### 👂 **3. Human Audibility & Ultrasound:**\n"
+            f"- **Audible Human Hearing Range:** **$20\\text{{ Hz}} - 20,000\\text{{ Hz}}$** ($20\\text{{ kHz}}$).\n"
+            f"- **Infrasound:** Frequency $< 20\\text{{ Hz}}$ (whales, elephants, earthquakes).\n"
+            f"- **Ultrasound:** Frequency $> 20\\text{{ kHz}}$ (bats, medical echocardiography, SONAR for measuring ocean depth).\n\n"
+            f"#### 📢 **4. Echo & Conditions for Hearing Echo:**\n"
+            f"- For a distinct echo to be heard, the reflected sound must reach the ear after at least **$0.1\\text{{ seconds}}$** (due to persistence of hearing).\n"
+            f"- **Minimum distance from reflecting surface in air at $22^\\circ\\text{{C}}$:** $$d = \\frac{{v \\times t}}{{2}} = \\frac{{344 \\times 0.1}}{{2}} = \\mathbf{{17.2\\text{{ meters}}}}$$\n\n"
+            f"Would you like a quick 3-question quiz to test this concept?"
+        )
+
+    if any(k in q_lower for k in ['motion', 'force', 'newton', 'acceleration']):
+        return thinking + (
+            f"### 🚀 **Newton's Laws of Motion ({grade} - {subject})**\n\n"
             "#### 1. **First Law (Law of Inertia):**\n"
             "An object remains at rest or in uniform motion along a straight line unless acted upon by an external unbalanced force.\n"
             "- *Real-life example:* You jerk forward when a school bus hits the brakes due to inertia of motion.\n\n"
